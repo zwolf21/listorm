@@ -356,11 +356,9 @@ class Listorm(list):
 			pk: primarykey for both Lists
 		'''
 		if not other:
-			return 
+			return
+			
 		other = Listorm(other)
-
-		# if self[0].keys() != other[0].keys():
-		# 	raise ValueError('Other record has different scheme')
 
 		common_keys = self[0].keys() & other[0].keys()
 
@@ -403,7 +401,9 @@ class Listorm(list):
 
 def join(left, right, left_on=None, right_on=None, on=None, how='inner'):
 	'''Join With two Listorm
-		join(lst1, lst2, on=['name'], how='inner')
+		join(lst1, lst2, on='name', how='inner')
+		join(lst1, lst2, left_on='name', right_on='name' how='inner')
+		on: if both index names are same else each index names are needed at left_on, right_on
 		how: 'inner'|'left'|'right'|'outer'
 	'''
 
