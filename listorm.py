@@ -83,7 +83,6 @@ class Scheme(dict):
 				try:
 					updated = func(self) if apply_to_record  else func(self[key])
 				except:
-					print('faile')
 					continue
 				else:
 					self[key] = updated
@@ -205,24 +204,30 @@ class Listorm(list):
 				ret.append(head)
 		return Listorm(ret, nomalize=False, column_orders=self.column_orders)
 
-	def groupby(self, *column, extra_columns=None, renames=None, **aggset):
+	def groupby(self, *columns, extra_columns=None, renames=None, agg_float_round=2,**aggset):
 		'''groupby('location', 'gender',
 				extra_columns = ['age', 'phone'], # Any one Extra Value in Grouped, not recomanded
 				gender=len, age=sum, # aggregate targets column and apply functions
-				renames = {'gender': 'gender_count', 'age': 'age_sum'}  # prevent for overwriting of result column to original column 
+				renames = {'gender': 'gender_count', 'age': 'age_sum'}  # prevent for overwriting of result column to original column
+				agg_float_round: column's rounding point that applied by aggregate function
 				when aggregation colunm overlaped with grouped columns name
 			)
 		'''
-		ret = []
+		grouped = defaultdict(Listorm)
 		renames = renames or {}
-		ret_columns = list(chain(column, extra_columns or [], aggset))
-		for g, lst in groupby(sorted(self, key=itemgetter(*column)), key=itemgetter(*column)):
-			grouped = Listorm(lst, nomalize=False).select(*ret_columns)
-			row = {k:v for k,v in grouped[0].items() if k not in renames or k in (extra_columns or [])}
-			for colnm, aggfn, in aggset.items():
-				row[renames.get(colnm, colnm)] = round_try(grouped.apply_column(colnm, aggfn))
-			ret.append(row)
-		return Listorm(ret, nomalize=False, column_orders=self.column_orders) 
+		ret_columns = list(chain(columns, extra_columns or [], aggset, renames.values()))
+
+		for record in self:
+			g = tuple(record.get(key) for key in columns)
+			grouped[g].append(record)
+
+		ret = Listorm()
+		for g, lst in grouped.items():
+			head = lst[0]
+			for column, aggfn in aggset.items():
+				head[renames.get(column, column)] = round_try(lst.apply_column(column, aggfn), round_to=agg_float_round)
+			ret.append(head, sync_new=False)
+		return ret.select(*ret_columns)
 
 	def set_number_type(self, **key_examples):
 		'''set_number_format(A=0.0, B=0, C='0'), change number type to default value(if failed, example values are applied to default)
