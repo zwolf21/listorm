@@ -204,7 +204,7 @@ class Listorm(list):
 				ret.append(head)
 		return Listorm(ret, nomalize=False, column_orders=self.column_orders)
 
-	def groupby(self, *columns, extra_columns=None, renames=None, agg_float_round=2,**aggset):
+	def groupby(self, *columns, extra_columns=None, renames=None, agg_float_round=2, **aggset):
 		'''groupby('location', 'gender',
 				extra_columns = ['age', 'phone'], # Any one Extra Value in Grouped, not recomanded
 				gender=len, age=sum, # aggregate targets column and apply functions
