@@ -117,12 +117,14 @@ class Scheme(dict):
 class Listorm(list):
 
 	def __init__(self, records=None, index=None, nomalize=True, column_orders=None):
-		self.column_orders = column_orders
 		to_normalize, to_init = tee(records or [])
 		if nomalize:
 			uni_keys = self._union_keys(to_normalize)
-		records = (Scheme.fromkeys(uni_keys)+Scheme(record) if nomalize else Scheme(record) for record in to_init if record)
+		records = list(Scheme.fromkeys(uni_keys)+Scheme(record) if nomalize else Scheme(record) for record in to_init if record)
 		super(Listorm, self).__init__(records)
+
+		self.column_orders = column_orders or list(self[0].keys()) if self else column_orders or []
+
 		if index:
 			self.set_index(*index)
 
@@ -234,13 +236,13 @@ class Listorm(list):
 			A: '123' => 123.0, B: 123.2 => 123, C: 123.1 => '123.1' 
 		'''
 		records = map(lambda record: record.number_format(**key_examples), self)
-		return Listorm(records, nomalize=False)
+		return Listorm(records, nomalize=False, column_orders=self.column_orders)
 
 	def apply_row(self, **key_func_to_records):
 		'''Function For one record
 		'''
 		records = map(lambda record: record.row_update(**key_func_to_records), self)
-		return Listorm(records, nomalize=False)
+		return Listorm(records, nomalize=False, column_orders=self.column_orders)
 
 	def apply_column(self, column, func=lambda col:col):
 		values = [e[0] for e in self.row_values(column)]
@@ -257,14 +259,16 @@ class Listorm(list):
 		   lst.rename({'OriginCol': 'ChangedCol', 'OriginCol2': 'ChangedCol2'})
 		'''
 		records = map(lambda record: record.rename(**key_map), self)
-		return Listorm(records, nomalize=False)
+		colums = map(lambda e: key_map.get(e, e), self.column_orders)
+		return Listorm(records, nomalize=False, column_orders=list(colums))
 
 	def add_columns(self, **kwargs):
 		'''adding columns in current scheme by related funcion with neighborhood in record
 		   lst.add_columns(C=lambda row: row['A'] -  row['B'], B=lambda row: row['C']*row['D'])
 		'''
 		records = map(lambda record: record.row_update(insert_new=True, **kwargs), self)
-		return Listorm(records)
+		column_orders = self.column_orders + list(kwargs.keys())
+		return Listorm(records, column_orders=column_orders)
 
 	def top(self, *by, n=10):
 		'''get top n record in current List, if 0<n<1, then n apply as percentage
@@ -312,7 +316,7 @@ class Listorm(list):
 		'''
 		if not self:
 			return
-		selects =  selects or self[0].keys()
+		selects =  selects or self.column_orders
 
 		error_columns = set(selects) - self[0].keys()
 		for col in error_columns:
@@ -336,7 +340,7 @@ class Listorm(list):
 		if not self:
 			return
 
-		selects =  selects or self[0].keys()
+		selects =  selects or self.column_orders
 
 		error_columns = set(selects) - self[0].keys()
 		for col in error_columns:
