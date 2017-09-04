@@ -206,29 +206,37 @@ class Listorm(list):
 				ret.append(head)
 		return Listorm(ret, nomalize=False, column_orders=self.column_orders)
 
-	def groupby(self, *columns, extra_columns=None, renames=None, agg_float_round=2, **aggset):
+	def groupby(self, *columns, extra_columns=None, renames=None, agg_float_round=2, set_name=None, **aggset):
 		'''groupby('location', 'gender',
 				extra_columns = ['age', 'phone'], # Any one Extra Value in Grouped, not recomanded
 				gender=len, age=sum, # aggregate targets column and apply functions
 				renames = {'gender': 'gender_count', 'age': 'age_sum'}  # prevent for overwriting of result column to original column
 				agg_float_round: column's rounding point that applied by aggregate function
 				when aggregation colunm overlaped with grouped columns name
+				set_name: To containing sub record and column name for each sub record in grouped results. 
 			)
 		'''
 		grouped = defaultdict(Listorm)
 		renames = renames or {}
 		ret_columns = list(chain(columns, extra_columns or [], aggset, renames.values()))
 
+		if set_name:
+			ret_columns.append(set_name) 
+
 		for record in self:
 			g = tuple(record.get(key) for key in columns)
 			grouped[g].append(record)
 
 		ret = Listorm()
+
 		for g, lst in grouped.items():
 			head = lst[0]
 			for column, aggfn in aggset.items():
 				head[renames.get(column, column)] = round_try(lst.apply_column(column, aggfn), round_to=agg_float_round)
+			if set_name:
+				head[set_name] = lst
 			ret.append(head, sync_new=False)
+
 		return ret.select(*ret_columns)
 
 	def set_number_type(self, **key_examples):
