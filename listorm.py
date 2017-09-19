@@ -532,3 +532,46 @@ def read_csv(filename=None, encoding='utf-8',  fp=None, index=None):
     records = [dict(zip(fields, map(str, row))) for row in csv_reader]
     csvfp.close()
     return Listorm(records, index=index, column_orders=fields)
+
+
+def filter_splited(records,  keyword, *columns, splitby=['space', 'nospace', 'digit'], exclude=False):
+        '''splitby = ['space', 'nospace', 'digit']
+        '''
+
+        for sep in splitby:
+
+            lst = Listorm(records)
+            
+            if exclude:
+                excluded = Listorm(records)
+
+            ismatch = lambda keyword, text: re.search(keyword, text)
+
+            if sep == 'space':
+                tokkens = re.split('\s+', keyword)
+            elif sep == 'nospace':
+                ismatch = lambda keyword, text: re.search(re.sub('\s+','', keyword), re.sub('\s+','', text))
+                tokkens = [keyword]
+            elif sep == 'digit':
+                tokkens = re.split('\d+', keyword) + re.findall('\d+', keyword)     
+
+            for tok in tokkens:
+                filtered = Listorm()
+                for col in columns:
+                    filtered += lst.filter(where=lambda row: ismatch(tok, row[col]))
+                if filtered:
+                    lst = filtered
+
+            if lst:
+                if len(lst) == len(records):
+                    continue
+
+                if exclude:
+                    for col in columns:
+                        colvalues = lst.unique(col)
+                        excluded = excluded.filter(where=lambda row: row[col] not in colvalues)
+                    return excluded
+                else:
+                    return lst
+
+        return Listorm()
