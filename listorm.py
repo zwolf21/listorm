@@ -415,47 +415,49 @@ class Listorm(list):
         Changes = namedtuple('Changes', 'added deleted updated')
         return Changes(added, deleted, updated)
 
-    def filter_splited(self,  keyword, *columns, splitby=['space', 'nospace', 'digit'], exclude=False):
+    def filter_splited(self, keywords, columns, splitby=['space', 'nospace', 'digit'], exclude=False):
         '''splitby = ['space', 'nospace', 'digit']
         '''
+        ret = Listorm()
 
-        for sep in splitby:
-
-            lst = Listorm(self)
+        if exclude:
+            excluded = Listorm(self)
             
-            if exclude:
-                excluded = Listorm(self)
+        for keyword in keywords:
+            
+            for sep in splitby:
 
-            ismatch = lambda keyword, text: re.search(keyword, text)
+                lst = Listorm(self)
 
-            if sep == 'space':
-                tokkens = re.split('\s+', keyword)
-            elif sep == 'nospace':
-                ismatch = lambda keyword, text: re.search(re.sub('\s+','', keyword), re.sub('\s+','', text))
-                tokkens = [keyword]
-            elif sep == 'digit':
-                tokkens = re.split('\d+', keyword) + re.findall('\d+', keyword)     
 
-            for tok in tokkens:
-                filtered = Listorm()
-                for col in columns:
-                    filtered += lst.filter(where=lambda row: ismatch(tok, row[col]))
-                if filtered:
-                    lst = filtered
+                ismatch = lambda keyword, text: re.search(keyword, text)
 
-            if lst:
-                if len(lst) == len(self):
-                    continue
+                if sep == 'space':
+                    tokkens = re.split('\s+', keyword)
+                elif sep == 'nospace':
+                    ismatch = lambda keyword, text: re.search(re.sub('\s+','', keyword), re.sub('\s+','', text))
+                    tokkens = [keyword]
+                elif sep == 'digit':
+                    tokkens = re.split('\d+', keyword) + re.findall('\d+', keyword)     
 
-                if exclude:
+                for tok in tokkens:
+                    filtered = Listorm()
                     for col in columns:
-                        colvalues = lst.unique(col)
-                        excluded = excluded.filter(where=lambda row: row[col] not in colvalues)
-                    return excluded
-                else:
-                    return lst
+                        filtered += lst.filter(where=lambda row: ismatch(tok, row[col]))
+                    if filtered:
+                        lst = filtered
+                if lst:
+                    if len(lst) == len(self):
+                        continue
+                    if exclude:
+                        for col in columns:
+                            colvalues = lst.unique(col)
+                            excluded = excluded.filter(where=lambda row: row[col] not in colvalues)
+                        ret = excluded
+                    else:
+                        ret+=lst
 
-        return Listorm()
+        return ret.distinct(*columns)
 
 
 
@@ -534,16 +536,20 @@ def read_csv(filename=None, encoding='utf-8',  fp=None, index=None):
     return Listorm(records, index=index, column_orders=fields)
 
 
-def filter_splited(records,  keyword, *columns, splitby=['space', 'nospace', 'digit'], exclude=False):
-        '''splitby = ['space', 'nospace', 'digit']
-        '''
+def filter_splited(records, keywords, columns, splitby=['space', 'nospace', 'digit'], exclude=False):
+    '''splitby = ['space', 'nospace', 'digit']
+    '''
+    ret = Listorm()
+
+    if exclude:
+        excluded = Listorm(records)
+
+    for keyword in keywords:
 
         for sep in splitby:
 
             lst = Listorm(records)
-            
-            if exclude:
-                excluded = Listorm(records)
+
 
             ismatch = lambda keyword, text: re.search(keyword, text)
 
@@ -561,17 +567,16 @@ def filter_splited(records,  keyword, *columns, splitby=['space', 'nospace', 'di
                     filtered += lst.filter(where=lambda row: ismatch(tok, row[col]))
                 if filtered:
                     lst = filtered
-
             if lst:
                 if len(lst) == len(records):
                     continue
-
                 if exclude:
                     for col in columns:
                         colvalues = lst.unique(col)
                         excluded = excluded.filter(where=lambda row: row[col] not in colvalues)
-                    return excluded
+                    ret = excluded
                 else:
-                    return lst
+                    ret+=lst
 
-        return Listorm()
+    return ret.distinct(*columns)
+
