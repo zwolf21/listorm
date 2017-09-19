@@ -415,7 +415,7 @@ class Listorm(list):
         Changes = namedtuple('Changes', 'added deleted updated')
         return Changes(added, deleted, updated)
 
-    def filter_splited(self, keywords, columns, splitby=['space', 'nospace', 'digit'], exclude=False):
+    def search_splited(self, keywords, columns, splitby=['space', 'nospace', 'digit'], exclude=False, distinct=True):
         '''splitby = ['space', 'nospace', 'digit']
         '''
         ret = Listorm()
@@ -457,7 +457,7 @@ class Listorm(list):
                     else:
                         ret+=lst
 
-        return ret.distinct(*columns)
+        return ret.distinct(*columns) if distinct else ret
 
 
 
@@ -536,16 +536,16 @@ def read_csv(filename=None, encoding='utf-8',  fp=None, index=None):
     return Listorm(records, index=index, column_orders=fields)
 
 
-def filter_splited(records, keywords, columns, splitby=['space', 'nospace', 'digit'], exclude=False):
+def search_splited(records, keywords, columns, splitby=['space', 'nospace', 'digit'], exclude=False, distinct=True):
     '''splitby = ['space', 'nospace', 'digit']
     '''
     ret = Listorm()
 
     if exclude:
         excluded = Listorm(records)
-
+        
     for keyword in keywords:
-
+        
         for sep in splitby:
 
             lst = Listorm(records)
@@ -578,5 +578,5 @@ def filter_splited(records, keywords, columns, splitby=['space', 'nospace', 'dig
                 else:
                     ret+=lst
 
-    return ret.distinct(*columns)
+    return ret.distinct(*columns) if distinct else ret
 
