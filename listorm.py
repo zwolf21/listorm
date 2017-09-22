@@ -3,11 +3,10 @@ from operator import itemgetter
 from heapq import nlargest, nsmallest
 from io import BytesIO, StringIO
 from collections import namedtuple, Counter, OrderedDict, defaultdict
-from copy import deepcopy
+from functools import partial
 import csv, re
 
 import xlrd, xlsxwriter
-
 
 
 def str2float(value):
@@ -57,6 +56,9 @@ class Scheme(dict):
         self =self-other
         return self
 
+    def __hash__(self):
+        return hash(tuple(self.items()))
+
     def _filter_invalid_keys(self, *keys):
         return (k for k in keys if k in self)
 
@@ -91,8 +93,10 @@ class Scheme(dict):
 
     def set_index(self, *keys, index_name=None):
         keys = self._filter_invalid_keys(*keys)
-        self[index_name] = tuple(self[k] for k in keys)
-        return index_name
+        if index_name in self:
+            index_name += '__index'
+        self[index_name] = ''.join(self[k] for k in keys)
+        return self
 
 
     def number_format(self, **key_examples):
@@ -118,22 +122,44 @@ class Scheme(dict):
 class Listorm(list):
 
     def __init__(self, records=None, index=None, nomalize=True, column_orders=None):
+        self.index = index
+        self.index_name = ''
+        self.column_orders = []
+
         to_normalize, to_init = tee(records or [])
+
         if nomalize:
             uni_keys = self._union_keys(to_normalize)
+
         records = list(Scheme.fromkeys(uni_keys)+Scheme(record) if nomalize else Scheme(record) for record in to_init if record)
+
+        if column_orders:
+            self.column_orders = column_orders
+        elif isinstance(records, Listorm):
+            self.column_orders = records.column_orders
+        else:
+            self.column_orders = sorted(records[0].keys()) if records else []
+
         super(Listorm, self).__init__(records)
-
-        self.column_orders = column_orders or list(self[0].keys()) if self else column_orders or []
-
         if index:
+            if isinstance(index ,str):
+                index = [index]
             self.set_index(*index)
 
     def __add__(self, other):
-        return Listorm(super(Listorm, self).__add__(other))
+        return Listorm(super(Listorm, self).__add__(other), index=other.index)
+        
+    def __sub__(self, other):
+        return Listorm(set(self)-set(other), column_orders=self.column_orders, index=self.index)
+        
+    def __or__(self, other):
+       return Listorm(set(self)|set(other), column_orders=self.column_orders, index=self.index)
 
-    def __iadd__(self, other):
-        return self + other
+    def __and__(self, other):
+       return Listorm(set(self)&set(other), column_orders=self.column_orders, index=self.index)
+       
+    def __xor__(self, other):
+       return Listorm(set(self)^set(other), column_orders=self.column_orders, index=self.index)
 
     def _union_keys(self, records):
         return set(chain(*(record.keys() for record in records)))
@@ -142,6 +168,18 @@ class Listorm(list):
         if row_value and isinstance(row_value, dict):
             return True
         return False
+
+    def _row_func(self, row, filter_and, **where):
+        if filter_and:
+            for key, val in where.items():
+                    if row[key] != val:
+                        return False
+            return True
+        else:
+            for key, val in where.items():
+                    if row[key] == val:
+                        return True
+            return False
 
     def append(self, row_value, sync_new=True):
         if self._is_valid(row_value):
@@ -156,6 +194,7 @@ class Listorm(list):
                                 record[key] = None
                     else:
                         new_record.delete(*enough)
+                    self.column_orders += list(enough)
                 for key in deficiency:
                     new_record[key] = None
             super(Listorm, self).append(new_record)
@@ -164,15 +203,75 @@ class Listorm(list):
         '''filtering by func apply to each record
            lst.filter(where = lambda row:row['price'] > 500)
         '''
-        return Listorm((record for record in self if where(record)), nomalize=False)
+        return Listorm((record for record in self if where(record)), nomalize=False, column_orders=self.column_orders)
 
-    def select(self, *args, values=False):
+    def filterand(self, **where):
+        '''filtering by value for each column in record
+           lst.vfilter(a='1', b='2') , filtering as 'AND'
+        '''
+        rowfunc = partial(self._row_func, filter_and=True, **where)
+        return Listorm(self, nomalize=False).filter(rowfunc)
+
+    def filteror(self, **where):
+        '''filtering by value for each column in record
+           lst.vfilter(a='1', b='2') , filtering as 'OR'
+        '''
+        rowfunc = partial(self._row_func, filter_and=False, **where)
+        return Listorm(self, nomalize=False).filter(rowfunc)
+         
+    def exclude(self, where=lambda row: True):
+        '''filtering exclusively by func apply to each record
+           lst.filter(where = lambda row:row['price'] > 500)
+        '''
+        return Listorm((record for record in self if not where(record)), nomalize=False, column_orders=self.column_orders)
+
+    def excludeand(self, **where):
+        '''exclude when all where condition is true
+        '''
+        rowfunc = partial(self._row_func, filter_and=True, **where)
+        return Listorm(self, nomalize=False).exclude(rowfunc)
+
+    def excludeor(self, **where):
+        '''exclude when any where conditions is true
+        '''
+        rowfunc = partial(self._row_func, filter_and=False, **where)
+        return Listorm(self, nomalize=False).exclude(rowfunc)
+
+    def select(self, *columns, values=False):
         '''select columns if you need
            lst.select('A', 'B', 'c')
            values: True, then returns 2dArray that only contains values
         '''
-        records = (record.select(*args, values=values) for record in self)
-        return list(records) if values else Listorm(records, nomalize=False)
+        records = (record.select(*columns, values=values) for record in self)
+        column_orders = [column for column in columns if column in self.column_orders]
+        return list(records) if values else Listorm(records, nomalize=False, column_orders=column_orders)
+
+    def drop(self, *columns):
+        column_orders = [column for column in self.column_orders if column not in columns]
+        lst = self.select(*column_orders)
+        return lst
+
+    def max(self, column):
+        seq = list(filter(None, self.column_values(column)))
+        if seq:
+            return max(seq)
+
+    def min(self, column):
+        seq = list(filter(None, self.column_values(column)))
+        if seq:
+            return min(seq)
+
+    @property
+    def first(self):
+        if self:
+            return self[0]
+        return Scheme()
+
+    @property
+    def last(self):
+        if self:
+            return self[-1]
+        return Scheme()
 
     def row_values(self, *args, headers=False):
         '''returns 2dArray contains only value of self
@@ -205,7 +304,7 @@ class Listorm(list):
                 continue
             else:
                 ret.append(head)
-        return Listorm(ret, nomalize=False, column_orders=self.column_orders)
+        return Listorm(ret, nomalize=False, column_orders=self.column_orders, index=self.index)
 
     def groupby(self, *columns, extra_columns=None, renames=None, agg_float_round=2, set_name=None, **aggset):
         '''groupby('location', 'gender',
@@ -221,17 +320,17 @@ class Listorm(list):
         renames = renames or {}
         ret_columns = list(chain(columns, extra_columns or [], aggset, renames.values()))
 
+        ret = Listorm()
+
         if set_name:
-            ret_columns.append(set_name) 
+            ret_columns.append(set_name)
 
         for record in self:
             g = tuple(record.get(key) for key in columns)
             grouped[g].append(record)
 
-        ret = Listorm()
-        
         for g, lst in grouped.items():
-            head = {k:v for k, v in lst[0].items()}
+            head = {k:v for k, v in lst.first.items()}
             for column, aggfn in aggset.items():
                 head[renames.get(column, column)] = round_try(lst.apply_column(column, aggfn), round_to=agg_float_round)
             if set_name:
@@ -305,13 +404,19 @@ class Listorm(list):
         '''
         return set(self.apply_column(column))
 
+    def isunique(self, column):
+        column_values = self.apply_column(column)
+        return len(column_values) == len(set(column_values))
+
     def set_index(self, *column, index_name='__index__'):
         '''set Index each record by column values
            lst.set_index('A', 'B', 'C')
         '''
         for record in self:
             index = record.set_index(*column, index_name=index_name)
-        return index_name
+        self.index_name = index_name
+        self.index = column
+        return self
 
     def join(self, other, **kwargs):
         ''' Join With two Listorm
@@ -325,11 +430,16 @@ class Listorm(list):
         '''
         if not self:
             return
-        selects =  selects or self.column_orders
+        selects = selects or self.column_orders
 
         error_columns = set(selects) - self[0].keys()
+
         for col in error_columns:
             selects.remove(col)
+
+        for key, val in self[0].items():
+            if isinstance(val, (Listorm, list)):
+                selects.remove(key)
 
         output = BytesIO()
         wb = xlsxwriter.Workbook(output)
@@ -354,6 +464,10 @@ class Listorm(list):
         error_columns = set(selects) - self[0].keys()
         for col in error_columns:
             selects.remove(col)
+
+        for key, val in self[0].items():
+            if isinstance(val, (Listorm, list)):
+                selects.remove(key)
 
         output = StringIO()
         writer = csv.DictWriter(output, fieldnames = selects, lineterminator='\n')
@@ -415,49 +529,38 @@ class Listorm(list):
         Changes = namedtuple('Changes', 'added deleted updated')
         return Changes(added, deleted, updated)
 
-    def search_splited(self, keywords, columns, splitby=['space', 'nospace', 'digit'], exclude=False, distinct=True):
-        '''splitby = ['space', 'nospace', 'digit']
-        '''
-        ret = Listorm()
+    def filtersim(self, **where):
+        ret = Listorm(column_orders=self.column_orders, index=self.index)
+        splitby=['space', 'nospace', 'digit']
 
-        if exclude:
-            excluded = Listorm(self)
-            
-        for keyword in keywords:
-            
-            for sep in splitby:
-
+        for colname, keywords in where.items():
+            if isinstance(keywords, str):
+                keywords = [keywords]
+            keyword_set = Listorm()
+            for keyword in keywords:
                 lst = Listorm(self)
+                for sep in splitby:
+                    ismatch = lambda keyword, text: re.search(keyword, text)
 
+                    if sep == 'space':
+                        tokkens = re.split('\s+', keyword)
+                    elif sep == 'nospace':
+                        ismatch = lambda keyword, text: re.search(re.sub('\s+','', keyword), re.sub('\s+','', text))
+                        tokkens = [keyword]
+                    elif sep == 'digit':
+                        tokkens = re.split('\d+', keyword) + re.findall('\d+', keyword)     
 
-                ismatch = lambda keyword, text: re.search(keyword, text)
+                    tokkens = list(filter(None, tokkens))
+                    for tok in tokkens:
+                        filtered = lst.filter(where= lambda row: ismatch(tok, row[colname]))
+                        if filtered:
+                            lst = filtered
+                keyword_set|= lst
+            ret|= keyword_set
+        return ret
 
-                if sep == 'space':
-                    tokkens = re.split('\s+', keyword)
-                elif sep == 'nospace':
-                    ismatch = lambda keyword, text: re.search(re.sub('\s+','', keyword), re.sub('\s+','', text))
-                    tokkens = [keyword]
-                elif sep == 'digit':
-                    tokkens = re.split('\d+', keyword) + re.findall('\d+', keyword)     
-
-                for tok in tokkens:
-                    filtered = Listorm()
-                    for col in columns:
-                        filtered += lst.filter(where=lambda row: ismatch(tok, row[col]))
-                    if filtered:
-                        lst = filtered
-                if lst:
-                    if len(lst) == len(self):
-                        continue
-                    if exclude:
-                        for col in columns:
-                            colvalues = lst.unique(col)
-                            excluded = excluded.filter(where=lambda row: row[col] not in colvalues)
-                        ret = excluded
-                    else:
-                        ret+=lst
-
-        return ret.distinct(*columns) if distinct else ret
+    def excludesim(self, **where):
+        return self - self.filtersim(**where)                      
 
 
 
@@ -468,14 +571,16 @@ def join(left, right, left_on=None, right_on=None, on=None, how='inner'):
         on: if both index names are same else each index names are needed at left_on, right_on
         how: 'inner'|'left'|'right'|'outer'
     '''
+    left_on = left_on or left.index_name
+    right_on = right_on or right.index_name
 
     if not (left_on and right_on or on):
         return
 
     left_on_index, right_on_index = defaultdict(list), defaultdict(list)
 
-    left = Listorm(left)
-    right = Listorm(right)
+    left = Listorm(left, column_orders=left.column_orders, index=left.index)
+    right = Listorm(right, column_orders=right.column_orders, index=right.index)
 
     for record in left:
         key = record.get(left_on or on)
@@ -506,7 +611,9 @@ def join(left, right, left_on=None, right_on=None, on=None, how='inner'):
             for right_record in rights_list:
                 row = left_record+right_record
                 ret.append(row)
-    return Listorm(ret)
+
+    column_orders = list(OrderedDict.fromkeys(left.column_orders+right.column_orders))
+    return Listorm(ret, column_orders=column_orders, index=left.index)
 
 
 def read_excel(file_name=None, file_contents=None, sheet_index=0, start_row=0, index=None):
@@ -534,49 +641,4 @@ def read_csv(filename=None, encoding='utf-8',  fp=None, index=None):
     records = [dict(zip(fields, map(str, row))) for row in csv_reader]
     csvfp.close()
     return Listorm(records, index=index, column_orders=fields)
-
-
-def search_splited(records, keywords, columns, splitby=['space', 'nospace', 'digit'], exclude=False, distinct=True):
-    '''splitby = ['space', 'nospace', 'digit']
-    '''
-    ret = Listorm()
-
-    if exclude:
-        excluded = Listorm(records)
-        
-    for keyword in keywords:
-        
-        for sep in splitby:
-
-            lst = Listorm(records)
-
-
-            ismatch = lambda keyword, text: re.search(keyword, text)
-
-            if sep == 'space':
-                tokkens = re.split('\s+', keyword)
-            elif sep == 'nospace':
-                ismatch = lambda keyword, text: re.search(re.sub('\s+','', keyword), re.sub('\s+','', text))
-                tokkens = [keyword]
-            elif sep == 'digit':
-                tokkens = re.split('\d+', keyword) + re.findall('\d+', keyword)     
-
-            for tok in tokkens:
-                filtered = Listorm()
-                for col in columns:
-                    filtered += lst.filter(where=lambda row: ismatch(tok, row[col]))
-                if filtered:
-                    lst = filtered
-            if lst:
-                if len(lst) == len(records):
-                    continue
-                if exclude:
-                    for col in columns:
-                        colvalues = lst.unique(col)
-                        excluded = excluded.filter(where=lambda row: row[col] not in colvalues)
-                    ret = excluded
-                else:
-                    ret+=lst
-
-    return ret.distinct(*columns) if distinct else ret
 
