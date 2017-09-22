@@ -57,7 +57,7 @@ class Scheme(dict):
         return self
 
     def __hash__(self):
-        return hash(tuple(self.items()))
+        return hash(tuple(sorted(self.items())))
 
     def _filter_invalid_keys(self, *keys):
         return (k for k in keys if k in self)
