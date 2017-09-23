@@ -199,6 +199,7 @@ class Listorm(list):
                     new_record[key] = None
             super(Listorm, self).append(new_record)
 
+    @property
     def exists(self):
         return len(self) != 0
 
