@@ -199,6 +199,9 @@ class Listorm(list):
                     new_record[key] = None
             super(Listorm, self).append(new_record)
 
+    def exists(self):
+        return len(self) != 0
+
     def filter(self, where=lambda row: True):
         '''filtering by func apply to each record
            lst.filter(where = lambda row:row['price'] > 500)
@@ -557,6 +560,7 @@ class Listorm(list):
                             lst = filtered
                 keyword_set|= lst
             ret|= keyword_set
+
         return ret
 
     def excludesim(self, **where):
