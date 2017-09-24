@@ -382,7 +382,7 @@ class Listorm(list):
         column_orders = self.column_orders + list(kwargs.keys())
         return Listorm(records, column_orders=column_orders)
 
-    def top(self, *by, n=10):
+    def top(self, *by, n=1):
         '''get top n record in current List, if 0<n<1, then n apply as percentage
            lst.top('age', 1) => returns a oldest peple's record
            lst.top('sellary', 0.1) => returns top 10% sellary's records in List
@@ -390,7 +390,7 @@ class Listorm(list):
         index = round(len(self) * n) if n < 1 else n
         return nlargest(index, self, key=itemgetter(*by))
 
-    def bottom(self, *by, n=10):
+    def bottom(self, *by, n=1):
         '''get bottom n record in current List, if 0<n<1, then n apply as percentage
            lst.bottom('age', 1) => returns a youngest peple's record
            lst.bottom('sellary', 0.1) => returns bottom 10% sellary's records in List
