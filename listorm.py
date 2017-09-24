@@ -372,7 +372,10 @@ class Listorm(list):
         '''
         records = map(lambda record: record.rename(**key_map), self)
         colums = map(lambda e: key_map.get(e, e), self.column_orders)
-        return Listorm(records, nomalize=False, column_orders=list(colums))
+        lst = Listorm(records, nomalize=False, column_orders=list(colums))
+        lst.index = list(map(lambda e: key_map.get(e, e), self.index))
+        lst.index_name = key_map.get(self.index_name, self.index_name)
+        return lst
 
     def add_columns(self, **kwargs):
         '''adding columns in current scheme by related funcion with neighborhood in record
@@ -380,7 +383,7 @@ class Listorm(list):
         '''
         records = map(lambda record: record.row_update(insert_new=True, **kwargs), self)
         column_orders = self.column_orders + list(kwargs.keys())
-        return Listorm(records, column_orders=column_orders)
+        return Listorm(records, column_orders=column_orders, index=self.index)
 
     def top(self, *by, n=1):
         '''get top n record in current List, if 0<n<1, then n apply as percentage
@@ -388,7 +391,7 @@ class Listorm(list):
            lst.top('sellary', 0.1) => returns top 10% sellary's records in List
         '''
         index = round(len(self) * n) if n < 1 else n
-        return nlargest(index, self, key=itemgetter(*by))
+        return Listorm(nlargest(index, self, key=itemgetter(*by)), column_orders=self.column_orders, index=self.index)
 
     def bottom(self, *by, n=1):
         '''get bottom n record in current List, if 0<n<1, then n apply as percentage
@@ -396,7 +399,7 @@ class Listorm(list):
            lst.bottom('sellary', 0.1) => returns bottom 10% sellary's records in List
         '''
         index = round(len(self) * n) if n < 1 else n
-        return nsmallest(index, self, key=itemgetter(*by))
+        return Listorm(nsmallest(index, self, key=itemgetter(*by)), column_orders=self.column_orders, index=self.index)
 
     def value_count(self, column):
         '''returns a Column's value count
