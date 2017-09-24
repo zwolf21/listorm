@@ -572,7 +572,7 @@ class Listorm(list):
                 keywords = [keywords]
             keyword_set = Listorm()
             for keyword in keywords:
-                lst = Listorm(self)
+                lst = Listorm()
                 for sep in splitby:
                     ismatch = lambda keyword, text: re.search(keyword, text)
 
@@ -585,10 +585,10 @@ class Listorm(list):
                         tokkens = re.split('\d+', keyword) + re.findall('\d+', keyword)     
 
                     tokkens = list(filter(None, tokkens))
+                    toklst = Listorm(self)
                     for tok in tokkens:
-                        filtered = lst.filter(where= lambda row: ismatch(tok, row[colname]))
-                        if filtered:
-                            lst = filtered
+                        toklst = toklst.filter(where= lambda row: ismatch(tok, row[colname])) 
+                    lst|=toklst
                 keyword_set|= lst
             ret|= keyword_set
 
