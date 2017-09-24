@@ -84,8 +84,8 @@ class Scheme(dict):
         for key, func in key_apply_set.items():
             if key in self or insert_new:
                 try:
-                    updated = func(self) if apply_to_record  else func(self[key])
-                except:
+                    updated = func(self) if apply_to_record else func(self[key])
+                except Exception as e:
                     continue
                 else:
                     self[key] = updated
@@ -121,9 +121,9 @@ class Scheme(dict):
 
 class Listorm(list):
 
-    def __init__(self, records=None, index=None, nomalize=True, column_orders=None):
+    def __init__(self, records=None, index=None, index_name=None, nomalize=True, column_orders=None):
         self.index = index
-        self.index_name = ''
+        self.index_name = index_name
         self.column_orders = []
 
         to_normalize, to_init = tee(records or [])
@@ -141,10 +141,13 @@ class Listorm(list):
             self.column_orders = sorted(records[0].keys()) if records else []
 
         super(Listorm, self).__init__(records)
-        if index:
-            if isinstance(index ,str):
-                index = [index]
+
+        if isinstance(index, str):
+            index = [index]
+        if index and not index_name:
             self.set_index(*index)
+        if index_name and not index:
+            self.index_name = None                
 
     def __add__(self, other):
         return Listorm(super(Listorm, self).__add__(other), index=other.index)
@@ -203,11 +206,25 @@ class Listorm(list):
     def exists(self):
         return len(self) != 0
 
+    def update(self, where=lambda row: True, to_rows=True, **updates):
+        '''update record in where condition
+           apply_to_record if True func in updates applies each row(record), else applies on each cell(value) 
+           lst.update(name=lambda row: row.name + row.firstname, height=round, where=lamba row: row['age']>18)
+        '''
+        for record in self:
+            if where(record):
+                for column, apply in updates.items():
+                    if callable(apply):
+                        record.row_update(apply_to_record=to_rows, **{column: apply})
+                    else:
+                        record[column] = apply
+        return self
+
     def filter(self, where=lambda row: True):
         '''filtering by func apply to each record
            lst.filter(where = lambda row:row['price'] > 500)
         '''
-        return Listorm((record for record in self if where(record)), nomalize=False, column_orders=self.column_orders)
+        return Listorm((record for record in self if where(record)), nomalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
 
     def filterand(self, **where):
         '''filtering by value for each column in record
@@ -227,19 +244,19 @@ class Listorm(list):
         '''filtering exclusively by func apply to each record
            lst.filter(where = lambda row:row['price'] > 500)
         '''
-        return Listorm((record for record in self if not where(record)), nomalize=False, column_orders=self.column_orders)
+        return Listorm((record for record in self if not where(record)), nomalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
 
     def excludeand(self, **where):
         '''exclude when all where condition is true
         '''
         rowfunc = partial(self._row_func, filter_and=True, **where)
-        return Listorm(self, nomalize=False).exclude(rowfunc)
+        return Listorm(self, nomalize=False, index=self.index, index_name=self.index_name).exclude(rowfunc)
 
     def excludeor(self, **where):
         '''exclude when any where conditions is true
         '''
         rowfunc = partial(self._row_func, filter_and=False, **where)
-        return Listorm(self, nomalize=False).exclude(rowfunc)
+        return Listorm(self, nomalize=False, index=self.index, index_name=self.index_name).exclude(rowfunc)
 
     def select(self, *columns, values=False):
         '''select columns if you need
@@ -308,7 +325,7 @@ class Listorm(list):
                 continue
             else:
                 ret.append(head)
-        return Listorm(ret, nomalize=False, column_orders=self.column_orders, index=self.index)
+        return Listorm(ret, nomalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
 
     def groupby(self, *columns, extra_columns=None, renames=None, agg_float_round=2, set_name=None, **aggset):
         '''groupby('location', 'gender',
@@ -348,13 +365,13 @@ class Listorm(list):
             A: '123' => 123.0, B: 123.2 => 123, C: 123.1 => '123.1' 
         '''
         records = map(lambda record: record.number_format(**key_examples), self)
-        return Listorm(records, nomalize=False, column_orders=self.column_orders)
+        return Listorm(records, nomalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
 
-    def apply_row(self, **key_func_to_records):
+    def apply_row(self, apply_to_record=True, **key_func_to_records):
         '''Function For one record
         '''
-        records = map(lambda record: record.row_update(**key_func_to_records), self)
-        return Listorm(records, nomalize=False, column_orders=self.column_orders)
+        records = map(lambda record: record.row_update(apply_to_record=apply_to_record, **key_func_to_records), self)
+        return Listorm(records, nomalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
 
     def apply_column(self, column, func=lambda col:col):
         values = [e[0] for e in self.row_values(column)]
@@ -362,9 +379,20 @@ class Listorm(list):
 
     def map(self, **key_values):
         '''Function for one value in record
+           value_map = {'M':'multy', 'K':'kill'}
            map(A=lambda val: value_map.get(val, val))
+           map(A=value_map) -> same as above
         '''
-        return self.apply_row(apply_to_record=False, **key_values)
+        applies = {}
+        lst = Listorm(self)
+        for column, mapping in key_values.items():
+            if isinstance(mapping, dict):
+                f = lambda e: mapping.get(e,e)
+                lst = self.apply_row(apply_to_record=False, **{column:f})
+            else:
+                applies[column] = mapping
+        return lst.apply_row(apply_to_record=False, **applies)
+
 
     def rename(self, **key_map):
         '''change Columns name
@@ -372,10 +400,7 @@ class Listorm(list):
         '''
         records = map(lambda record: record.rename(**key_map), self)
         colums = map(lambda e: key_map.get(e, e), self.column_orders)
-        lst = Listorm(records, nomalize=False, column_orders=list(colums))
-        lst.index = list(map(lambda e: key_map.get(e, e), self.index))
-        lst.index_name = key_map.get(self.index_name, self.index_name)
-        return lst
+        return Listorm(records, nomalize=False, column_orders=list(colums), index=list(map(lambda e: key_map.get(e, e), self.index)), index_name=key_map.get(self.index_name, self.index_name))
 
     def add_columns(self, **kwargs):
         '''adding columns in current scheme by related funcion with neighborhood in record
@@ -383,7 +408,7 @@ class Listorm(list):
         '''
         records = map(lambda record: record.row_update(insert_new=True, **kwargs), self)
         column_orders = self.column_orders + list(kwargs.keys())
-        return Listorm(records, column_orders=column_orders, index=self.index)
+        return Listorm(records, column_orders=column_orders, index=self.index, index_name=self.index_name)
 
     def top(self, *by, n=1):
         '''get top n record in current List, if 0<n<1, then n apply as percentage
@@ -391,7 +416,7 @@ class Listorm(list):
            lst.top('sellary', 0.1) => returns top 10% sellary's records in List
         '''
         index = round(len(self) * n) if n < 1 else n
-        ret = Listorm(nlargest(index, self, key=itemgetter(*by)), column_orders=self.column_orders, index=self.index)
+        ret = Listorm(nlargest(index, self, key=itemgetter(*by)), column_orders=self.column_orders, index=self.index, index_name=self.index_name)
         return ret.first if n == 1 else ret
 
     def bottom(self, *by, n=1):
@@ -400,7 +425,7 @@ class Listorm(list):
            lst.bottom('sellary', 0.1) => returns bottom 10% sellary's records in List
         '''
         index = round(len(self) * n) if n < 1 else n
-        ret = Listorm(nsmallest(index, self, key=itemgetter(*by)), column_orders=self.column_orders, index=self.index)
+        ret = Listorm(nsmallest(index, self, key=itemgetter(*by)), column_orders=self.column_orders, index=self.index, index_name=self.index_name)
         return ret.first if n == 1 else ret
 
     def value_count(self, column):
