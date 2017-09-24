@@ -391,7 +391,8 @@ class Listorm(list):
            lst.top('sellary', 0.1) => returns top 10% sellary's records in List
         '''
         index = round(len(self) * n) if n < 1 else n
-        return Listorm(nlargest(index, self, key=itemgetter(*by)), column_orders=self.column_orders, index=self.index)
+        ret = Listorm(nlargest(index, self, key=itemgetter(*by)), column_orders=self.column_orders, index=self.index)
+        return ret.first if n == 1 else ret
 
     def bottom(self, *by, n=1):
         '''get bottom n record in current List, if 0<n<1, then n apply as percentage
@@ -399,7 +400,8 @@ class Listorm(list):
            lst.bottom('sellary', 0.1) => returns bottom 10% sellary's records in List
         '''
         index = round(len(self) * n) if n < 1 else n
-        return Listorm(nsmallest(index, self, key=itemgetter(*by)), column_orders=self.column_orders, index=self.index)
+        ret = Listorm(nsmallest(index, self, key=itemgetter(*by)), column_orders=self.column_orders, index=self.index)
+        return ret.first if n == 1 else ret
 
     def value_count(self, column):
         '''returns a Column's value count
