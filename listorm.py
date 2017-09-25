@@ -122,9 +122,8 @@ class Scheme(dict):
 class Listorm(list):
 
     def __init__(self, records=None, index=None, index_name=None, nomalize=True, column_orders=None):
-        self.index = index
+        self.index = index or []
         self.index_name = index_name
-        self.column_orders = []
 
         to_normalize, to_init = tee(records or [])
 
