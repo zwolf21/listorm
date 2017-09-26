@@ -1,4 +1,4 @@
-from itertools import chain, groupby, tee
+from itertools import chain, groupby, tee 
 from operator import itemgetter
 from heapq import nlargest, nsmallest
 from io import BytesIO, StringIO
@@ -16,7 +16,6 @@ def str2float(value):
         return value
     else:
         return ret
-
 
 def round_try(value, round_to=2):
     try:
@@ -95,9 +94,8 @@ class Scheme(dict):
         keys = self._filter_invalid_keys(*keys)
         if index_name in self:
             index_name += '__index'
-        self[index_name] = ''.join(self[k] for k in keys)
+        self[index_name] = ''.join(filter(None, (self[k] for k in keys)))
         return self
-
 
     def number_format(self, **key_examples):
 
@@ -213,6 +211,9 @@ class Listorm(list):
         for record in self:
             if where(record):
                 for column, apply in updates.items():
+                    if column not in record:
+                        print("Listorm.update-Warning: {} is not in this columns".format(column))
+                        continue
                     if callable(apply):
                         record.row_update(apply_to_record=to_rows, **{column: apply})
                     else:
@@ -306,11 +307,15 @@ class Listorm(list):
 
     def orderby(self, *rules):
         '''lst.orderby('A', '-B') orderby A asc B desc
+           lst = lst.orderby(lambda row: [row.name, row.age], lambda row: row.gender)
         '''
         for rule in reversed(rules):
-            rvs = rule.startswith('-')
-            rule = rule.strip('-')
-            super().sort(key=lambda x: x[rule], reverse=rvs)
+            if isinstance(rule, str):
+                rvs = rule.startswith('-')
+                rule = rule.strip('-')
+                super().sort(key=lambda x: x[rule], reverse=rvs)
+            elif callable(rule):
+                super().sort(key=rule)
         return self
 
     def distinct(self, *column, eliminate=False):
@@ -590,7 +595,6 @@ class Listorm(list):
                     lst|=toklst
                 keyword_set|= lst
             ret|= keyword_set
-
         return ret
 
     def excludesim(self, **where):
@@ -609,6 +613,7 @@ def join(left, right, left_on=None, right_on=None, on=None, how='inner'):
     right_on = right_on or right.index_name
 
     if not (left_on and right_on or on):
+        print("Listorm.join: has no index for join")
         return
 
     left_on_index, right_on_index = defaultdict(list), defaultdict(list)
