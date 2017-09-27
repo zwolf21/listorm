@@ -574,8 +574,10 @@ class Listorm(list):
         for colname, keywords in where.items():
             if isinstance(keywords, str):
                 keywords = [keywords]
+            elif keywords is None:
+                keywords = []
             keyword_set = Listorm()
-            for keyword in keywords:
+            for keyword in filter(None, keywords):
                 lst = Listorm()
                 for sep in splitby:
                     ismatch = lambda keyword, text: re.search(keyword, text)
