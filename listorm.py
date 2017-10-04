@@ -568,8 +568,9 @@ class Listorm(list):
         return Changes(added, deleted, updated)
 
     def filtersim(self, **where):
-        ret = Listorm(column_orders=self.column_orders, index=self.index)
+        result_set = {}
         splitby=['space', 'nospace', 'digit']
+        for_filter = Listorm(self).select(*where)
 
         for colname, keywords in where.items():
             if isinstance(keywords, str):
@@ -591,12 +592,18 @@ class Listorm(list):
                         tokkens = re.split('\d+', keyword) + re.findall('\d+', keyword)     
 
                     tokkens = list(filter(None, tokkens))
-                    toklst = Listorm(self)
+                    toklst = Listorm(for_filter)
                     for tok in tokkens:
                         toklst = toklst.filter(where= lambda row: ismatch(tok, row[colname])) 
                     lst|=toklst
                 keyword_set|= lst
-            ret|= keyword_set
+            result_set[colname] = keyword_set
+
+        ret = Listorm(column_orders=self.column_orders, index=self.index, index_name=self.index_name)
+        for colname, lst in result_set.items():
+            filtered = lst.unique(colname)
+            ret+=self.filter(lambda row: row[colname] in filtered)
+
         return ret
 
     def excludesim(self, **where):
