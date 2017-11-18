@@ -41,7 +41,7 @@ lst = [
 
 
 ```python
-# Auto nomailize: set same keys for each record(set to None if key does not exists)
+# Auto normailize: set same keys for each record(set to None if key does not exists)
 ls.Listorm(lst)
 ```
 

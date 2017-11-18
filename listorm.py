@@ -115,20 +115,29 @@ class Scheme(dict):
                     self[key] = val_formated
         return self
 
+def diffkeys(src:dict, dest:dict):
+    common_keys = src.keys() | dest.keys()
+    diff_keys = []
+    for key in common_keys:
+        src_val = src.get(key)
+        dest_val = dest.get(key)
+        if src_val != dest_val:
+            diff_keys.append(key)
+    return diff_keys
 
 
 class Listorm(list):
 
-    def __init__(self, records=None, index=None, index_name=None, nomalize=True, column_orders=None):
+    def __init__(self, records=None, index=None, index_name=None, normalize=True, column_orders=None):
         self.index = index or []
         self.index_name = index_name
 
         to_normalize, to_init = tee(records or [])
 
-        if nomalize:
+        if normalize:
             uni_keys = self._union_keys(to_normalize)
 
-        records = list(Scheme.fromkeys(uni_keys)+Scheme(record) if nomalize else Scheme(record) for record in to_init if record)
+        records = list(Scheme.fromkeys(uni_keys)+Scheme(record) if normalize else Scheme(record) for record in to_init if record)
 
         if column_orders:
             self.column_orders = column_orders
@@ -224,39 +233,39 @@ class Listorm(list):
         '''filtering by func apply to each record
            lst.filter(where = lambda row:row['price'] > 500)
         '''
-        return Listorm((record for record in self if where(record)), nomalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
+        return Listorm((record for record in self if where(record)), normalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
 
     def filterand(self, **where):
         '''filtering by value for each column in record
            lst.vfilter(a='1', b='2') , filtering as 'AND'
         '''
         rowfunc = partial(self._row_func, filter_and=True, **where)
-        return Listorm(self, nomalize=False).filter(rowfunc)
+        return Listorm(self, normalize=False).filter(rowfunc)
 
     def filteror(self, **where):
         '''filtering by value for each column in record
            lst.vfilter(a='1', b='2') , filtering as 'OR'
         '''
         rowfunc = partial(self._row_func, filter_and=False, **where)
-        return Listorm(self, nomalize=False).filter(rowfunc)
+        return Listorm(self, normalize=False).filter(rowfunc)
          
     def exclude(self, where=lambda row: True):
         '''filtering exclusively by func apply to each record
            lst.filter(where = lambda row:row['price'] > 500)
         '''
-        return Listorm((record for record in self if not where(record)), nomalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
+        return Listorm((record for record in self if not where(record)), normalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
 
     def excludeand(self, **where):
         '''exclude when all where condition is true
         '''
         rowfunc = partial(self._row_func, filter_and=True, **where)
-        return Listorm(self, nomalize=False, index=self.index, index_name=self.index_name).exclude(rowfunc)
+        return Listorm(self, normalize=False, index=self.index, index_name=self.index_name).exclude(rowfunc)
 
     def excludeor(self, **where):
         '''exclude when any where conditions is true
         '''
         rowfunc = partial(self._row_func, filter_and=False, **where)
-        return Listorm(self, nomalize=False, index=self.index, index_name=self.index_name).exclude(rowfunc)
+        return Listorm(self, normalize=False, index=self.index, index_name=self.index_name).exclude(rowfunc)
 
     def select(self, *columns, values=False):
         '''select columns if you need
@@ -265,7 +274,7 @@ class Listorm(list):
         '''
         records = (record.select(*columns, values=values) for record in self)
         column_orders = [column for column in columns if column in self.column_orders]
-        return list(records) if values else Listorm(records, nomalize=False, column_orders=column_orders)
+        return list(records) if values else Listorm(records, normalize=False, column_orders=column_orders)
 
     def drop(self, *columns):
         column_orders = [column for column in self.column_orders if column not in columns]
@@ -329,7 +338,7 @@ class Listorm(list):
                 continue
             else:
                 ret.append(head)
-        return Listorm(ret, nomalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
+        return Listorm(ret, normalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
 
     def groupby(self, *columns, extra_columns=None, renames=None, agg_float_round=2, set_name=None, **aggset):
         '''groupby('location', 'gender',
@@ -369,13 +378,13 @@ class Listorm(list):
             A: '123' => 123.0, B: 123.2 => 123, C: 123.1 => '123.1' 
         '''
         records = map(lambda record: record.number_format(**key_examples), self)
-        return Listorm(records, nomalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
+        return Listorm(records, normalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
 
     def apply_row(self, apply_to_record=True, **key_func_to_records):
         '''Function For one record
         '''
         records = map(lambda record: record.row_update(apply_to_record=apply_to_record, **key_func_to_records), self)
-        return Listorm(records, nomalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
+        return Listorm(records, normalize=False, column_orders=self.column_orders, index=self.index, index_name=self.index_name)
 
     def apply_column(self, column, func=lambda col:col):
         values = [e[0] for e in self.row_values(column)]
@@ -400,11 +409,11 @@ class Listorm(list):
 
     def rename(self, **key_map):
         '''change Columns name
-           lst.rename({'OriginCol': 'ChangedCol', 'OriginCol2': 'ChangedCol2'})
+           lst.rename(**{'OriginCol': 'ChangedCol', 'OriginCol2': 'ChangedCol2'})
         '''
         records = map(lambda record: record.rename(**key_map), self)
         colums = map(lambda e: key_map.get(e, e), self.column_orders)
-        return Listorm(records, nomalize=False, column_orders=list(colums), index=list(map(lambda e: key_map.get(e, e), self.index)), index_name=key_map.get(self.index_name, self.index_name))
+        return Listorm(records, normalize=False, column_orders=list(colums), index=list(map(lambda e: key_map.get(e, e), self.index)), index_name=key_map.get(self.index_name, self.index_name))
 
     def add_columns(self, **kwargs):
         '''adding columns in current scheme by related funcion with neighborhood in record
@@ -608,6 +617,51 @@ class Listorm(list):
 
     def excludesim(self, **where):
         return self - self.filtersim(**where)                      
+
+
+def difflist(src:list, dest:list, nodiffs=None, common=True):
+    if not src or not dest:
+        return
+
+    lst_src, lst_dest = Listorm(src), Listorm(dest)
+
+    if set(lst_src.column_orders) != set(lst_dest.column_orders):
+        if common:
+            common_keys = lst_src.first.keys() & lst_dest.first.keys()
+        else:
+            common_keys = lst_src.first.keys() | lst_dest.first.keys()
+        lst_src = lst_src.select(*common_keys)
+        lst_dest = lst_dest.select(*common_keys)
+
+    src_counter = Counter([{'row': row} for row in lst_src])
+    dest_counter = Counter([{'row': row} for row in lst_dest])
+    diff_counter_keys = src_counter.keys() ^ dest_counter.keys()
+    common_counter_keys = src_counter.keys() & dest_counter.keys()
+
+    added = []
+    removed = []
+
+    for key in common_counter_keys:
+        src_row_count = src_counter[key]
+        dest_row_count = dest_counter[key]
+        count_diff = dest_row_count - src_row_count
+        if count_diff > 0:
+            target = added
+        elif count_diff < 0:
+            target = removed
+        for _ in range(abs(count_diff)):
+            target.append(key)
+
+    for key in diff_counter_keys:
+        src_row_count = src_counter.get(key, 0)
+        dest_row_count = dest_counter.get(key, 0)
+        
+        target = added if dest_row_count else removed
+
+        for _ in range(src_row_count+dest_row_count):
+            target.append(key)
+
+    return added, removed
 
 
 
