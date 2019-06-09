@@ -34,7 +34,7 @@ class Scheme(dict):
     __getattr__ = dict.get
 
     def __init__(self, *args, **kwargs):
-        return super(Scheme, self).__init__(*args, **kwargs)
+        super(Scheme, self).__init__(*args, **kwargs)
 
     def __add__(self, other):
         cp = Scheme(self)
@@ -528,6 +528,11 @@ class Listorm(list):
                 fp.write(output.getvalue())
         else:
             return output.getvalue()
+        
+    def to_records(self):
+        return [
+            dict(row) for row in self
+        ]
 
     def get_changes(self, other, pk):
         '''Comparison both Lists that has common keys
