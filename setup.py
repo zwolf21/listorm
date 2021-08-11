@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
 	name='listorm',
-	version='0.2.15',
+	version='0.2.16',
 	description='list API for table type of dict-list',
 	author = 'HS Moon',
 	author_email = 'mhs9089@gmail.com',
