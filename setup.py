@@ -2,8 +2,8 @@ from distutils.core import setup
 
 setup(
 	name='listorm',
-	version='0.2.14',
-	description='SQL ORM API for table type of dict-list',
+	version='0.2.15',
+	description='list API for table type of dict-list',
 	author = 'HS Moon',
 	author_email = 'mhs9089@gmail.com',
 	py_modules = ['listorm'],
