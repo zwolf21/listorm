@@ -84,12 +84,8 @@ class Scheme(dict):
     def row_update(self, apply_to_record=True, insert_new=False, **key_apply_set):
         for key, func in key_apply_set.items():
             if key in self or insert_new:
-                try:
-                    updated = func(self) if apply_to_record else func(self[key])
-                except Exception as e:
-                    continue
-                else:
-                    self[key] = updated
+                updated = func(self) if apply_to_record else func(self[key])
+                self[key] = updated
         return self
 
     def set_index(self, *keys, index_name=None):
