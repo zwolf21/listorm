@@ -74,6 +74,8 @@ class Scheme(dict):
     def rename(self, **key_map):
         for key in self:
             for ori, new in key_map.items():
+                if ori == new:
+                    continue
                 if ori in self:
                     value = self.pop(ori)
                     self[new]=value
