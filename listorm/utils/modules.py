@@ -15,7 +15,6 @@ class Undefined(object):
 
 
 
-
 def get_argcounts(callable):
     try:
         sig = inspect.signature(callable)
@@ -23,3 +22,4 @@ def get_argcounts(callable):
         return 1
     else:
         return len(sig.parameters)
+

@@ -1,74 +1,55 @@
 from collections import UserDict
-from operator import itemgetter
 
-from .utils import reduce_kwargs, reduce_args, Undefined, get_argcounts
 from .exceptions import *
+from .utils import  Undefined, get_argcounts
+from .api import selectitem, renamekeys, set_defaults, asvalues, addkeys
+
 
 
 class Row(UserDict):
 
-    def __init__(self, *args, fields=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        if fields:
-            self.arrange(fields)
+    __getattr__ = UserDict.get
 
-    def _items(self):
-        yield from self.data.items()
+    def normalize(self, common_columns:list[str], defaults:dict=None):
+        row = set_defaults(self, common_columns, defaults, Undefined())
+        return Row(row)
 
-    def arrange(self, fields:list[str]):
-        self.data = {
-           f:self.data[f] if f in self.data else Undefined()
-           for f in fields 
-        }
-        return self
-
-    @reduce_kwargs
-    def rename(self, *args:dict, **kwargs):
-        self.data = {
-            kwargs.get(key, key): value
-            for key, value in self._items()
-        }
-        return self
+    def rename(self, renames:dict):
+        row = renamekeys(self, renames)
+        return Row(row)
     
-    @reduce_args
-    def select(self, *columns:str, excludes:list=None):
-        columns = columns or self.data.keys()
-        excludes = excludes or []
-        self.data = {
-            col:self.data[col] for col in columns
-            if col not in excludes
-        }
-        return self
+    def select(self, columns:list=None, excludes:list=None):
+        row = selectitem(self, columns, excludes=excludes)
+        return Row(row)
     
-    @reduce_args
-    def drop(self, *columns):
-        self.data = {
-            key: value for key, value in self._items()
-            if key not in columns
-        }
-        return self
+    def drop(self, columns:list):
+        row = selectitem(self, excludes=columns)
+        return Row(row)
 
-    @reduce_kwargs
-    def map(self, *args, **kwargs):
+    def addkeys(self, keymapset:dict):
+        row = addkeys(self, keymapset)
+        return Row(row)
+
+    def map(self, keymapset:dict):
         applied = {}
-        for key, app in kwargs.items():
-            value = self.data[key]
+        for key, app in keymapset.items():
+            value = self[key]
             if isinstance(value, Undefined):
                 continue
             if callable(app):
                 if get_argcounts(app) == 1:
-                    result = app(self.data[key])
+                    result = app(self[key])
                 elif get_argcounts(app) == 2:
-                    result = app(self.data[key], self.data)
+                    result = app(self[key], self)
                 else:
                     raise ApplyFunctionArgumentCountError(app)
             else:
                 result = app
             applied[key] = result
-        self.data.update(applied)
-        return self
+        row = selectitem(self)
+        row.update(applied)
+        return Row(row)
     
-    @reduce_args
-    def values(self, *columns, **kwargs):
-        return itemgetter(*columns)(self.data)
+    def values(self, columns:list):
+        return asvalues(self, columns)
         

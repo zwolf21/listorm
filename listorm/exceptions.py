@@ -7,4 +7,8 @@ class ApplyFunctionArgumentCountError(Exception):
 
 
 class UniqueConstraintError(Exception):
-    pass
+    '''Unique constratint failed'''
+
+
+class JoinKeyDoesNotExists(Exception):
+    '''join key does not exists'''

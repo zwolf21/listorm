@@ -4,14 +4,15 @@
 /share
 /test
 
+
+*.ipynb
 *.egg-info/
 dist/
 __pycache__/
+.pytest_cache/
 
 
-
-
-
+.DS_Store
 pyvenv.cfg
 *.csv
 *.xlsx

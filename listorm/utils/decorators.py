@@ -7,10 +7,9 @@ def reduce_kwargs(func):
     def wrapper(self, *args, **kwargs):
         params = {
             key: value
-            for arg in args
+            for arg in args if isinstance(arg, dict)
             for key, value in arg.items()
         }
-        print('params', args)
         params.update(kwargs)
         return func(self, *args, **params)
     return wrapper
@@ -27,4 +26,3 @@ def reduce_args(func):
                 _args.append(arg)
         return func(self, *_args, **kwargs)
     return wrapper
-
