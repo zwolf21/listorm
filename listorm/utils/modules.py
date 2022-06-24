@@ -12,6 +12,8 @@ class Undefined(object):
     def __bool__(self): return False
     def __eq__(self, __o: object) -> bool:
         return self.default == __o.default
+    def __hash__(self) -> int:
+        return hash(self.default)
 
 
 

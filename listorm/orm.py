@@ -1,12 +1,14 @@
 from .base import BaseList
 
-
 from .exceptions import *
-from .api import sort, distinct, groupby, join, extend
+from .api import sort, distinct, groupby, join, extend, top_or_bottom
 from .utils import reduce_args, reduce_kwargs, tuplize
+from .extensions import ExtensionMixin
 
 
-class Listorm(BaseList):
+
+
+class Listorm(ExtensionMixin, BaseList):
 
     
     def _reduce_where(self, where):
@@ -35,9 +37,9 @@ class Listorm(BaseList):
         return Listorm(map(app, self))
 
     @reduce_kwargs
-    def update(self, *applymap:dict, where:callable=None, **apply_kwargs):
+    def update(self, *applymap:dict, where:callable=None, pass_undefined:bool=True, **apply_kwargs):
         where = self._reduce_where(where)
-        app = lambda row: row.map(apply_kwargs) if where(row) else row
+        app = lambda row: row.map(apply_kwargs, pass_undefined) if where(row) else row
         return Listorm(map(app, self))
     
     @reduce_args

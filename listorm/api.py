@@ -1,3 +1,7 @@
+from heapq import nlargest, nsmallest
+from collections import defaultdict, Counter
+
+
 def asvalues(dict:dict, keys:list, exact:bool=True) -> object:
     result = tuple(
         dict[key] for key in keys if exact or key in dict
@@ -44,6 +48,15 @@ def set_defaults(dict:dict, keys:list, defaults:dict, padding:object=None) -> di
             result[key] = defaults.get(key, padding)
     return result
 
+
+def diffkeys(dict1:dict, dict2:dict):
+    return [
+        key1
+        for key1, value1 in dict1.items()
+        for key2, value2 in dict2.items()
+        if key1 == key2 and value1 != value2
+    ]
+    
 
 def values_list(records:list[dict], keys:list) -> list:
     return [
@@ -189,3 +202,20 @@ def join(left:list[dict], right:list[dict], left_on:tuple=None, right_on:tuple=N
             rows.append(row)
         result += rows
     return result
+
+
+def top_or_bottom(records:list[dict], keys:list, n=1, top=True):
+    if n < 1:
+        index = round(len(records)*n)
+    else:
+        index = n
+    rgest = nlargest if top else nsmallest
+    result = list(rgest(index, records, key=lambda row: asvalues(row, keys)))
+    if n == 1 and result:
+        return result[0]
+    return result
+
+
+def values_count(records:list[dict], keys:list):
+    return Counter(values_list(records, keys))    
+

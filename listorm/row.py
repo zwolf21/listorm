@@ -30,11 +30,11 @@ class Row(UserDict):
         row = addkeys(self, keymapset)
         return Row(row)
 
-    def map(self, keymapset:dict):
+    def map(self, keymapset:dict, pass_undefined=True):
         applied = {}
         for key, app in keymapset.items():
             value = self[key]
-            if isinstance(value, Undefined):
+            if isinstance(value, Undefined) and pass_undefined:
                 continue
             if callable(app):
                 if get_argcounts(app) == 1:
