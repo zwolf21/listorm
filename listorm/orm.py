@@ -1,14 +1,15 @@
+from collections import namedtuple
+
 from .base import BaseList
-
 from .exceptions import *
-from .api import sort, distinct, groupby, join, extend, top_or_bottom
+from .api import sort, distinct, groupby, join, extend, asgroup, diffkeys
 from .utils import reduce_args, reduce_kwargs, tuplize
-from .extensions import ExtensionMixin
+from .shortcuts import ShortCutMixin
 
 
 
 
-class Listorm(ExtensionMixin, BaseList):
+class Listorm(ShortCutMixin, BaseList):
 
     
     def _reduce_where(self, where):
@@ -61,7 +62,6 @@ class Listorm(ExtensionMixin, BaseList):
         aggset_kwargs.update(aggset or {})
         return Listorm(groupby(self, columns, aggset=aggset_kwargs, aliases=aliases, groupset_name=groupset_name))
 
-
     def join(self, other, on:None, right_on=None, how:str='inner'):
         on, right_on = tuplize(on), tuplize(right_on)
         
@@ -76,3 +76,45 @@ class Listorm(ExtensionMixin, BaseList):
             raise JoinKeyDoesNotExists('on:{}, right_on:{} must be specified'.format(on, right_on))
         return Listorm(join(self, other, on, right_on, how=how))
 
+    def get_changes(self, other):
+        if not all([self.uniques, other.uniques]):
+            raise ValueError("Both of list has unique keys")
+        elif self.uniques != other.uniques:
+            raise ValueError("Both unique key fields({}, {}) must be same".format(self.uniques, other.uniques))
+        elif not isinstance(other, Listorm):
+            raise ValueError("{} must be Listorm instance, not {}".format(other, type(other)))
+        elif not all([self.exists, other.exists]):
+            raise ValueError("Empty list not allowed:")
+        
+        diff_keys = self.uniques or other.uniques
+
+        beforeset = asgroup(self, diff_keys)
+        afterset = asgroup(other, diff_keys)
+
+        comparison_keys = beforeset.keys() | afterset.keys()
+        
+        Added = namedtuple('Added', 'pk rows')
+        Deleted = namedtuple('Deleted', 'pk rows')
+        Updated = namedtuple('Updated', 'pk before after where')
+        Changes = namedtuple('Changes', 'added deleted updated')
+
+        added = []
+        deleted = []
+        updated = []
+        for key in comparison_keys:
+            before = beforeset.get(key)
+            after = afterset.get(key)
+            if before and not after:
+                deleted.append(Deleted(key, before[0]))
+            elif after and not before:
+                added.append(Added(key, after[0]))
+            else:
+                before, after = before[0], after[0]
+                diff = diffkeys(before, after)
+                if diff:
+                    updated.append(Updated(key, before, after, diff))
+        
+        return Changes(added, deleted, updated)
+            
+
+    

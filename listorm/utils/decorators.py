@@ -2,6 +2,7 @@ import functools
 
 
 
+
 def reduce_kwargs(func):
     @functools.wraps(func)
     def wrapper(self, *args, **kwargs):
