@@ -12,8 +12,8 @@ def to_io(path, *args, **kwargs):
 
 
 def read_csv(file, encoding='utf-8'):
-    fp = to_io(file)
-    csv_reader = csv.reader(fp, encoding=encoding)
+    fp = to_io(file, encoding=encoding)
+    csv_reader = csv.reader(fp)
     fields = next(csv_reader)
     result = [dict(zip(fields, map(str, row))) for row in csv_reader]
     return result
@@ -59,7 +59,7 @@ def to_excel(records:list[dict], filename=None):
             values = [v for k, v in row.items()]
         ws.write_row(i,0, values)
     wb.close()
-    
+
     if filename:
         with open(filename, 'wb') as fp:
             fp.write(output.getvalue())
