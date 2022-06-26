@@ -26,4 +26,4 @@ def reduce_args(func):
             else:
                 _args.append(arg)
         return func(self, *_args, **kwargs)
-    return 
+    return wrapper
