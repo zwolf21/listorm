@@ -2,7 +2,7 @@ from collections import namedtuple
 
 from .base import BaseList
 from .exceptions import *
-from .api import sort, distinct, groupby, join, extend, asgroup, diffkeys
+from .api import select, sort, distinct, groupby, join, extend, asgroup, diffkeys
 from .utils import reduce_args, reduce_kwargs, tuplize
 from .shortcuts import ShortCutMixin
 
@@ -17,13 +17,22 @@ class Listorm(ShortCutMixin, BaseList):
         
     def filter(self, where:callable):
         where = self._reduce_where(where)
-        return Listorm(filter(where, self), uniques=self.uniques, defaults=self.defaults)
+        # return Listorm(filter(where, self), uniques=self.uniques, defaults=self.defaults)
+        result = [
+            row for row in self if where(row)
+        ]
+        return Listorm(result, uniques=self.uniques, defaults=self.defaults)
 
     @reduce_args
     def select(self, *columns:str, excludes:list=None, where:callable=None):
-        app = lambda row: row.select(columns, excludes)
-        return Listorm(map(app, self.filter(where)))
-    
+        # app = lambda row: row.select(columns, excludes)
+        # return Listorm(map(app, self.filter(where)))
+        result = [
+            row.select(columns, excludes) for row in
+            self
+        ]
+        return Listorm(result)
+
     @reduce_args
     def drop_column(self, *columns:str):
         return self.select(excludes=columns)

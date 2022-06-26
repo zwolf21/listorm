@@ -12,8 +12,8 @@ def to_io(path, *args, **kwargs):
 
 
 def read_csv(file, encoding='utf-8'):
-    fp = to_io(file)
-    csv_reader = csv.reader(fp, encoding=encoding)
+    fp = to_io(file, encoding=encoding)
+    csv_reader = csv.reader(fp)
     fields = next(csv_reader)
     result = [dict(zip(fields, map(str, row))) for row in csv_reader]
     return result
