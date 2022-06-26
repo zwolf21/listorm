@@ -1,4 +1,4 @@
-from .helper import _route_callable
+from .helper import reduce_callable
 
 
 
@@ -15,7 +15,7 @@ def asvalues(dict:dict, keys:list, exact:bool=True) -> object:
 def addkeys(dict:dict, keymapset:dict) -> dict:
     row = {k:v for k,v in dict.items()}
     for key, app in keymapset.items():
-        row[key] = _route_callable(app, row)
+        row[key] = reduce_callable(app, row)
     return row
 
 
@@ -40,7 +40,7 @@ def setdefaults(row:dict, defaults:dict) -> dict:
     row = dict(row)
     for defkey, defval in defaults.items():
         if defkey not in row:
-            row[defkey] = _route_callable(defval, row)
+            row[defkey] = reduce_callable(defval, row)
     return row
 
 
