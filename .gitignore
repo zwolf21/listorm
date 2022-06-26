@@ -1,8 +1,9 @@
 /dist
-/__pycache__
 /test
 /Scripts
 /[Ll]ib
+
+__pycache__/
 
 .DS_STORE
 MANIFEST
