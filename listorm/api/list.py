@@ -1,5 +1,5 @@
 from .dict import *
-from utils import reduce_args, reduce_kwargs, tuplize
+from ..utils import reduce_args, reduce_kwargs, tuplize
 
 
 
