@@ -1,12 +1,14 @@
 /dist
 /__pycache__
 /test
-.DS_STORE
+/Scripts
+/[Ll]ib
 
-*test.py
+.DS_STORE
 MANIFEST
 
 *.xlxs
 *.csv
+*.cfg
 
 
