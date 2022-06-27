@@ -35,6 +35,14 @@ def get_allkeys(records:list[dict]) -> list:
     return list(keyset)
 
 
+def fillmissed(records:list[dict], value=None):
+    fields = get_allkeys(records)
+    defaults = dict.fromkeys(fields, value)
+    return [
+        setdefaults(row, defaults) for row in records
+    ]
+
+
 @reduce_args
 def sort(records:list[dict], *sortkeys) -> list[dict]:
     records = list(records)
@@ -42,7 +50,6 @@ def sort(records:list[dict], *sortkeys) -> list[dict]:
         return records
 
     for keys in reversed(sortkeys):
-        print(keys)
         reverse = False
         if isinstance(keys, str):
             if keys.startswith('-'):
@@ -89,8 +96,8 @@ def aggregate(grouped:dict[str, list[dict]], keys:list, aggset:dict, aliases:dic
     for _, rows in grouped.items():
         agged = asselect(rows[0], keys)
         for key, apply in aggset.items():
-            values = values(rows, [key])
-            agg = apply(values)
+            values_list = values(rows, [key])
+            agg = apply(values_list)
             alias = aliases.get(key, key)
             agged[alias] = agg
         if groupset_name:
@@ -101,7 +108,7 @@ def aggregate(grouped:dict[str, list[dict]], keys:list, aggset:dict, aliases:dic
 
 @reduce_args
 @reduce_kwargs
-def groupby(records:list[dict], *keys:str, aggset:dict, aliases:dict=None, groupset_name:str=None, **aggset_kwargs) -> list[dict]:
+def groupby(records:list[dict], *keys:str, aggset:dict=None, aliases:dict=None, groupset_name:str=None, **aggset_kwargs) -> list[dict]:
     grouped = asgroup(records, keys)
     agged = aggregate(grouped, keys, aggset_kwargs, aliases, groupset_name)
     return agged

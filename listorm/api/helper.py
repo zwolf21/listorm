@@ -1,5 +1,5 @@
 def reduce_callable(value, *args, **kwargs):
-    if isinstance(value, callable):
+    if callable(value):
         return value(*args, **kwargs)
     return value
 
