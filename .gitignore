@@ -2,13 +2,14 @@
 /test
 /Scripts
 /[Ll]ib
+/share
 
 __pycache__/
 
 .DS_STORE
 MANIFEST
 
-*.xlxs
+*.xlsx
 *.csv
 *.cfg
 

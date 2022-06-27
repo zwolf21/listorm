@@ -1,5 +1,5 @@
-from .helper import reduce_callable
-
+from .helper import reduce_callable, reduce_args_count
+from ..utils import number_format
 
 
 
@@ -51,3 +51,23 @@ def diffkeys(dict1:dict, dict2:dict) -> list:
         for key2, value2 in dict2.items()
         if key1 == key2 and value1 != value2
     ]
+
+
+def asnumformat(dict:dict, examples:dict):
+    return {
+        key: number_format(value, examples.get(key))
+        for key, value in dict.items()
+    }
+
+
+
+def asmap(dict:dict, keymapset:dict):
+    applied = {} 
+    for key, value in dict.items():
+        app = keymapset.get(key)
+        if not app:
+            applied[key] = value
+            continue
+        app = keymapset[key]
+        applied[key] = reduce_args_count(app, value, dict)
+    return applied

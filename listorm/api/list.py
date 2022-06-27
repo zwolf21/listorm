@@ -1,10 +1,12 @@
 from .dict import *
 from ..utils import reduce_args, reduce_kwargs, tuplize
+from .helper import reduce_where
+
 
 
 
 @reduce_args
-def values(records:list[dict], *keys:str) -> list:
+def values_list(records:list[dict], *keys:str) -> list:
     return [
         asvalues(row, keys) for row in records
     ]
@@ -12,7 +14,7 @@ def values(records:list[dict], *keys:str) -> list:
 
 @reduce_args
 def select(records:list[dict], *keys:str, excludes:list=None, where:callable=None) -> list[dict]:
-    where = where or (lambda row: True)
+    where = reduce_where(where)
     return [
         asselect(row, keys, excludes) for row in records
         if where(row)
@@ -20,10 +22,32 @@ def select(records:list[dict], *keys:str, excludes:list=None, where:callable=Non
 
 
 @reduce_kwargs
-def extend(records:list[dict], keymapset:dict, **keymapset_kwargs):
+def update(records:list[dict], applymap:dict=None, where:callable=None, **applymap_kwargs):
+    where = reduce_where(where)
+    return [
+        asmap(row, applymap_kwargs) if where(row) else row
+        for row in records
+    ]
+
+
+@reduce_kwargs
+def extend(records:list[dict], keymapset:dict, **keymapset_kwargs) -> list[dict]:
     return [
         addkeys(row, keymapset_kwargs) for row in records
     ]
+
+
+@reduce_args
+def drop(records, *keys:str) -> list:
+    return select(excludes=keys)
+
+
+@reduce_kwargs
+def rename(dict:dict, renames:dict, **renames_kwargs) -> dict:
+    return {
+        renames_kwargs.get(key, key): value
+        for key, value in dict.items()
+    }
 
 
 def get_allkeys(records:list[dict]) -> list:
@@ -96,8 +120,8 @@ def aggregate(grouped:dict[str, list[dict]], keys:list, aggset:dict, aliases:dic
     for _, rows in grouped.items():
         agged = asselect(rows[0], keys)
         for key, apply in aggset.items():
-            values_list = values(rows, [key])
-            agg = apply(values_list)
+            values = values_list(rows, [key])
+            agg = apply(values)
             alias = aliases.get(key, key)
             agged[alias] = agg
         if groupset_name:
@@ -130,8 +154,14 @@ def set_index(records:list[dict], *keys:str) -> list[tuple[tuple, dict]]:
     ]
 
 
-def join(left:list[dict], right:list[dict], left_on:tuple, right_on:tuple, how:str='inner') -> list[dict]:
-    left_on, right_on = tuplize(left_on), tuplize(right_on)
+def join(left:list[dict], right:list[dict], on:tuple=None, left_on:tuple=None, right_on:tuple=None, how:str='inner') -> list[dict]:
+    on, left_on, right_on = tuplize(on), tuplize(left_on), tuplize(right_on)
+
+    if on:
+        left_on = right_on = on
+    elif not all([left_on, right_on]):
+        raise ValueError('left_on and rignt_on must be specified')
+
 
     left_group = asgroup(left, left_on)
     right_group = asgroup(right, right_on)
@@ -174,3 +204,15 @@ def values_count(records:list[dict], *keys:str):
         counter.setdefault(value, 0)
         counter[value] += 1   
     return counter
+
+
+@reduce_kwargs
+def set_number_format(records:list[dict], formats:dict=None, **formats_kwargs):
+    return [
+        asnumformat(row, formats_kwargs) for row in records
+    ]
+
+@reduce_args
+def is_unique(records:list[dict], *keys:str):
+    counter = values_count(records, keys)
+    return max(counter.values(), default=1) < 2
