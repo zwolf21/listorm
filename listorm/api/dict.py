@@ -3,11 +3,11 @@ from ..utils import number_format
 
 
 
-def asvalues(dict:dict, keys:list, exact:bool=True) -> object:
+def asvalues(dict:dict, keys:list, exact:bool=True, flat=True) -> object:
     result = tuple(
         dict[key] for key in keys if exact or key in dict
     )
-    if len(result) == 1:
+    if flat and len(result) == 1:
         return result[0]
     return result
 

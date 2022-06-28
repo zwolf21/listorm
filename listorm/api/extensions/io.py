@@ -8,7 +8,7 @@ def get_bytesio():
     return BytesIO()
 
 
-def path2fp(path, *args, **kwargs):
+def reduce_fp(path, *args, **kwargs):
     if isinstance(path, str):
         return open(path, *args, **kwargs)
     elif isinstance(path, (TextIOBase, BufferedReader)):

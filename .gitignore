@@ -3,6 +3,7 @@
 /Scripts
 /[Ll]ib
 /share
+/.pytest_cache
 
 __pycache__/
 
@@ -12,5 +13,7 @@ MANIFEST
 *.xlsx
 *.csv
 *.cfg
+*.ipynb
+*.json
 
 

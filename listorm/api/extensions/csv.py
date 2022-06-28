@@ -1,11 +1,11 @@
 import csv
-
-from .io import get_stringio, path2fp
+from ..list import get_allkeys
+from .io import get_stringio, reduce_fp
 
 
 
 def read_csv(file, encoding='utf-8'):
-    fp = path2fp(file, encoding=encoding)
+    fp = reduce_fp(file, encoding=encoding)
     csv_reader = csv.reader(fp)
     fields = next(csv_reader)
     result = [dict(zip(fields, map(str, row))) for row in csv_reader]
@@ -13,14 +13,15 @@ def read_csv(file, encoding='utf-8'):
 
 
 
-def write_csv(records:list[dict], filename=None):
+def write_csv(records:list[dict], filename=None, fields=None, lineterminator='\n', encoding='utf-8'):
     output = get_stringio()
-    writer = csv.DictWriter(output, lineterminator='\n')
+    fields = fields or get_allkeys(records)
+    writer = csv.DictWriter(output, fields, lineterminator=lineterminator)
     writer.writeheader()
     for row in records:
         writer.writerow(row)
     if filename:
-        with open(filename, 'w') as fp:
+        with open(filename, 'w', encoding=encoding) as fp:
             fp.write(output.getvalue())
     else:
         return output.getvalue()
