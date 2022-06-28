@@ -162,7 +162,6 @@ def join(left:list[dict], right:list[dict], on:tuple=None, left_on:tuple=None, r
     elif not all([left_on, right_on]):
         raise ValueError('left_on and rignt_on must be specified')
 
-
     left_group = asgroup(left, left_on)
     right_group = asgroup(right, right_on)
 

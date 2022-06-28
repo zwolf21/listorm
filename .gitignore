@@ -4,6 +4,8 @@
 /[Ll]ib
 /share
 /.pytest_cache
+/etc
+/Include
 
 __pycache__/
 
