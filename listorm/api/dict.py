@@ -13,10 +13,9 @@ def asvalues(dict:dict, keys:list, exact:bool=True, flat=True) -> object:
 
 
 def addkeys(dict:dict, keymapset:dict) -> dict:
-    row = {k:v for k,v in dict.items()}
     for key, app in keymapset.items():
-        row[key] = reduce_callable(app, row)
-    return row
+        dict[key] = reduce_callable(app, dict)
+    return dict
 
 
 def asselect(dict:dict, keys:list=None, excludes:list=None) -> dict:

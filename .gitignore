@@ -4,12 +4,12 @@
 /[Ll]ib
 /share
 /.pytest_cache
+/.ipynb_checkpoints
 /etc
 /Include
 
 __pycache__/
-
-.DS_STORE
+.DS_Store
 MANIFEST
 
 *.xlsx

@@ -1,3 +1,5 @@
+from itertools import tee
+
 from .dict import *
 from ..utils import reduce_args, reduce_kwargs, tuplize
 from .helper import reduce_where
@@ -60,12 +62,18 @@ def get_allkeys(records:list[dict]) -> list:
 
 
 def fillmissed(records:list[dict], value=None):
-    fields = get_allkeys(records)
+    tee1, tee2 = tee(records, 2)
+    fields = get_allkeys(tee1)
     defaults = dict.fromkeys(fields, value)
     return [
-        setdefaults(row, defaults) for row in records
+        setdefaults(row, defaults) for row in tee2
     ]
 
+
+def guess_type(records:list[dict], key:str):
+    values = values_list(records, key)
+    head, *_ = filter(None, values)
+    return type(head)
 
 @reduce_args
 def sort(records:list[dict], *sortkeys) -> list[dict]:
@@ -86,8 +94,8 @@ def sort(records:list[dict], *sortkeys) -> list[dict]:
 
 
 @reduce_args
-def distinct(records:list[dict], *keys:str, fisrt:bool=True, singles:bool=False) -> list:
-    if not fisrt:
+def distinct(records:list[dict], *keys:str, first:bool=True, singles:bool=False) -> list:
+    if not first:
         records = reversed(records)
     duplicates = {}
     for row in records:
@@ -100,7 +108,7 @@ def distinct(records:list[dict], *keys:str, fisrt:bool=True, singles:bool=False)
             continue
         distincts.append(rows[0])
     
-    if not fisrt:
+    if not first:
         distincts = reversed(distincts)
     return distincts
 
@@ -132,9 +140,10 @@ def aggregate(grouped:dict[str, list[dict]], keys:list, aggset:dict, aliases:dic
 
 @reduce_args
 @reduce_kwargs
-def groupby(records:list[dict], *keys:str, aggset:dict=None, aliases:dict=None, groupset_name:str=None, **aggset_kwargs) -> list[dict]:
+def groupby(records:list[dict], *keys:str, aggset:dict=None, renames:dict=None, groupset_name:str=None, **aggset_kwargs) -> list[dict]:
+    aggset_kwargs.update(aggset or {})
     grouped = asgroup(records, keys)
-    agged = aggregate(grouped, keys, aggset_kwargs, aliases, groupset_name)
+    agged = aggregate(grouped, keys, aggset_kwargs, renames, groupset_name)
     return agged
 
 

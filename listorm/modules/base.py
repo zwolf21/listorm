@@ -9,18 +9,22 @@ from .row import Row
 
 class BaseList(list):
 
-    def __init__(self, records:list, uniques:tuple=None, normalize=True,  fill_missed=None):
+    def __init__(self, records:list, uniques:tuple=None, fill_missed=True,  fill_value=None):
         self.uniques = tuplize(uniques)
+        self.fill_value = fill_value
         self.fill_missed = fill_missed
-        self.normalize = normalize
-        self.check_for_uniques(records)
-        if self.normalize:
-            records = self.normalize_records(records, fill_missed)
+        if self.uniques:
+            records = self.check_for_uniques(records)
+        if self.fill_missed:
+            records = self.normalize_records(records, fill_value)
         super().__init__(map(Row, records))
+    
+    def as_kwargs(self, **updates):
+        default = asselect(self.__dict__, ['uniques', 'fill_value', 'fill_missed'])
+        default.update(updates)
+        return default
 
     def check_for_uniques(self, records):
-        if not self.uniques:
-            return
         uniqueset = set(self.uniques)
         seen = {}
         for row in records:
@@ -37,6 +41,7 @@ class BaseList(list):
                     "\nUnique Constraint Failed in.\n{}\n{}\non:{}".format(exists, row, self.uniques)
                 )
             seen[values] = row
+            yield row
 
     def normalize_records(self, records, value):
         return fillmissed(records, value)

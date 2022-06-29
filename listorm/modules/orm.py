@@ -3,35 +3,27 @@ from collections import namedtuple
 from .base import BaseList
 from .shortcuts import ShortCutMixin
 from ..exceptions import *
-from ..api import select, sort, distinct, groupby, join, extend, asgroup, diffkeys
+from ..api import  sort, distinct, groupby, join, extend, asgroup, diffkeys, reduce_where
 from ..utils import reduce_args, reduce_kwargs, tuplize
-
 
 
 
 class Listorm(ShortCutMixin, BaseList):
 
-    
-    def _reduce_where(self, where):
-        return where or (lambda row: True)
         
     def filter(self, where:callable):
-        where = self._reduce_where(where)
-        # return Listorm(filter(where, self), uniques=self.uniques, defaults=self.defaults)
-        result = [
-            row for row in self if where(row)
-        ]
-        return Listorm(result, uniques=self.uniques, defaults=self.defaults)
+        where = reduce_where(where)
+        return Listorm(
+            filter(where, self),
+            uniques=self.uniques, fill_missed=False
+        )
 
     @reduce_args
     def select(self, *columns:str, excludes:list=None, where:callable=None):
-        # app = lambda row: row.select(columns, excludes)
-        # return Listorm(map(app, self.filter(where)))
-        result = [
-            row.select(columns, excludes) for row in
-            self
-        ]
-        return Listorm(result)
+        app = lambda row: row.select(columns, excludes)
+        return Listorm(
+            map(app, self.filter(where)), fill_missed=False
+        )
 
     @reduce_args
     def drop_column(self, *columns:str):
@@ -39,41 +31,45 @@ class Listorm(ShortCutMixin, BaseList):
     
     @reduce_kwargs
     def add_column(self, *column_mapset:dict, **column_map_kwargs):
-        return Listorm(extend(self, column_map_kwargs), uniques=self.uniques, defaults=self.defaults)
+        app = lambda row: row.addkeys(column_map_kwargs)
+        return Listorm(
+            map(app, self), **self.as_kwargs(fill_missed=False)
+        )
 
     @reduce_kwargs
     def rename(self, *renamemap:dict, **rename_kwargs):
         app = lambda row: row.rename(rename_kwargs)
-        return Listorm(map(app, self))
+        return Listorm(map(app, self), fill_missed=False)
 
     @reduce_kwargs
-    def update(self, *applymap:dict, where:callable=None, pass_undefined:bool=True, **apply_kwargs):
-        where = self._reduce_where(where)
-        app = lambda row: row.map(apply_kwargs, pass_undefined) if where(row) else row
-        return Listorm(map(app, self))
+    def update(self, *applymap:dict, where:callable=None, **apply_kwargs):
+        where = reduce_where(where)
+        app = lambda row: row.map(apply_kwargs) if where(row) else row
+        return Listorm(map(app, self), fill_missed=False)
     
     @reduce_args
-    def values(self, *columns:str):
-        app = lambda row: row.values(columns)
+    def values(self, *columns:str, flat_one=True):
+        app = lambda row: row.values(columns, flat=flat_one)
         return list(map(app, self))
 
     @reduce_args
     def distinct(self, *columns:str, first:bool=True, singles:bool=False):
-        return Listorm(distinct(self, columns, first, singles))
+        return Listorm(distinct(self, columns, first=first, singles=singles), fill_missed=False)
 
     @reduce_args
     def orderby(self, *sortkeys:list):
-        return Listorm(sort(self, sortkeys))
+        return Listorm(sort(self, sortkeys), **self.as_kwargs(fill_missed=False))
 
     @reduce_args
     @reduce_kwargs
-    def groupby(self, *columns:str, aggset:dict=None, aliases:dict=None, groupset_name:str=None, **aggset_kwargs):
+    def groupby(self, *columns:str, aggset:dict=None, renames:dict=None, groupset_name:str=None, **aggset_kwargs):
         aggset_kwargs.update(aggset or {})
-        return Listorm(groupby(self, columns, aggset=aggset_kwargs, aliases=aliases, groupset_name=groupset_name))
+        return Listorm(
+            groupby(self, columns, aggset=aggset_kwargs, renames=renames, groupset_name=groupset_name)
+        )
 
     def join(self, other, on:None, right_on=None, how:str='inner'):
         on, right_on = tuplize(on), tuplize(right_on)
-        
         if not on:
             on = self.uniques
         if not right_on:
@@ -83,7 +79,10 @@ class Listorm(ShortCutMixin, BaseList):
                 right_on = on
         if not all((on, right_on)):
             raise JoinKeyDoesNotExists('on:{}, right_on:{} must be specified'.format(on, right_on))
-        return Listorm(join(self, other, on, right_on, how=how))
+        return Listorm(
+                join(self, other, None, on, right_on, how=how),
+                fill_value=self.fill_value
+            )
 
     def get_changes(self, other):
         if not all([self.uniques, other.uniques]):
