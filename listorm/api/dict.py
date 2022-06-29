@@ -2,8 +2,13 @@ from .helper import reduce_callable, reduce_args_count
 from ..utils import number_format
 
 
+def getkeys(dict:dict):
+    return [
+        key for key in dict
+    ]
 
 def asvalues(dict:dict, keys:list, exact:bool=True, flat=True) -> object:
+    keys = keys or getkeys(dict)
     result = tuple(
         dict[key] for key in keys if exact or key in dict
     )
@@ -57,7 +62,6 @@ def asnumformat(dict:dict, examples:dict):
         key: number_format(value, examples.get(key))
         for key, value in dict.items()
     }
-
 
 
 def asmap(dict:dict, keymapset:dict):

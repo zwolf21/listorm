@@ -6,7 +6,6 @@ from .helper import reduce_where
 
 
 
-
 @reduce_args
 def values_list(records:list[dict], *keys:str) -> list:
     return [

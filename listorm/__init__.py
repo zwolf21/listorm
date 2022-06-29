@@ -1,2 +1,2 @@
 from .api import *
-from .modules import *
+from .core import *
