@@ -1,9 +1,7 @@
-from collections import namedtuple
-
 from .base import BaseList
 from .shortcuts import ShortCutMixin
 from ..exceptions import *
-from ..api import sort, distinct, groupby, join, asgroup, diffkeys, reduce_where, read_excel
+from ..api import sort, distinct, groupby, join, reduce_where
 from ..utils import reduce_args, reduce_kwargs, tuplize
 
 
@@ -84,45 +82,6 @@ class Listorm(ShortCutMixin, BaseList):
                 fill_value=self.fill_value
             )
 
-    def get_changes(self, other):
-        if not all([self.uniques, other.uniques]):
-            raise ValueError("Both of list has unique keys")
-        elif self.uniques != other.uniques:
-            raise ValueError("Both unique key fields({}, {}) must be same".format(self.uniques, other.uniques))
-        elif not isinstance(other, Listorm):
-            raise ValueError("{} must be Listorm instance, not {}".format(other, type(other)))
-        elif not all([self.exists, other.exists]):
-            raise ValueError("Empty list not allowed:")
-        
-        diff_keys = self.uniques or other.uniques
-
-        beforeset = asgroup(self, diff_keys)
-        afterset = asgroup(other, diff_keys)
-
-        comparison_keys = beforeset.keys() | afterset.keys()
-        
-        Added = namedtuple('Added', 'pk rows')
-        Deleted = namedtuple('Deleted', 'pk rows')
-        Updated = namedtuple('Updated', 'pk before after where')
-        Changes = namedtuple('Changes', 'added deleted updated')
-
-        added = []
-        deleted = []
-        updated = []
-        for key in comparison_keys:
-            before = beforeset.get(key)
-            after = afterset.get(key)
-            if before and not after:
-                deleted.append(Deleted(key, before[0]))
-            elif after and not before:
-                added.append(Added(key, after[0]))
-            else:
-                before, after = before[0], after[0]
-                diff = diffkeys(before, after)
-                if diff:
-                    updated.append(Updated(key, before, after, diff))
-        
-        return Changes(added, deleted, updated)
     
 
 

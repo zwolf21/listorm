@@ -1,22 +1,23 @@
 import csv
 from ..list import get_allkeys
-from .io import get_stringio, reduce_fp
+from .io import get_stringio, reduce_csv_input
 
 
 
-def read_csv(file, encoding='utf-8'):
-    fp = reduce_fp(file, encoding=encoding)
-    csv_reader = csv.reader(fp)
-    fields = next(csv_reader)
+def read_csv(file, encoding='utf-8', fields=None, **csv_kwargs):
+    fp = reduce_csv_input(file, encoding=encoding)
+    csv_reader = csv.reader(fp, **csv_kwargs)
+    fields = fields or next(csv_reader)
     result = [dict(zip(fields, map(str, row))) for row in csv_reader]
     return result
 
 
 
-def write_csv(records:list[dict], filename=None, fields=None, lineterminator='\n', encoding='utf-8'):
+def write_csv(records:list[dict], filename=None, fields=None, encoding='utf-8', **csv_kwargs):
+    csv_kwargs.update({'lineterminator':'\n'})
     output = get_stringio()
     fields = fields or get_allkeys(records)
-    writer = csv.DictWriter(output, fields, lineterminator=lineterminator)
+    writer = csv.DictWriter(output, fields, **csv_kwargs)
     writer.writeheader()
     for row in records:
         writer.writerow(row)

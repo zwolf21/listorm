@@ -1,8 +1,7 @@
 import openpyxl
-import xlsxwriter
 
 from .io import get_bytesio, reduce_excel_input
-from ..list import asvalues, fillmissed, values_list, getkeys
+from ..list import fillmissed, values_list, getkeys
 
 
 
@@ -35,7 +34,22 @@ def _find_table(values, fields_contains=None, start_rows=None, start_cols=None):
     return _slice_padding(values, start_rows, start_cols)
 
 
-def read_excel(file=None, search_fields:list=None, sheet_name=None, start_rows=0, start_cols=0):
+def _normalize_columns(fields):
+    results = []
+    trantab = {
+        '\n': '',
+        '_x000D_': '',
+        '_x000d_': '',
+    }
+    for col in fields:
+        for t, c in trantab.items():
+            col = col.replace(t, c)
+        col = col.strip()
+        results.append(col)
+    return results
+
+
+def read_excel(file=None, search_fields:list=None, sheet_name=None, start_rows=0, start_cols=0, prettify_column_names=True):
     '''Excel File or byte Content of Excel to Listorm object
     '''
     file = reduce_excel_input(file)
@@ -47,12 +61,14 @@ def read_excel(file=None, search_fields:list=None, sheet_name=None, start_rows=0
         table = _find_table(worksheet.values, start_rows=start_rows, start_cols=start_cols)
     workbook.close()
     fields, *records = table
+    if prettify_column_names:
+        fields = _normalize_columns(fields)
     return [
         dict(zip(fields, row)) for row in records
     ]
 
 
-def write_excel(records:list[dict], filename=None, sheet_name=None, fill_miss=True):
+def write_excel(records:list[dict], filename=None, fill_miss=True):
     if not records:
         raise ValueError('Cannot write excel from Empty list')
     if fill_miss:

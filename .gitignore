@@ -17,5 +17,6 @@ MANIFEST
 *.cfg
 *.ipynb
 *.json
+*.txt
 
 
