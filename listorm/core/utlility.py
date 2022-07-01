@@ -9,7 +9,7 @@ def read_excel(
     sheet_name=None, start_rows=0, start_cols=0,
     prettify_column_names=True,
 ):
-    records = extensions.read_execel(
+    records = extensions.read_excel(
         file, fields_contains, sheet_name, start_rows, start_cols,
         prettify_column_names=prettify_column_names
     )

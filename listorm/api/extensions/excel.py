@@ -1,7 +1,7 @@
 import openpyxl
 
 from .io import get_bytesio, reduce_excel_input
-from ..list import fillmissed, values_list, getkeys
+from ..list import fillmissed, values_list, getkeys, select
 
 
 
@@ -73,11 +73,13 @@ def write_excel(records:list[dict], filename=None, fill_miss=True):
         raise ValueError('Cannot write excel from Empty list')
     if fill_miss:
         records = fillmissed(records)
+
     output = get_bytesio()
     workbook = openpyxl.Workbook()
     worksheet = workbook.active
     fields = getkeys(records[0])
-    rows = values_list(records)
+    selected = select(records, fields)
+    rows = values_list(selected)
     worksheet.append(fields)
     for row in rows:
         worksheet.append(row)

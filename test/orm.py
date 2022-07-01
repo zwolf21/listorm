@@ -1,6 +1,6 @@
 import pytest
 
-from listorm import Listorm
+from listorm import Listorm, read_csv, read_excel
 from listorm.exceptions import UniqueConstraintError
 from .samples import *
 
@@ -126,3 +126,43 @@ def test_join(records, other, on, right_on, how, results):
         .orderby('name', 'product') \
         .set_number_type(amount=0.0)
 
+
+test_write_and_read_csv_cases = [
+    (userTable, 'user_table_write_test.csv', userTable),
+    (userTable_missing_values, 'user_table_write_missing_values_test.csv', userTable_missing_values_filling_with_undefined),
+    (userTable_has_one_column_name, 'user_table_write_has_oncolumn_test.csv', userTable_has_one_column_name)
+]
+@pytest.mark.parametrize('records, file, results', test_write_and_read_csv_cases)
+def test_write_and_read_csv(records, file, results):
+    lstsrc = Listorm(records, fill_value='undefined')
+    lstsrc.to_csv(file)
+    lstdest = read_csv(file).update(
+        age=int,
+        where=lambda row: row.age and row.age.isnumeric()
+    )
+    assert results == lstdest
+
+test_write_and_read_excel_cases = [
+    (userTable, 'user_table_write_test.xlsx', userTable),
+    (userTable_missing_values, 'user_table_write_missing_values_test.xlsx', userTable_missing_values_filling_with_undefined),
+    # (userTable_has_one_column_name, 'user_table_write_has_oncolumn_test.xlsx', userTable_has_one_column_name)
+]
+@pytest.mark.parametrize('records, file, results', test_write_and_read_excel_cases)
+def test_write_and_read_excel(records, file, results):
+    lst = Listorm(records, fill_value='undefined')
+    lst.to_excel(file)
+    lstdest = read_excel(file)
+    # .update(
+    #     age=int,
+    #     where=lambda row: row.age and row.age.isnumeric()
+    # )
+    assert results == lstdest
+# test_read_write_csv_cases = [
+#     ('')
+# ]
+# @pytest.mark.parametrize('src, dest')
+# def test_read_write_csv(src, dest):
+#     lst_src = read_csv(src)
+#     lst_src.to_csv(dest)
+#     lst_dest = read_csv(dest)
+#     assert lst_src == lst_dest
