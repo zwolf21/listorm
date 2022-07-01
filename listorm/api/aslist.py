@@ -127,8 +127,8 @@ def aggregate(grouped:dict[str, list[dict]], keys:list, aggset:dict, aliases:dic
     for _, rows in grouped.items():
         agged = asselect(rows[0], keys)
         for key, apply in aggset.items():
-            values = values(rows, [key])
-            agg = apply(values)
+            values_list = values(rows, [key])
+            agg = apply(values_list)
             alias = aliases.get(key, key)
             agged[alias] = agg
         if groupset_name:

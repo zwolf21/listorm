@@ -1,7 +1,7 @@
 import openpyxl
 
 from .io import get_bytesio, reduce_excel_input
-from ..aslist import fillmissed, values_list, askeys, select
+from ..aslist import fillmissed, values, askeys, select
 
 
 
@@ -79,7 +79,7 @@ def write_excel(records:list[dict], filename=None, fill_miss=True):
     worksheet = workbook.active
     fields = askeys(records[0])
     selected = select(records, fields)
-    rows = values_list(selected, flat_one=False)
+    rows = values(selected, flat_one=False)
     worksheet.append(fields)
     for row in rows:
         worksheet.append(row)
