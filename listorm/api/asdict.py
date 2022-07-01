@@ -1,14 +1,17 @@
 from .helper import reduce_callable, reduce_args_count
-from ..utils import number_format
+from ..utils import number_format, reduce_args, reduce_kwargs
 
 
 
-def askeys(dict:dict):
+def askeys(dict:dict, excludes:list=None):
+    excludes = excludes or []
     return [
-        key for key in dict
+        key for key in dict if key not in excludes
     ]
 
-def asvalues(dict:dict, keys:list, exact:bool=True, flat=True) -> object:
+
+@reduce_args
+def asvalues(dict:dict, *keys:str, exact:bool=True, flat=True) -> object:
     keys = keys or askeys(dict)
     result = tuple(
         dict[key] for key in keys if exact or key in dict
@@ -18,8 +21,9 @@ def asvalues(dict:dict, keys:list, exact:bool=True, flat=True) -> object:
     return result
 
 
-def addkeys(dict:dict, keymapset:dict) -> dict:
-    for key, app in keymapset.items():
+@reduce_kwargs
+def addkeys(dict:dict, keymapset:dict, **keymapset__kwargs) -> dict:
+    for key, app in keymapset__kwargs.items():
         dict[key] = reduce_callable(app, dict)
     return dict
 
