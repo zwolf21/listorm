@@ -1,6 +1,6 @@
 from collections import UserList
 
-from ..api.list import *
+from ..api.aslist import *
 from ..api.extensions import *
 from ..utils import tuplize
 from ..exceptions import UniqueConstraintError

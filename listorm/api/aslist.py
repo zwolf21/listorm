@@ -1,6 +1,6 @@
 from itertools import tee
 
-from .dict import *
+from .asdict import *
 from ..utils import reduce_args, reduce_kwargs, tuplize
 from .helper import reduce_where
 

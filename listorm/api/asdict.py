@@ -2,13 +2,14 @@ from .helper import reduce_callable, reduce_args_count
 from ..utils import number_format
 
 
-def getkeys(dict:dict):
+
+def askeys(dict:dict):
     return [
         key for key in dict
     ]
 
 def asvalues(dict:dict, keys:list, exact:bool=True, flat=True) -> object:
-    keys = keys or getkeys(dict)
+    keys = keys or askeys(dict)
     result = tuple(
         dict[key] for key in keys if exact or key in dict
     )
@@ -33,7 +34,7 @@ def asselect(dict:dict, keys:list=None, excludes:list=None) -> dict:
     }
     
 
-def renamekeys(dict:dict, renames:dict) -> dict:
+def asrename(dict:dict, renames:dict) -> dict:
     return {
         renames.get(key, key): value
         for key, value in dict.items()

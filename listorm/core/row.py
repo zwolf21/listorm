@@ -1,6 +1,5 @@
 from ..exceptions import *
-from ..utils import get_argcounts
-from ..api import asselect, renamekeys, setdefaults, asvalues, addkeys, asmap
+from ..api import asselect, asrename, setdefaults, asvalues, addkeys, asmap
 
 
 
@@ -13,7 +12,7 @@ class Row(dict):
         return Row(row)
 
     def rename(self, renames:dict):
-        row = renamekeys(self, renames)
+        row = asrename(self, renames)
         return Row(row)
     
     def select(self, columns:list=None, excludes:list=None):

@@ -1,5 +1,5 @@
 import csv
-from ..list import get_allkeys
+from ..aslist import get_allkeys
 from .io import get_stringio, reduce_csv_input
 
 
