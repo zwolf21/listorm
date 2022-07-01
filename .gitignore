@@ -17,5 +17,6 @@ MANIFEST
 *.ipynb
 *.json
 *.txt
+test.py
 
 
