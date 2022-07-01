@@ -7,9 +7,9 @@ from .helper import reduce_where
 
 
 @reduce_args
-def values_list(records:list[dict], *keys:str) -> list:
+def values(records:list[dict], *keys:str, flat_one=True) -> list:
     return [
-        asvalues(row, keys) for row in records
+        asvalues(row, keys, flat=flat_one) for row in records
     ]
 
 
@@ -70,7 +70,7 @@ def fillmissed(records:list[dict], value=None):
 
 
 def guess_type(records:list[dict], key:str):
-    values = values_list(records, key)
+    values = values(records, key)
     head, *_ = filter(None, values)
     return type(head)
 
@@ -127,7 +127,7 @@ def aggregate(grouped:dict[str, list[dict]], keys:list, aggset:dict, aliases:dic
     for _, rows in grouped.items():
         agged = asselect(rows[0], keys)
         for key, apply in aggset.items():
-            values = values_list(rows, [key])
+            values = values(rows, [key])
             agg = apply(values)
             alias = aliases.get(key, key)
             agged[alias] = agg
