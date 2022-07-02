@@ -1,9 +1,24 @@
+'''
+Shortcut functions for manipulating dicts
+=========================================
+'''
+
+
 from .helper import reduce_callable, reduce_args_count
 from ..utils import number_format, reduce_args, reduce_kwargs
 
 
 
-def askeys(dict:dict, excludes:list=None):
+def askeys(dict:dict, excludes:list=None) -> list:
+    """get keys from the dict
+
+    :param dict: dict
+    :type dict: dict
+    :param excludes: list for exclude from existing keys , defaults to None
+    :type excludes: list, optional
+    :return: list containing the keys of the dict
+    :rtype: list
+    """
     excludes = excludes or []
     return [
         key for key in dict if key not in excludes

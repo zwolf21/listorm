@@ -1,9 +1,15 @@
+'''
+test doc string
+'''
+
+
 class UniqueConstraintError(Exception):
     '''Unique constratint failed'''
+    pass
 
 class JoinKeyDoesNotExists(Exception):
     '''join key does not exists'''
-
+    pass
 
 class ApplyFunctionArgumentCountError(Exception):
 
