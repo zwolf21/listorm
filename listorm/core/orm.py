@@ -51,8 +51,8 @@ class Listorm(ShortCutMixin, BaseList):
         return list(map(app, self))
 
     @reduce_args
-    def distinct(self, *columns:str, first:bool=True, singles:bool=False):
-        return Listorm(distinct(self, columns, first=first, singles=singles), fill_missed=False)
+    def distinct(self, *columns:str, keep_first:bool=True, singles:bool=False):
+        return Listorm(distinct(self, columns, keep_first=keep_first, singles=singles), fill_missed=False)
 
     @reduce_args
     def orderby(self, *sortkeys:list):

@@ -95,7 +95,7 @@ test_distinct_cases = [
 ]
 @pytest.mark.parametrize('records, columns, first, singles, results', test_distinct_cases)
 def test_distinct(records, columns, first, singles, results):
-    assert results == Listorm(records).distinct(columns, first=first, singles=singles)
+    assert results == Listorm(records).distinct(columns, keep_first=first, singles=singles)
 
 
 test_orderby_cases = [

@@ -1,14 +1,17 @@
 from .helper import reduce_callable, reduce_args_count
-from ..utils import number_format
+from ..utils import number_format, reduce_args, reduce_kwargs
 
 
 
-def askeys(dict:dict):
+def askeys(dict:dict, excludes:list=None):
+    excludes = excludes or []
     return [
-        key for key in dict
+        key for key in dict if key not in excludes
     ]
 
-def asvalues(dict:dict, keys:list, exact:bool=True, flat=True) -> object:
+
+@reduce_args
+def asvalues(dict:dict, *keys:str, exact:bool=True, flat=True) -> object:
     keys = keys or askeys(dict)
     result = tuple(
         dict[key] for key in keys if exact or key in dict
@@ -18,13 +21,15 @@ def asvalues(dict:dict, keys:list, exact:bool=True, flat=True) -> object:
     return result
 
 
-def addkeys(dict:dict, keymapset:dict) -> dict:
-    for key, app in keymapset.items():
+@reduce_kwargs
+def addkeys(dict:dict, keymapset:dict, **keymapset__kwargs) -> dict:
+    for key, app in keymapset__kwargs.items():
         dict[key] = reduce_callable(app, dict)
     return dict
 
 
-def asselect(dict:dict, keys:list=None, excludes:list=None) -> dict:
+@reduce_args
+def asselect(dict:dict, *keys:str, excludes:list=None) -> dict:
     keys = [
         key for key in (keys or dict.keys())
         if key not in (excludes or [])
@@ -34,16 +39,17 @@ def asselect(dict:dict, keys:list=None, excludes:list=None) -> dict:
     }
     
 
-def asrename(dict:dict, renames:dict) -> dict:
+@reduce_kwargs
+def asrename(dict:dict, renamemap:dict, **renamemap_kwargs) -> dict:
     return {
-        renames.get(key, key): value
+        renamemap_kwargs.get(key, key): value
         for key, value in dict.items()
     }
 
-
-def setdefaults(row:dict, defaults:dict) -> dict:
+@reduce_kwargs
+def setdefaults(row:dict, defaults:dict, **defaults_kwargs) -> dict:
     row = dict(row)
-    for defkey, defval in defaults.items():
+    for defkey, defval in defaults_kwargs.items():
         if defkey not in row:
             row[defkey] = reduce_callable(defval, row)
     return row
@@ -64,14 +70,14 @@ def asnumformat(dict:dict, examples:dict):
         for key, value in dict.items()
     }
 
-
-def asmap(dict:dict, keymapset:dict):
+@reduce_kwargs
+def asmap(dict:dict, keymap:dict, **keymap_kwargs):
     applied = {} 
     for key, value in dict.items():
-        app = keymapset.get(key)
+        app = keymap_kwargs.get(key)
         if not app:
             applied[key] = value
             continue
-        app = keymapset[key]
+        app = keymap_kwargs[key]
         applied[key] = reduce_args_count(app, value, dict)
     return applied

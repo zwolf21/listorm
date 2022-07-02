@@ -93,8 +93,8 @@ def sort(records:list[dict], *sortkeys) -> list[dict]:
 
 
 @reduce_args
-def distinct(records:list[dict], *keys:str, first:bool=True, singles:bool=False) -> list:
-    if not first:
+def distinct(records:list[dict], *keys:str, keep_first:bool=True, singles:bool=False) -> list:
+    if not keep_first:
         records = reversed(records)
     duplicates = {}
     for row in records:
@@ -107,7 +107,7 @@ def distinct(records:list[dict], *keys:str, first:bool=True, singles:bool=False)
             continue
         distincts.append(rows[0])
     
-    if not first:
+    if not keep_first:
         distincts = reversed(distincts)
     return distincts
 
