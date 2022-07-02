@@ -18,7 +18,7 @@ setup(
 	install_requires=[],
 	keywords=['listorm', 'list of dict'],
 	url='https://github.com/zwolf21/listorm',
-	packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+	packages=find_packages(exclude=['contrib', 'docs', 'test']),
 	classifiers=[
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
