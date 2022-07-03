@@ -16,5 +16,4 @@ Listorm documentation
 Indices and tables
 ==================
 
-
 * :ref:`search`
