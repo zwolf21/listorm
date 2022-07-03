@@ -1,5 +1,5 @@
 '''
-Shortcut functions for manipulating dicts
+Functional API for manipulating dicts
 =========================================
 
 * For apis that apply to a dict, use the prefix 'as' 
