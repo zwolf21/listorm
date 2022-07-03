@@ -1,7 +1,7 @@
 import openpyxl
 
 from .io import get_bytesio, reduce_excel_input
-from ..aslist import fillmissed, values, askeys, select
+from ..forlist import fillmissed, values, askeys, select
 
 
 

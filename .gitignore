@@ -7,7 +7,9 @@
 /etc
 /Include
 /bin
+/.vscode
 
+build/
 __pycache__/
 .DS_Store
 MANIFEST

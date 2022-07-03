@@ -1,5 +1,5 @@
 '''
-listorm documentation
+About
 =====================
 
 * listorm is a simple library that handles dict and list of dict data structures

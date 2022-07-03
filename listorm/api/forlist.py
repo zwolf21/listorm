@@ -26,7 +26,7 @@ def select(records:list[dict], *keys:str, excludes:list=None, where:callable=Non
 def update(records:list[dict], applymap:dict=None, where:callable=None, **applymap_kwargs):
     where = reduce_where(where)
     return [
-        asmap(row, applymap_kwargs) if where(row) else row
+        asupdate(row, applymap_kwargs) if where(row) else row
         for row in records
     ]
 
@@ -65,7 +65,7 @@ def fillmissed(records:list[dict], value=None):
     fields = get_allkeys(tee1)
     defaults = dict.fromkeys(fields, value)
     return [
-        setdefaults(row, defaults) for row in tee2
+        asdefault(row, defaults) for row in tee2
     ]
 
 

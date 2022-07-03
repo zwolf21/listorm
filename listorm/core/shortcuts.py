@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from ..utils import reduce_kwargs, reduce_args, number_format
-from ..api import values_count, write_excel, write_csv, asgroup, diffkeys
+from ..api import values_count, write_excel, write_csv, asgroup, asdiff, aslambda
 
 
 
@@ -36,12 +36,12 @@ class ShortCutMixin:
         '''set_number_format(A=0.0, B=0, C='0'), change number type to default value(if failed, example values are applied to default)
             A: '123' => 123.0, B: 123.2 => 123, C: 123.1 => '123.1' 
         '''
-        kwargs = {
-            column:lambda v: number_format(v, fmt) 
+        keymap = {
+            column: aslambda(number_format, column, formats=fmt)
             for column, fmt in formats_kwargs.items()
         }
-        return self.update(kwargs, pass_undefined=False)
-
+        return self.update(keymap, pass_undefined=False)
+        
     @reduce_args
     def values_count(self, *columns:str):
         return values_count(self, columns)
@@ -86,7 +86,7 @@ class ShortCutMixin:
                 added.append(Added(key, after[0]))
             else:
                 before, after = before[0], after[0]
-                diff = diffkeys(before, after)
+                diff = asdiff(before, after)
                 if diff:
                     updated.append(Updated(key, before, after, diff))
         return Changes(added, deleted, updated)

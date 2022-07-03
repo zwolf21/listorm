@@ -1,6 +1,6 @@
 import pytest
 
-from listorm import Listorm, read_csv, read_excel
+from listorm import Listorm, read_csv, read_excel, aslambda
 from listorm.exceptions import UniqueConstraintError
 from .samples import *
 
@@ -67,9 +67,9 @@ def test_rename(records, renamemap, results):
 
 
 test_update_cases = [
-    (userTable, {'name': str.upper}, None, userTable_updated_name_upper),
-    (userTable, {'name': str.upper}, lambda row: row.age > 20, userTable_updated_name_upper_where_age_gt_20),
-    (userTable, {'gender': lambda value, row: "{}/{}".format(value, row.age) }, None, userTable_updated_gender_concat_with_age),
+    (userTable, {'name': aslambda(str.upper, 'name')}, None, userTable_updated_name_upper),
+    (userTable, {'name': aslambda(str.upper, 'name')}, lambda row: row.age > 20, userTable_updated_name_upper_where_age_gt_20),
+    (userTable, {'gender': aslambda("{}/{}".format, 'gender', 'age') }, None, userTable_updated_gender_concat_with_age),
 ]
 @pytest.mark.parametrize('records, renamemap, where, results', test_update_cases)
 def test_update(records, renamemap, where, results):
@@ -121,10 +121,12 @@ test_join_cases = [
 ]
 @pytest.mark.parametrize('records, other, on, right_on, how, results', test_join_cases)
 def test_join(records, other, on, right_on, how, results):
-    assert results == Listorm(records, fill_value= '') \
+    lst = Listorm(records, fill_value= '') \
         .join(other, on, right_on, how) \
         .orderby('name', 'product') \
-        .set_number_type(amount=0.0)
+        .set_number_type(amount=0)
+    for rec, l in zip(results, lst):
+        assert rec == l
 
 
 test_write_and_read_csv_cases = [
@@ -137,7 +139,7 @@ def test_write_and_read_csv(records, file, results):
     lstsrc = Listorm(records, fill_value='undefined')
     lstsrc.to_csv(file)
     lstdest = read_csv(file).update(
-        age=int,
+        age=aslambda(int, 'age'),
         where=lambda row: row.age and row.age.isnumeric()
     )
     assert results == lstdest

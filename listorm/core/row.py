@@ -1,5 +1,5 @@
 from ..exceptions import *
-from ..api import asselect, asrename, setdefaults, asvalues, addkeys, asmap
+from ..api import asselect, asrename, asdefault, asvalues, addkeys, asupdate
 
 
 
@@ -8,7 +8,7 @@ class Row(dict):
     __getattr__ = dict.get
 
     def normalize(self, common_columns:list[str], defaults:dict=None):
-        row = setdefaults(self, common_columns, defaults)
+        row = asdefault(self, common_columns, defaults)
         return Row(row)
 
     def rename(self, renames:dict):
@@ -28,7 +28,10 @@ class Row(dict):
         return Row(row)
 
     def map(self, keymapset:dict):
-        return asmap(self, keymapset)
+        print('row', self ,keymapset)
+        row = asupdate(self, keymapset)
+        print('row', row ,keymapset)
+        return Row(row)
     
     def values(self, columns:list, **kwargs):
         return asvalues(self, columns, **kwargs)
