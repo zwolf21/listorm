@@ -1,9 +1,26 @@
-/Include
-/[Ll]ib
+/dist
 /Scripts
+/[Ll]ib
 /share
-/test
+/.pytest_cache
+/.ipynb_checkpoints
+/etc
+/Include
+/bin
+/.vscode
 
+build/
+__pycache__/
+.DS_Store
+MANIFEST
+
+*.xlsx
+*.csv
+*.cfg
+*.ipynb
+*.json
+*.txt
+test.py
 
 *.ipynb
 *.egg-info/

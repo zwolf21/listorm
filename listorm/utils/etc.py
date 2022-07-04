@@ -1,6 +1,10 @@
+import inspect
+
+
+
 def tuplize(arg):
     if arg is None:
-        return arg
+        return (arg)
     if isinstance(arg, (list, tuple)):
         return tuple(arg)
     return arg,
@@ -26,6 +30,8 @@ def round_try(value, round_to=2):
 
 
 def number_format(value, formats:object):
+    if formats is None:
+        return value
     formatter = type(formats)
     try:
         formatted = formatter(value)
@@ -38,3 +44,10 @@ def number_format(value, formats:object):
     return formatted
 
 
+def get_argcounts(callable):
+    try:
+        sig = inspect.signature(callable)
+    except:
+        return 1
+    else:
+        return len(sig.parameters)
