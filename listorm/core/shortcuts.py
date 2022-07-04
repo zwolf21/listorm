@@ -1,7 +1,7 @@
 from collections import namedtuple
 
 from ..utils import reduce_kwargs, reduce_args, number_format
-from ..api import values_count, write_excel, write_csv, asgroup, asdiff, aslambda
+from ..api import values_count, write_excel, write_csv, asgroup, asdiff
 
 
 
@@ -33,11 +33,8 @@ class ShortCutMixin:
     
     @reduce_kwargs
     def set_number_type(self, *formats:dict, **formats_kwargs):
-        '''set_number_format(A=0.0, B=0, C='0'), change number type to default value(if failed, example values are applied to default)
-            A: '123' => 123.0, B: 123.2 => 123, C: 123.1 => '123.1' 
-        '''
         keymap = {
-            column: aslambda(number_format, column, formats=fmt)
+            column: lambda column: number_format(column, fmt)
             for column, fmt in formats_kwargs.items()
         }
         return self.update(keymap, pass_undefined=False)

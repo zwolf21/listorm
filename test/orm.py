@@ -1,6 +1,6 @@
 import pytest
 
-from listorm import Listorm, read_csv, read_excel, aslambda
+from listorm import Listorm, read_csv, read_excel
 from listorm.exceptions import UniqueConstraintError
 from .samples import *
 
@@ -48,7 +48,7 @@ def test_drop_column(records, columns, results):
 
 test_add_column_cases = [
     (userTable, {'key': 'value'}, userTable_column_added_value),
-    (userTable, {'gender/age': lambda row: '{}/{}'.format(row.gender, row.age)}, userTable_column_added_gender_age_concated)
+    (userTable, {'gender/age': lambda gender, age: '{}/{}'.format(gender, age)}, userTable_column_added_gender_age_concated)
 ]
 @pytest.mark.parametrize('records, column_mapset, results', test_add_column_cases)
 def test_add_column(records, column_mapset, results):
@@ -67,9 +67,9 @@ def test_rename(records, renamemap, results):
 
 
 test_update_cases = [
-    (userTable, {'name': aslambda(str.upper, 'name')}, None, userTable_updated_name_upper),
-    (userTable, {'name': aslambda(str.upper, 'name')}, lambda row: row.age > 20, userTable_updated_name_upper_where_age_gt_20),
-    (userTable, {'gender': aslambda("{}/{}".format, 'gender', 'age') }, None, userTable_updated_gender_concat_with_age),
+    (userTable, {'name': str.upper}, None, userTable_updated_name_upper),
+    (userTable, {'name': str.upper}, lambda row: row.age > 20, userTable_updated_name_upper_where_age_gt_20),
+    (userTable, {'gender': lambda gender, age: "{}/{}".format(gender, age) }, None, userTable_updated_gender_concat_with_age),
 ]
 @pytest.mark.parametrize('records, renamemap, where, results', test_update_cases)
 def test_update(records, renamemap, where, results):
@@ -139,7 +139,7 @@ def test_write_and_read_csv(records, file, results):
     lstsrc = Listorm(records, fill_value='undefined')
     lstsrc.to_csv(file)
     lstdest = read_csv(file).update(
-        age=aslambda(int, 'age'),
+        age=int,
         where=lambda row: row.age and row.age.isnumeric()
     )
     assert results == lstdest

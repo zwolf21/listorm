@@ -1,7 +1,7 @@
 from .base import BaseList
 from .shortcuts import ShortCutMixin
 from ..exceptions import *
-from ..api import sort, distinct, groupby, join, reduce_where, aslambda
+from ..api import sort, distinct, groupby, join, reduce_where
 from ..utils import reduce_args, reduce_kwargs, tuplize
 
 
