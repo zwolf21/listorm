@@ -6,50 +6,47 @@ from .helper import reduce_where
 
 
 
-@reduce_args
-def values(records:list[dict], *keys:str, flat_one=True) -> list:
+@reduce_args('keys')
+def values(records:list[dict], keys:list, *, flat_one=True) -> list:
     return [
         asvalues(row, keys, flat=flat_one) for row in records
     ]
 
 
-@reduce_args
-def select(records:list[dict], *keys:str, excludes:list=None, where:callable=None) -> list[dict]:
-    where = reduce_where(where)
+@reduce_args('keys')
+def select(records:list[dict], keys:list, *, excludes:list=None, where:callable=None) -> list[dict]:
     return [
-        asselect(row, keys, excludes) for row in records
-        if where(row)
+        asselect(row, keys, excludes=excludes) for row in records
+        if reduce_where(row, where)
     ]
 
 
-@reduce_kwargs
-def update(records:list[dict], applymap:dict=None, where:callable=None, **applymap_kwargs):
-    where = reduce_where(where)
+@reduce_kwargs('updatemap')
+def update(records:list[dict], updatemap:dict=None, where:callable=None):
     return [
-        asupdate(row, applymap_kwargs) if where(row) else row
+        asupdate(row, updatemap=updatemap) if reduce_where(row, where) else row
         for row in records
     ]
 
 
-@reduce_kwargs
-def extend(records:list[dict], keymapset:dict, **keymapset_kwargs) -> list[dict]:
+@reduce_kwargs('keymap')
+def extend(records:list[dict], *, keymap:dict) -> list[dict]:
     return [
-        addkeys(row, keymapset_kwargs) for row in records
+        addkeys(row, keymap=keymap) for row in records
     ]
 
 
-@reduce_args
-def drop(records, *keys:str) -> list:
-    return select(excludes=keys)
+@reduce_args('keys')
+def drop(records:list[dict], keys:list) -> list:
+    return select(records, excludes=keys)
 
 
-@reduce_kwargs
-def rename(dict:dict, renames:dict, **renames_kwargs) -> dict:
-    return {
-        renames_kwargs.get(key, key): value
-        for key, value in dict.items()
-    }
-
+@reduce_kwargs('renamemap')
+def rename(records:list[dict], renamemap:dict) -> dict:
+    return [
+        asrename(row, renamemap=renamemap)
+        for row in records   
+    ]
 
 def get_allkeys(records:list[dict]) -> list:
     keyset = {
@@ -65,7 +62,7 @@ def fillmissed(records:list[dict], value=None):
     fields = get_allkeys(tee1)
     defaults = dict.fromkeys(fields, value)
     return [
-        asdefault(row, defaults) for row in tee2
+        asdefault(row, defaultmap=defaults) for row in tee2
     ]
 
 
@@ -74,8 +71,9 @@ def guess_type(records:list[dict], key:str):
     head, *_ = filter(None, values)
     return type(head)
 
-@reduce_args
-def sort(records:list[dict], *sortkeys) -> list[dict]:
+
+@reduce_args('sortkeys')
+def sort(records:list[dict], sortkeys:list) -> list[dict]:
     records = list(records)
     if not records:
         return records
@@ -92,10 +90,10 @@ def sort(records:list[dict], *sortkeys) -> list[dict]:
     return records
 
 
-@reduce_args
-def distinct(records:list[dict], *keys:str, keep_first:bool=True, singles:bool=False) -> list:
+@reduce_args('keys')
+def distinct(records:list[dict], keys:list, *, keep_first:bool=True, singles:bool=False) -> list:
     if not keep_first:
-        records = reversed(records)
+        records = list(reversed(records))
     duplicates = {}
     for row in records:
         values = asvalues(row, keys)
@@ -108,12 +106,11 @@ def distinct(records:list[dict], *keys:str, keep_first:bool=True, singles:bool=F
         distincts.append(rows[0])
     
     if not keep_first:
-        distincts = reversed(distincts)
+        distincts = list(reversed(distincts))
     return distincts
 
 
-@reduce_args
-def asgroup(records:list[dict], *keys:list, with_pos:bool=False) -> tuple[list, dict[str, list]]:
+def asgroup(records:list[dict], keys:list, with_pos:bool=False) -> tuple[list, dict[str, list]]:
     grouped = {}
     for p, row in enumerate(records):
         values = asvalues(row, keys)    
@@ -137,12 +134,11 @@ def aggregate(grouped:dict[str, list[dict]], keys:list, aggset:dict, aliases:dic
     return aggregated
 
 
-@reduce_args
-@reduce_kwargs
-def groupby(records:list[dict], *keys:str, aggset:dict=None, renames:dict=None, groupset_name:str=None, **aggset_kwargs) -> list[dict]:
-    aggset_kwargs.update(aggset or {})
+@reduce_args('keys')
+@reduce_kwargs('aggset')
+def groupby(records:list[dict], keys:list, *, aggset:dict, renames:dict=None, groupset_name:str=None) -> list[dict]:
     grouped = asgroup(records, keys)
-    agged = aggregate(grouped, keys, aggset_kwargs, renames, groupset_name)
+    agged = aggregate(grouped, keys, aggset, renames, groupset_name)
     return agged
 
 
@@ -155,8 +151,8 @@ def product(records1:list[dict], records2:list[dict]):
             yield row
 
 
-@reduce_args
-def set_index(records:list[dict], *keys:str) -> list[tuple[tuple, dict]]:
+@reduce_args('keys')
+def set_index(records:list[dict], keys:list) -> list[tuple[tuple, dict]]:
     return [
         (asvalues(row, keys), row) for row in records
     ]
@@ -203,8 +199,8 @@ def join(left:list[dict], right:list[dict], on:tuple=None, left_on:tuple=None, r
     return joined
 
 
-@reduce_args
-def values_count(records:list[dict], *keys:str):
+@reduce_args('keys')
+def values_count(records:list[dict], keys:list):
     counter = {}
     for row in records:
         value = asvalues(row, keys)
@@ -213,13 +209,13 @@ def values_count(records:list[dict], *keys:str):
     return counter
 
 
-@reduce_kwargs
-def set_number_format(records:list[dict], formats:dict=None, **formats_kwargs):
+@reduce_kwargs('formats')
+def set_number_format(records:list[dict], *, formats:dict=None):
     return [
-        asnumformat(row, formats_kwargs) for row in records
+        asnumformat(row, formats) for row in records
     ]
 
-@reduce_args
-def is_unique(records:list[dict], *keys:str):
+@reduce_args('keys')
+def is_unique(records:list[dict], keys:list):
     counter = values_count(records, keys)
     return max(counter.values(), default=1) < 2

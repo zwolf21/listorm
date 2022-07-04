@@ -39,46 +39,46 @@ def update_params(func, param_name, callback, *args, **kwargs):
     return tuple(args), kwargs
 
 
-# def reduce_args(target):
-#     def wrapper(func):
-#         @functools.wraps(func)
-#         def reduce(*args, **kwargs):
-#             if target in kwargs:
-#                 return func(*args, **kwargs)
-#             index = get_param_index(func, target)
-#             head, tail = args[:index], args[index:]
-#             reduced = []
-#             for arg in tail:
-#                 if isinstance(arg, (list, tuple)):
-#                     reduced += arg
-#                 else:
-#                     reduced.append(arg)
-#             return func(*head, reduced, **kwargs)
-#         return reduce
-#     return wrapper
+def reduce_args(target):
+    def wrapper(func):
+        @functools.wraps(func)
+        def reduce(*args, **kwargs):
+            if target in kwargs:
+                return func(*args, **kwargs)
+            index = get_param_index(func, target)
+            head, tail = args[:index], args[index:]
+            reduced = []
+            for arg in tail:
+                if isinstance(arg, (list, tuple)):
+                    reduced += arg
+                else:
+                    reduced.append(arg)
+            return func(*head, reduced, **kwargs)
+        return reduce
+    return wrapper
 
 
-# def reduce_kwargs(target):
-#     def wrapper(func):
-#         @functools.wraps(func)
-#         def reduce(*args, **kwargs):
-#             if target in kwargs:
-#                 return func(*args, **kwargs)            
-#             sig = inspect.signature(func)
-#             kw = {}
-#             rest = {}
-#             for key, value in kwargs.items():
-#                 if key not in sig.parameters:
-#                     kw[key] = value
-#                 else:
-#                     rest[key] = value
-#             kwargs = {
-#                 target: kw
-#             }
-#             kwargs.update(rest)
-#             return func(*args, **kwargs)
-#         return reduce
-#     return wrapper
+def reduce_kwargs(target):
+    def wrapper(func):
+        @functools.wraps(func)
+        def reduce(*args, **kwargs):
+            if target in kwargs:
+                return func(*args, **kwargs)            
+            sig = inspect.signature(func)
+            kw = {}
+            rest = {}
+            for key, value in kwargs.items():
+                if key not in sig.parameters:
+                    kw[key] = value
+                else:
+                    rest[key] = value
+            kwargs = {
+                target: kw
+            }
+            kwargs.update(rest)
+            return func(*args, **kwargs)
+        return reduce
+    return wrapper
             
 
 def pluralize_params(*targets):

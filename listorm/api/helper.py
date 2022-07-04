@@ -11,8 +11,19 @@ def reduce_args_count(app, *args):
     return app
 
 
-def reduce_where(where):
-    return where or (lambda x: True)
+def reduce_where(item, where):
+    if where is None:
+        return True
+    
+    if not callable(where):
+        raise ValueError('where must be callable')
+    
+    try:
+        return where(**item)
+    except TypeError:
+        kwargs = filer_kwargs(item, where)
+        return where(**kwargs)
+
 
 
 def reduce_callback(item, key, app):

@@ -39,8 +39,8 @@ def askeys(item:dict, excludes:list=None):
 
 
 
-@reduce_args
-def asvalues(item:dict, *keys:str, exact:bool=True, flat=True):    
+@reduce_args('keys')
+def asvalues(item:dict, keys:list, *, exact:bool=True, flat=True):    
     """extract values from item that matchs the order of keys
 
     :param item: a dict object
@@ -54,10 +54,10 @@ def asvalues(item:dict, *keys:str, exact:bool=True, flat=True):
 
         >>> item = {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 
-        >>> listorm.asvalues(item, 'name', 'gender')
+        >>> listorm.asvalues(item, ['name', 'gender']) #  listify keys
         ('Smith', 'M')
 
-        >>> listorm.asvalues(item, ['name', 'gender']) #  listify keys
+        >>> listorm.asvalues(item, 'name', 'gender') # also as unpacked args
         ('Smith', 'M')
 
         >>> listorm.asvalues(item, 'name') # unpacked when retriving single value
@@ -76,8 +76,8 @@ def asvalues(item:dict, *keys:str, exact:bool=True, flat=True):
     return result
 
 
-@reduce_args
-def asselect(item:dict, *keys:str, excludes:list=None) -> dict:
+@reduce_args('keys')
+def asselect(item:dict, keys:list, *, excludes:list=None) -> dict:
     """select key, value pair from item
 
     :param item: a dict object
@@ -113,12 +113,12 @@ def asselect(item:dict, *keys:str, excludes:list=None) -> dict:
     }
 
 
-@reduce_kwargs
-def addkeys(item:dict, keymapset:dict=None, **keymapset__kwargs) -> dict:
+@reduce_kwargs('keymap')
+def addkeys(item:dict, *, keymap:dict) -> dict:
     """extends item keys values via value or callback
 
     :param item: a dict object
-    :param keymapset: key: value pair dict of items to be added
+    :param keymap: key: value pair dict of items to be added
     :return: Expanded existing items
 
 
@@ -126,10 +126,10 @@ def addkeys(item:dict, keymapset:dict=None, **keymapset__kwargs) -> dict:
 
         >>> item = {'name': 'Smith', 'gender': 'M', 'age': 17}
 
-        >>> listorm.addkeys(item, {'location': 'USA'})
+        >>> listorm.addkeys(item, keymap={'location': 'USA'})
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 
-        >>> listorm.addkeys(item, location='USA') # also keymapset can converted into kwargs style
+        >>> listorm.addkeys(item, location='USA') # also keymap can converted into kwargs style
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
         
         # add key value via function
@@ -155,7 +155,7 @@ def addkeys(item:dict, keymapset:dict=None, **keymapset__kwargs) -> dict:
 
     """
     added = {}
-    for key, app in keymapset__kwargs.items():
+    for key, app in keymap.items():
         added.update(reduce_callback(item, key, app))
 
     item = dict(item)
@@ -163,8 +163,8 @@ def addkeys(item:dict, keymapset:dict=None, **keymapset__kwargs) -> dict:
     return item
 
 
-@reduce_kwargs
-def asrename(item:dict, renamemap:dict=None, **renamemap_kwargs) -> dict:
+@reduce_kwargs('renamemap')
+def asrename(item:dict, *, renamemap:dict) -> dict:
     """change key as to another name
 
     :param item: a dict object
@@ -178,25 +178,25 @@ def asrename(item:dict, renamemap:dict=None, **renamemap_kwargs) -> dict:
 
         >>> item = {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 
-        >>> listorm.asrename(item, {'name': 'first_name', 'gender': 'sex', 'location': 'country'})
+        >>> listorm.asrename(item, renamemap={'name': 'first_name', 'gender': 'sex', 'location': 'country'})
         {'first_name': 'Smith', 'sex': 'M', 'age': 17, 'country': 'USA'}
 
-        >>> listorm.asrename(item, name='first_name', gender='sex', location='country') # also as kwargs style
+        >>> listorm.asrename(item, name='first_name', gender='sex', location='country') # also as uppacked kwarg style
         {'first_name': 'Smith', 'sex': 'M', 'age': 17, 'country': 'USA'}
 
     """
     return {
-        renamemap_kwargs.get(key, key): value
+        renamemap.get(key, key): value
         for key, value in item.items()
     }
 
 
-@reduce_kwargs
-def asdefault(item:dict, defaults:dict=None, **defaults_kwargs) -> dict:
+@reduce_kwargs('defaultmap')
+def asdefault(item:dict, *, defaultmap:dict) -> dict:
     """fill values from defaults if key not in existing item
 
     :param item: a dict object
-    :param defaults: defaults key:value mapping for missing items
+    :param defaultmap: defaults key:value mapping for missing items
     :return: newly normalized dict
 
 
@@ -225,12 +225,10 @@ def asdefault(item:dict, defaults:dict=None, **defaults_kwargs) -> dict:
         >>> listorm.asdefault(missing_location, location=fill_location)
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'Earth'}
 
-
-
     """
 
-    defaults = asselect(defaults_kwargs, excludes=askeys(item))
-    return addkeys(item, defaults)
+    defaults = asselect(defaultmap, excludes=askeys(item))
+    return addkeys(item, keymap=defaults)
 
 
 def asdiff(item1:dict, item2:dict) -> list:
@@ -264,21 +262,21 @@ def asnumformat(dict:dict, examples:dict):
     }
 
 
-@reduce_kwargs
-def asmap(item:dict, keymap:dict, **keymap_kwargs):
+@reduce_kwargs('keymap')
+def asmap(item:dict, keymap:dict):
     applied = {} 
     for key, value in item.items():
-        app = keymap_kwargs.get(key)
+        app = keymap.get(key)
         if not app:
             applied[key] = value
             continue
-        app = keymap_kwargs[key]
+        app = keymap[key]
         applied[key] = reduce_args_count(app, value, item)
     return applied
 
 
-@reduce_kwargs
-def asupdate(item:dict, updatemap:dict=None, **updatemap_kwargs):
+@reduce_kwargs('updatemap')
+def asupdate(item:dict, updatemap:dict):
     """update item values
 
     :param item: a dict object
@@ -303,15 +301,12 @@ def asupdate(item:dict, updatemap:dict=None, **updatemap_kwargs):
         >>> listorm.asupdate(item, location=str.upper)
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 
-
-
     """
-    
-        
+            
         # >>> listorm.asupdate(item, location=aslambda(str.upper, 'location'))
         # {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
     updated = {}
     for key, value in item.items():
-        app = updatemap_kwargs.get(key, value)
+        app = updatemap.get(key, value)
         updated.update(reduce_callback(item, key, app))
     return updated
