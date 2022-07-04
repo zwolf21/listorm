@@ -27,8 +27,8 @@ def test_init(records, uniques, fill_missed, fill_value, results):
 
 test_select_cases = [
     (userTable, 'name', ['location'], None, userTable_select_name_exclude_location),
-    (userTable, [], None, lambda row: row.age > 20, userTable_age_over_20),
-    (userTable, ['name', 'gender', 'location' ], None, lambda row: row.age > 20, userTable_select_name_gender_location_where_age_gt_20),
+    (userTable, [], None, lambda age: age > 20, userTable_age_over_20),
+    (userTable, ['name', 'gender', 'location' ], None, lambda age: age > 20, userTable_select_name_gender_location_where_age_gt_20),
 ]
 @pytest.mark.parametrize('records, columns, excludes, where, results', test_select_cases)
 def test_select(records, columns, excludes, where, results):
@@ -52,7 +52,7 @@ test_add_column_cases = [
 ]
 @pytest.mark.parametrize('records, column_mapset, results', test_add_column_cases)
 def test_add_column(records, column_mapset, results):
-    lst = Listorm(records).add_column(column_mapset)
+    lst = Listorm(records).add_column(**column_mapset)
     assert lst == results
 
 
@@ -62,18 +62,18 @@ test_rename_cases = [
 ]
 @pytest.mark.parametrize('records, renamemap, results', test_rename_cases)
 def test_rename(records, renamemap, results):
-    lst = Listorm(records).rename(renamemap)
+    lst = Listorm(records).rename(**renamemap)
     assert lst == results
 
 
 test_update_cases = [
     (userTable, {'name': str.upper}, None, userTable_updated_name_upper),
-    (userTable, {'name': str.upper}, lambda row: row.age > 20, userTable_updated_name_upper_where_age_gt_20),
+    (userTable, {'name': str.upper}, lambda age: age > 20, userTable_updated_name_upper_where_age_gt_20),
     (userTable, {'gender': lambda gender, age: "{}/{}".format(gender, age) }, None, userTable_updated_gender_concat_with_age),
 ]
-@pytest.mark.parametrize('records, renamemap, where, results', test_update_cases)
-def test_update(records, renamemap, where, results):
-    lst = Listorm(records).update(renamemap, where=where)
+@pytest.mark.parametrize('records, updatemap, where, results', test_update_cases)
+def test_update(records, updatemap, where, results):
+    lst = Listorm(records).update(**updatemap, where=where)
     assert lst == results
 
 
@@ -140,7 +140,7 @@ def test_write_and_read_csv(records, file, results):
     lstsrc.to_csv(file)
     lstdest = read_csv(file).update(
         age=int,
-        where=lambda row: row.age and row.age.isnumeric()
+        where=lambda **row: row.get('age') and row['age'].isnumeric()
     )
     assert results == lstdest
 

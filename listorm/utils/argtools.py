@@ -1,4 +1,5 @@
 import inspect, functools
+import re
 
 
 def get_param_type(func, param_name):
@@ -81,6 +82,13 @@ def reduce_kwargs(target):
     return wrapper
             
 
+def _tuplizer(value):
+    if value is None:
+        return value
+    if isinstance(value, (list, tuple)):
+        return value
+    return value,
+
 def pluralize_params(*targets):
     targets = list(targets)
     def wrapper(func):
@@ -90,7 +98,7 @@ def pluralize_params(*targets):
                 target = targets.pop()
                 args, kwargs = update_params(
                     func, target,
-                    lambda v: v if isinstance(v, (list, tuple)) else (v,),
+                    _tuplizer,
                     *args, **kwargs
                 )
             return func(*args, **kwargs)

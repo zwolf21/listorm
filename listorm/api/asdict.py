@@ -144,12 +144,12 @@ def addkeys(item:dict, *, keymap:dict) -> dict:
         * Refers to the keys in the item by specifying it as the lambda arguments
 
 
-        .. code-block::
+        .. code-block:: python
 
             lambda gender, age: "{}/{}".format(gender, age) # gender and age are key name of item
         * For refer to all items in a lambda, you can use **kwargs pattern, for example, when reffering space character exists in item
 
-        .. code-block::
+        .. code-block:: python
 
             lambda **kwargs: kwargs['age of ultron'] == 19  # (ex: when space exists in key name)
 

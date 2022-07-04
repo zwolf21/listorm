@@ -12,7 +12,6 @@ listorm at a glance
 
 * process of list of dict, a form that is often dealt with
 
-
 .. code-block::
 
    # select
