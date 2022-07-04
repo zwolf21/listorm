@@ -6,14 +6,7 @@ Listorm documentation
    :maxdepth: 2
    :caption: API Index:
 
-
-
-
    module/asdict
    
 
 
-Indices and tables
-==================
-
-* :ref:`search`

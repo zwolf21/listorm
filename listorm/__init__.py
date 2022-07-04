@@ -13,10 +13,9 @@ listorm at a glance
 * process of list of dict, a form that is often dealt with
 
 
-- extracting columns
-
-
 .. code-block::
+
+   # select
 
    from listorm import Listorm, aslambda, read_excel, read_csv
 
@@ -55,6 +54,27 @@ listorm at a glance
    >>> ls.select('name', 'age', 'location', where=lambda row: row.age > 20).print()
     {'name': 'Lyn', 'age': 28, 'location': 'China'}
     {'name': 'Park', 'age': 29, 'location': 'Korea'}
+
+
+.. code-block::
+
+   # retriving values
+
+   >>> ls.values('name', 'gender')
+   [('Hong', 'M'),
+   ('Charse', 'M'),
+   ('Lyn', 'F'),
+   ('Xiaomi', 'M'),
+   ('Park', 'M'),
+   ('Smith', 'M'),
+   ('Lee', 'F')]
+
+
+.. code-block::
+
+   # update
+
+   >> ls.update()
 
 
 '''
