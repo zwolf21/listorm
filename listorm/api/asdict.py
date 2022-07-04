@@ -147,7 +147,6 @@ def addkeys(item:dict, keymapset:dict=None, **keymapset__kwargs) -> dict:
         .. code-block::
 
             lambda gender, age: "{}/{}".format(gender, age) # gender and age are key name of item
-
         * For refer to all items in a lambda, you can use **kwargs pattern, for example, when reffering space character exists in item
 
         .. code-block::
@@ -221,7 +220,8 @@ def asdefault(item:dict, defaults:dict=None, **defaults_kwargs) -> dict:
 
         >>> def fill_location(age): # argument name age matched with age as key in item
         ...     return 'Universe' if age > 100 else 'Earth'
-    
+
+        >>> # Changing the location by referring to the neighboring key age
         >>> listorm.asdefault(missing_location, location=fill_location)
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'Earth'}
 
