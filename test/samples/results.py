@@ -247,16 +247,18 @@ user_buy_table_outer_joined = [
 ]
 
 
-userTable = [
-    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'},
-    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'},
-    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'},
-    {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'},
-    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'},
-    {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'},
-    {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'},
-]
-
+buyTable_values_count_by_product = {
+    'adopter': 1,
+    'battery': 2,
+    'cable': 1,
+    'cleaner': 2,
+    'hardcase': 1,
+    'keyboard': 2,
+    'keycover': 1,
+    'manual': 1,
+    'monitor': 1,
+    'mouse': 3
+}
 
 
 

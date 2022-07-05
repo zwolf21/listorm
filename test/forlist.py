@@ -28,8 +28,8 @@ test_add_column_cases = [
     (userTable, {'gender/age': lambda gender, age: '{}/{}'.format(gender, age)}, userTable_column_added_gender_age_concated)
 ]
 @pytest.mark.parametrize('records, column_mapset, results', test_add_column_cases)
-def test_extend(records, column_mapset, results):
-    lst = extend(records, **column_mapset)
+def test_add_column(records, column_mapset, results):
+    lst = add_column(records, **column_mapset)
     assert results == lst
 
 test_rename_cases = [

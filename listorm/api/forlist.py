@@ -1,13 +1,59 @@
+'''
+Functional API for manipulating list contains dict items
+========================================================
+'''
+
 from itertools import tee
 
 from .asdict import *
-from ..utils import reduce_args, reduce_kwargs, tuplize
+from ..utils import reduce_args, reduce_kwargs, pluralize_params
 from .helper import reduce_where
 
 
 
 @reduce_args('keys')
-def values(records:list[dict], keys:list, *, flat_one=True) -> list:
+def values(records:list[dict], keys:list, *, flat_one=True) -> list[tuple]:
+    '''extract values list from records
+
+    :param records: list contains dicts
+    :param keys: keys for extracting values
+    :param flat_one: When the return value is a single value, the value is returned without being included in the list, defaults to True
+    :return: list contains tuple values
+
+
+    .. doctest::
+        
+        >>> import listorm
+
+        >>> userTable = [
+        ...    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'},
+        ...    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'},
+        ...    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'},
+        ...    {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'},
+        ...    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'},
+        ...    {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'},
+        ...    {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'},
+        ... ]
+
+        >>> records = listorm.values(userTable, 'name', 'gender', 'location')
+        >>> for row in records: print(row)
+        ('Hong', 'M', 'Korea')
+        ('Charse', 'M', 'USA')
+        ('Lyn', 'F', 'China')
+        ('Xiaomi', 'M', 'China')
+        ('Park', 'M', 'Korea')
+        ('Smith', 'M', 'USA')
+        ('Lee', 'F', 'Korea')
+
+        >>> # When there is only one column, a flatten single list is returned
+        >>> listorm.values(userTable, 'name')
+        ['Hong', 'Charse', 'Lyn', 'Xiaomi', 'Park', 'Smith', 'Lee']
+
+        >>> # but, flat_one = False when consistency is required
+        >>> listorm.values(userTable, 'name', flat_one=False)
+        [('Hong',), ('Charse',), ('Lyn',), ('Xiaomi',), ('Park',), ('Smith',), ('Lee',)]
+
+    '''
     return [
         asvalues(row, keys, flat=flat_one) for row in records
     ]
@@ -15,6 +61,24 @@ def values(records:list[dict], keys:list, *, flat_one=True) -> list:
 
 @reduce_args('keys')
 def select(records:list[dict], keys:list, *, excludes:list=None, where:callable=None) -> list[dict]:
+    '''Retrieves the item of the specified item
+
+    :param records: list contains dicts
+    :param keys: keys for retrieves item
+    :param excludes: keys for excluded, defaults to None
+    :param where: record filtering callback 
+    :return: list of selected and filtered as records
+
+
+    .. doctest::
+
+        >>> # Names of people over 20 years of name, age, location
+        >>> records = listorm.select(userTable, ['name', 'age', 'location'], where=lambda age: age > 20)
+        >>> for row in records: row
+        {'name': 'Lyn', 'age': 28, 'location': 'China'}
+        {'name': 'Park', 'age': 29, 'location': 'Korea'}
+
+    '''
     return [
         asselect(row, keys, excludes=excludes) for row in records
         if reduce_where(row, where)
@@ -23,6 +87,66 @@ def select(records:list[dict], keys:list, *, excludes:list=None, where:callable=
 
 @reduce_kwargs('updatemap')
 def update(records:list[dict], updatemap:dict=None, where:callable=None):
+    '''update item values
+
+    :param records: a list contains dicts
+    :param updatemap: key:value|callable mapping for update values
+    :param where: filter specifying what to update, defaults to None
+    :return: list of updated items as records
+
+
+    .. doctest::
+
+        >>> # Increase the age of people in Korea and China by one
+        >>> records = listorm.update(
+        ...     userTable,
+        ...     age=lambda age: age +1,
+        ...     # or updatemap={'age': lambda age: age +1} 
+        ...     where=lambda location: location.lower() in ['korea', 'china']
+        ... )
+        >>> for row in records: print(row)
+        {'name': 'Hong', 'gender': 'M', 'age': 19, 'location': 'Korea'}
+        {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
+        {'name': 'Lyn', 'gender': 'F', 'age': 29, 'location': 'China'}
+        {'name': 'Xiaomi', 'gender': 'M', 'age': 16, 'location': 'China'}
+        {'name': 'Park', 'gender': 'M', 'age': 30, 'location': 'Korea'}
+        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
+        {'name': 'Lee', 'gender': 'F', 'age': 13, 'location': 'Korea'}
+ 
+        # applying value modifing functions
+        >>> records = listorm.update(userTable,
+        ...     # age=float, location=str.upper
+        ...     updatemap={'age': float, 'location': str.upper} 
+        ... )
+
+        >>> for row in records: row
+        {'name': 'Hong', 'gender': 'M', 'age': 18.0, 'location': 'KOREA'}
+        {'name': 'Charse', 'gender': 'M', 'age': 19.0, 'location': 'USA'}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28.0, 'location': 'CHINA'}
+        {'name': 'Xiaomi', 'gender': 'M', 'age': 15.0, 'location': 'CHINA'}
+        {'name': 'Park', 'gender': 'M', 'age': 29.0, 'location': 'KOREA'}
+        {'name': 'Smith', 'gender': 'M', 'age': 17.0, 'location': 'USA'}
+        {'name': 'Lee', 'gender': 'F', 'age': 12.0, 'location': 'KOREA'}
+
+
+    .. note::
+
+        *packed* vs *unpacked* the two way of parameterization supported
+
+        list for columns args and dict for mapping args can be converted into variable args or kwargs parameters in this library
+
+        The following below examples will use the unpacked parameters 
+
+
+        .. code-block::
+            # unpacked args vs packed to list
+            listorm.select(userTable, 'name', 'gender') == listorm.select(userTable, ['name', 'gender'])
+        
+        .. code-block::
+            # unpacked kwargs vs packed to dict
+            listorm.update(userTable, name=str.upper) == listorm.update(userTable, updatemap={'name': str.upper})
+
+    '''
     return [
         asupdate(row, updatemap=updatemap) if reduce_where(row, where) else row
         for row in records
@@ -30,7 +154,16 @@ def update(records:list[dict], updatemap:dict=None, where:callable=None):
 
 
 @reduce_kwargs('keymap')
-def extend(records:list[dict], *, keymap:dict) -> list[dict]:
+def add_column(records:list[dict], *, keymap:dict) -> list[dict]:
+    '''add keys to item in records
+
+    :param records: a list contains dicts
+    :param keymap: the value or function mapping required for key to be added
+    :return: extended records
+
+
+    '''
+
     return [
         addkeys(row, keymap=keymap) for row in records
     ]
@@ -157,9 +290,8 @@ def set_index(records:list[dict], keys:list) -> list[tuple[tuple, dict]]:
         (asvalues(row, keys), row) for row in records
     ]
 
-
+@pluralize_params('on', 'left_on', 'right_on')
 def join(left:list[dict], right:list[dict], on:tuple=None, left_on:tuple=None, right_on:tuple=None, how:str='inner') -> list[dict]:
-    on, left_on, right_on = tuplize(on), tuplize(left_on), tuplize(right_on)
 
     if on:
         left_on = right_on = on

@@ -155,3 +155,24 @@ def test_write_and_read_excel(records, file, results):
     lst.to_excel(file)
     lstdest = read_excel(file)
     assert results == lstdest
+
+test_min_max_cases = [
+    (userTable, 'max', 'age', 29),
+    (userTable, 'min', 'age', 12),
+]
+@pytest.mark.parametrize('records, min_max, column, results', test_min_max_cases)
+def test_minmax(records, min_max, column, results):
+    if min_max == 'max':
+        value = Listorm(records).max(column)
+    else:
+        value = Listorm(records).min(column)
+    assert results == value
+
+
+test_values_count_cases = [
+    (buyTable, 'product', buyTable_values_count_by_product)
+]
+@pytest.mark.parametrize('records, products, results', test_values_count_cases)
+def test_values_count(records, products, results):
+    lst = Listorm(records).values_count(products)
+    assert results == lst

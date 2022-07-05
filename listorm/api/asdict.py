@@ -280,7 +280,7 @@ def asupdate(item:dict, updatemap:dict):
     """update item values
 
     :param item: a dict object
-    :param updatemap: defaults key:value|callable mapping for update values
+    :param updatemap: key:value|callable mapping for update values
     :return: updated item
 
 
@@ -303,8 +303,6 @@ def asupdate(item:dict, updatemap:dict):
 
     """
             
-        # >>> listorm.asupdate(item, location=aslambda(str.upper, 'location'))
-        # {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
     updated = {}
     for key, value in item.items():
         app = updatemap.get(key, value)

@@ -32,7 +32,7 @@ class Listorm(ShortCutMixin, BaseList):
     @reduce_kwargs('keymap')
     def add_column(self, keymap:dict):
         return Listorm(
-            extend(self, keymap=keymap),
+            add_column(self, keymap=keymap),
             **self.as_kwargs(fill_missed=False)
         )
 
