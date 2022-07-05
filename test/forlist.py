@@ -72,12 +72,12 @@ def test_distinct(records, columns, first, singles, results):
     lst = distinct(records, columns, keep_first=first, singles=singles)
     assert results == lst
 
-test_sort_cases = [
+test_orderby_cases = [
     (userTable, ['location', '-age'], userTable_orderby_location_age_desc)
 ]
-@pytest.mark.parametrize('records, sortkeys, results', test_sort_cases)
-def test_sort(records, sortkeys, results):
-    lst = sort(records, sortkeys)
+@pytest.mark.parametrize('records, sortkeys, results', test_orderby_cases)
+def test_orderby(records, sortkeys, results):
+    lst = orderby(records, sortkeys)
     assert results == lst
 
 test_groupby_cases = [
@@ -98,7 +98,7 @@ test_join_cases = [
 def test_join(records, other, on, right_on, how, results):
     lst = join(records, other, on, on, right_on, how)
     lst = fillmissed(lst, '')
-    lst = sort(lst, 'name', 'product')
+    lst = orderby(lst, 'name', 'product')
     lst = set_number_format(lst, amount=0)
     for rec, l in zip(results, lst):
         assert rec == l

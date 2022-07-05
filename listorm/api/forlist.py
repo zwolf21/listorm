@@ -89,7 +89,7 @@ def select(records:list[dict], keys:list, *, excludes:list=None, where:callable=
 def update(records:list[dict], updatemap:dict=None, where:callable=None):
     '''update item values
 
-    :param records: a list contains dicts
+    :param records: a list contains dict items
     :param updatemap: key:value|callable mapping for update values
     :param where: filter specifying what to update, defaults to None
     :return: list of updated items as records
@@ -135,14 +135,16 @@ def update(records:list[dict], updatemap:dict=None, where:callable=None):
 
         list for columns args and dict for mapping args can be converted into variable args or kwargs parameters in this library
 
-        The following below examples will use the unpacked parameters 
+        The following below examples will use the unpacked parameters, or if unpacked is not available, you will see it used in packed form.
 
 
         .. code-block::
+
             # unpacked args vs packed to list
             listorm.select(userTable, 'name', 'gender') == listorm.select(userTable, ['name', 'gender'])
         
         .. code-block::
+
             # unpacked kwargs vs packed to dict
             listorm.update(userTable, name=str.upper) == listorm.update(userTable, updatemap={'name': str.upper})
 
@@ -157,11 +159,35 @@ def update(records:list[dict], updatemap:dict=None, where:callable=None):
 def add_column(records:list[dict], *, keymap:dict) -> list[dict]:
     '''add keys to item in records
 
-    :param records: a list contains dicts
+    :param records: a list contains dict items
     :param keymap: the value or function mapping required for key to be added
     :return: extended records
 
 
+    .. doctest::
+
+        >>> # Create a new column using the other two columns
+        >>> records = listorm.add_column(userTable, 
+        ...     keymap={'gender/age': lambda gender, age: "{}/{}".format(gender, age)}
+        ... )
+        >>> for row in records: row
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'gender/age': 'M/18'}
+        {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA', 'gender/age': 'M/19'}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China', 'gender/age': 'F/28'}
+        {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China', 'gender/age': 'M/15'}
+        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea', 'gender/age': 'M/29'}
+        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA', 'gender/age': 'M/17'}
+        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'gender/age': 'F/12'}
+
+    .. note::
+        As above, if a slash or space is included in the column name, unpacked paramater is not allowed
+
+
+        .. code-block::
+
+            # due to / is not allowed to using as parameter name, this cannot be valid code
+            add_column(userTable, gender/age=lambda gender, age: "{}/{}".format(gender, age))
+    
     '''
 
     return [
@@ -171,17 +197,99 @@ def add_column(records:list[dict], *, keymap:dict) -> list[dict]:
 
 @reduce_args('keys')
 def drop(records:list[dict], keys:list) -> list:
+    '''delete key from the items in records
+
+    :param records: a list contains dict items
+    :param keys: keys for to delete
+    :return: list what contains deleted items as records
+
+
+    .. doctest::
+
+        >>> records = listorm.drop(userTable, 'age', 'gender')
+        >>> for row in records: row
+        {'name': 'Hong', 'location': 'Korea'}
+        {'name': 'Charse', 'location': 'USA'}
+        {'name': 'Lyn', 'location': 'China'}
+        {'name': 'Xiaomi', 'location': 'China'}
+        {'name': 'Park', 'location': 'Korea'}
+        {'name': 'Smith', 'location': 'USA'}
+        {'name': 'Lee', 'location': 'Korea'}
+
+    .. note::
+
+        using by select and excludes parameter, can retrive same results
+
+
+        .. code-block::
+
+            listorm.select(userTable, excludes=['age', 'gender'])
+
+    '''
     return select(records, excludes=keys)
 
 
 @reduce_kwargs('renamemap')
 def rename(records:list[dict], renamemap:dict) -> dict:
+    '''change key of items in records as to another name
+
+    :param records: a list contains dict items
+    :param renamemap: old: new key mapping dict
+    :return: list what contains renamed items as records
+
+
+    .. doctest::
+
+        >>> records = listorm.rename(userTable, gender='sex', location='country')
+        >>> for row in records: row
+        {'name': 'Hong', 'sex': 'M', 'age': 18, 'country': 'Korea'}
+        {'name': 'Charse', 'sex': 'M', 'age': 19, 'country': 'USA'}
+        {'name': 'Lyn', 'sex': 'F', 'age': 28, 'country': 'China'}
+        {'name': 'Xiaomi', 'sex': 'M', 'age': 15, 'country': 'China'}
+        {'name': 'Park', 'sex': 'M', 'age': 29, 'country': 'Korea'}
+        {'name': 'Smith', 'sex': 'M', 'age': 17, 'country': 'USA'}
+        {'name': 'Lee', 'sex': 'F', 'age': 12, 'country': 'Korea'}
+
+        >>> # if key name has to be containing spaces
+        >>> records = listorm.rename(userTable, renamemap={'age': 'age of ultron' })
+        >>> for row in records: row
+        {'name': 'Hong', 'gender': 'M', 'age of ultron': 18, 'location': 'Korea'}
+        {'name': 'Charse', 'gender': 'M', 'age of ultron': 19, 'location': 'USA'}
+        {'name': 'Lyn', 'gender': 'F', 'age of ultron': 28, 'location': 'China'}
+        {'name': 'Xiaomi', 'gender': 'M', 'age of ultron': 15, 'location': 'China'}
+        {'name': 'Park', 'gender': 'M', 'age of ultron': 29, 'location': 'Korea'}
+        {'name': 'Smith', 'gender': 'M', 'age of ultron': 17, 'location': 'USA'}
+        {'name': 'Lee', 'gender': 'F', 'age of ultron': 12, 'location': 'Korea'}
+
+        .. note::
+
+            In newer versions of python, the order of key occurence in dict is valid
+
+    '''
     return [
         asrename(row, renamemap=renamemap)
         for row in records   
     ]
 
 def get_allkeys(records:list[dict]) -> list:
+    '''extract the occurance keys
+
+    :param records: a list contains dict items
+    :return: a list of key occurance
+
+
+    .. doctest::
+
+        >>> arecords = [
+        ...    {'name': 'Hong', 'gender': 'M'},
+        ...    {'name': 'Xiaomi', 'location': 'China'}
+        ... ]
+
+        >>> listorm.get_allkeys(arecords)
+        ['name', 'gender', 'location']
+    
+
+    '''
     keyset = {
         key:None
         for row in records
@@ -191,6 +299,60 @@ def get_allkeys(records:list[dict]) -> list:
 
 
 def fillmissed(records:list[dict], value=None):
+    '''fill missing key as default value for normalizing records
+
+    :param records: a list contains dict items
+    :param value: default value if item has missing key, defaults to None
+    :return: a records that filled with default values
+
+
+    .. doctest::
+
+        >>> userTable_with_missing_values = [
+        ...     {'age': 18, 'location': 'Korea'},
+        ...     {'name': 'Charse', 'gender': 'M', 'location': 'USA'},
+        ...     {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'},
+        ...     {'name': 'Xiaomi', },
+        ...     {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'},
+        ...     {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'},
+        ...     {'location': 'Korea'},
+        ... ]
+
+        >>> # as default, missing values are filled with None
+        >>> records = listorm.fillmissed(userTable_with_missing_values)
+        >>> for row in records: row
+        {'age': 18, 'location': 'Korea', 'name': None, 'gender': None}
+        {'name': 'Charse', 'gender': 'M', 'location': 'USA', 'age': None}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
+        {'name': 'Xiaomi', 'age': None, 'location': None, 'gender': None}
+        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
+        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
+        {'location': 'Korea', 'age': None, 'name': None, 'gender': None}
+
+        >>> # or filled with 'undefined'
+        >>> records = listorm.fillmissed(userTable_with_missing_values, 'undefined')
+        >>> for row in records: row
+        {'age': 18, 'location': 'Korea', 'name': 'undefined', 'gender': 'undefined'}
+        {'name': 'Charse', 'gender': 'M', 'location': 'USA', 'age': 'undefined'}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
+        {'name': 'Xiaomi', 'age': 'undefined', 'location': 'undefined', 'gender': 'undefined'}
+        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
+        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
+        {'location': 'Korea', 'age': 'undefined', 'name': 'undefined', 'gender': 'undefined'}
+
+        >>> # rearrange key order as same as original userTable by using select
+        >>> records = listorm.select(records, listorm.get_allkeys(userTable))
+        >>> for row in records: row
+        {'name': 'undefined', 'gender': 'undefined', 'age': 18, 'location': 'Korea'}
+        {'name': 'Charse', 'gender': 'M', 'age': 'undefined', 'location': 'USA'}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
+        {'name': 'Xiaomi', 'gender': 'undefined', 'age': 'undefined', 'location': 'undefined'}
+        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
+        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
+        {'name': 'undefined', 'gender': 'undefined', 'age': 'undefined', 'location': 'Korea'}
+
+
+    '''
     tee1, tee2 = tee(records, 2)
     fields = get_allkeys(tee1)
     defaults = dict.fromkeys(fields, value)
@@ -206,7 +368,44 @@ def guess_type(records:list[dict], key:str):
 
 
 @reduce_args('sortkeys')
-def sort(records:list[dict], sortkeys:list) -> list[dict]:
+def orderby(records:list[dict], sortkeys:list) -> list[dict]:
+    '''sort items in records
+
+    :param records: a list of dict items
+    :param sortkeys: key for sorting
+    :return: sorted records
+
+
+    .. doctest::
+
+    >>> # complex key sorting: location as ascending and by age decending
+    >>> records = listorm.orderby(userTable, 'location', '-age')
+    >>> for row in records: row
+    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
+    {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'}
+    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
+    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}
+    {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'}
+    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
+    {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
+
+    >>> # ordering by callback
+    >>> # order by first digit of age
+    >>> records = listorm.orderby(userTable, lambda age: str(age)[-1])
+    >>> for row in records: row
+    {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'}
+    {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'}
+    {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
+    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}
+    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
+    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
+    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
+
+    .. note::
+
+        If you are familiar with django it looks like it
+
+    '''
     records = list(records)
     if not records:
         return records
@@ -219,12 +418,94 @@ def sort(records:list[dict], sortkeys:list) -> list[dict]:
                reverse = True
             records.sort(key=lambda x: x[keys], reverse=reverse)
         elif callable(keys):
-            records.sort(key=keys)
+            records.sort(key=lambda row: reduce_callback(row, app=keys))
     return records
 
 
 @reduce_args('keys')
 def distinct(records:list[dict], keys:list, *, keep_first:bool=True, singles:bool=False) -> list:
+    '''remove duplicate item by values for keys 
+
+    :param records: a list contains dict items
+    :param keys: key, check for duplicated values
+    :param keep_first: if True In case of duplicate occurrence select the first item that appears, else last
+    :param singles: if True eliminate duplicated items. That is, only items that were unique are left. defaults to False
+    :return: distincted records
+
+
+    .. doctest::
+    
+        >>> buyTable = [
+        ...     {'name': 'Xiaomi', 'product': 'battery', 'amount':7},
+        ...     {'name': 'Hong', 'product': 'keyboard', 'amount':1},
+        ...     {'name': 'Lyn', 'product': 'cleaner', 'amount':5},
+        ...     {'name': 'Hong', 'product': 'monitor', 'amount':1},
+        ...     {'name': 'Hong', 'product': 'mouse', 'amount':3},
+        ...     {'name': 'Lyn', 'product': 'mouse', 'amount':1},
+        ...     {'name': 'Unknown', 'product': 'keyboard', 'amount':1},
+        ...     {'name': 'Lee', 'product': 'hardcase', 'amount':2},
+        ...     {'name': 'Lee', 'product': 'keycover', 'amount':2},
+        ...     {'name': 'Yuki', 'product': 'manual', 'amount':1},
+        ...     {'name': 'Xiaomi', 'product': 'cable', 'amount':1},
+        ...     {'name': 'anonymous', 'product': 'adopter', 'amount':2},
+        ...     {'name': 'Park', 'product': 'battery', 'amount':2},
+        ...     {'name': 'Hong', 'product': 'cleaner', 'amount':3},
+        ...     {'name': 'Smith', 'product': 'mouse', 'amount':1},
+        ... ]
+
+        >>> # maintains the existing item order if keep_first is True
+        >>> records = listorm.distinct(buyTable, 'name')
+        >>> for row in records: row
+        {'name': 'Xiaomi', 'product': 'battery', 'amount': 7}
+        {'name': 'Hong', 'product': 'keyboard', 'amount': 1}
+        {'name': 'Lyn', 'product': 'cleaner', 'amount': 5}
+        {'name': 'Unknown', 'product': 'keyboard', 'amount': 1}
+        {'name': 'Lee', 'product': 'hardcase', 'amount': 2}
+        {'name': 'Yuki', 'product': 'manual', 'amount': 1}
+        {'name': 'anonymous', 'product': 'adopter', 'amount': 2}
+        {'name': 'Park', 'product': 'battery', 'amount': 2}
+        {'name': 'Smith', 'product': 'mouse', 'amount': 1}
+
+        # retrive duplicated items occured at last if keep_first is False
+        >>> records = listorm.distinct(buyTable, 'name', keep_first=False)
+        >>> for row in records: row
+        {'name': 'Lyn', 'product': 'mouse', 'amount': 1}
+        {'name': 'Unknown', 'product': 'keyboard', 'amount': 1}
+        {'name': 'Lee', 'product': 'keycover', 'amount': 2}
+        {'name': 'Yuki', 'product': 'manual', 'amount': 1}
+        {'name': 'Xiaomi', 'product': 'cable', 'amount': 1}
+        {'name': 'anonymous', 'product': 'adopter', 'amount': 2}
+        {'name': 'Park', 'product': 'battery', 'amount': 2}
+        {'name': 'Hong', 'product': 'cleaner', 'amount': 3}
+        {'name': 'Smith', 'product': 'mouse', 'amount': 1}
+
+        # distinct by unique together by name, amount
+        >>> records = listorm.distinct(buyTable, 'name', 'amount')
+        >>> for row in records: row
+        {'name': 'Xiaomi', 'product': 'battery', 'amount': 7}
+        {'name': 'Hong', 'product': 'keyboard', 'amount': 1}
+        {'name': 'Lyn', 'product': 'cleaner', 'amount': 5}
+        {'name': 'Hong', 'product': 'mouse', 'amount': 3}
+        {'name': 'Lyn', 'product': 'mouse', 'amount': 1}
+        {'name': 'Unknown', 'product': 'keyboard', 'amount': 1}
+        {'name': 'Lee', 'product': 'hardcase', 'amount': 2}
+        {'name': 'Yuki', 'product': 'manual', 'amount': 1}
+        {'name': 'Xiaomi', 'product': 'cable', 'amount': 1}
+        {'name': 'anonymous', 'product': 'adopter', 'amount': 2}
+        {'name': 'Park', 'product': 'battery', 'amount': 2}
+        {'name': 'Smith', 'product': 'mouse', 'amount': 1}
+
+        >>> # if singles is True, retrive the item only the name exist once
+        >>> records = listorm.distinct(buyTable, 'name', singles=True)
+        >>> for row in records: row
+        {'name': 'Unknown', 'product': 'keyboard', 'amount': 1}
+        {'name': 'Yuki', 'product': 'manual', 'amount': 1}
+        {'name': 'anonymous', 'product': 'adopter', 'amount': 2}
+        {'name': 'Park', 'product': 'battery', 'amount': 2}
+        {'name': 'Smith', 'product': 'mouse', 'amount': 1}
+
+
+    '''
     if not keep_first:
         records = list(reversed(records))
     duplicates = {}
@@ -270,6 +551,55 @@ def aggregate(grouped:dict[str, list[dict]], keys:list, aggset:dict, aliases:dic
 @reduce_args('keys')
 @reduce_kwargs('aggset')
 def groupby(records:list[dict], keys:list, *, aggset:dict, renames:dict=None, groupset_name:str=None) -> list[dict]:
+    '''grouping by keys and aggregate values
+
+    :param records: a list of dict items
+    :param keys: keys for grouping
+    :param aggset: aggregate key: function map
+    :param renames: the name of aggregated key, if None, as original keyname, default None
+    :param groupset_name: if specified, grouped items are dangling, default None
+    :return: newly aggregated records
+
+
+    .. doctest::
+
+        >>> # get gender numbers by location
+        >>> grouped = listorm.groupby(userTable,
+        ...     'location', 'gender', #1. grouping
+        ...      gender=len,  #2 caclulating
+        ...      renames={'gender': 'gender_count'} #3 retriving as other keyname
+        ... )
+        >>> for row in grouped: row
+        {'location': 'Korea', 'gender': 'M', 'gender_count': 2}
+        {'location': 'USA', 'gender': 'M', 'gender_count': 2}
+        {'location': 'China', 'gender': 'F', 'gender_count': 1}
+        {'location': 'China', 'gender': 'M', 'gender_count': 1}
+        {'location': 'Korea', 'gender': 'F', 'gender_count': 1}
+
+        >>> # get average of age by gender
+        >>> def calc_average_age(values):
+        ...     return sum(values) / len(values)
+        >>> grouped = listorm.groupby(userTable,
+        ...   'gender',
+        ...   age=calc_average_age,
+        ...   renames={'age': 'age_avg'}
+        ... )
+        >>> grouped
+        [{'gender': 'M', 'age_avg': 19.6}, {'gender': 'F', 'age_avg': 20.0}]
+
+        >> simplify to values
+        >>> listorm.values(grouped)
+        [('M', 19.6), ('F', 20.0)]
+
+
+        .. note::
+            
+            Although groupby's parameterizing is rather complicated, tt is largely divided into three parts.
+            * keys
+            * aggregation
+            * renaming for retrieve aggregation
+
+    '''
     grouped = asgroup(records, keys)
     agged = aggregate(grouped, keys, aggset, renames, groupset_name)
     return agged
@@ -292,7 +622,71 @@ def set_index(records:list[dict], keys:list) -> list[tuple[tuple, dict]]:
 
 @pluralize_params('on', 'left_on', 'right_on')
 def join(left:list[dict], right:list[dict], on:tuple=None, left_on:tuple=None, right_on:tuple=None, how:str='inner') -> list[dict]:
+    '''merge two records
 
+    :param left: a records
+    :param right: another records
+    :param on: when the field name of the key to join is the same, specify on, defaluts to None
+    :param left_on: keys for join on left side records
+    :param right_on: keys for join on right side records
+    :param how: 'innder', 'left', 'right', 'outer', defaults to 'inner'
+    :return: new merged records
+
+
+    .. doctest::
+
+        >>> # inner join by name
+        >>> records = listorm.join(userTable, buyTable, on='name')
+        >>> records = listorm.orderby(records, 'name', 'product') # sort join results
+        >>> for row in records: row
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'cleaner', 'amount': 3}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'keyboard', 'amount': 1}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'monitor', 'amount': 1}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'mouse', 'amount': 3}
+        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'product': 'hardcase', 'amount': 2}
+        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'product': 'keycover', 'amount': 2}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China', 'product': 'cleaner', 'amount': 5}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China', 'product': 'mouse', 'amount': 1}
+        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea', 'product': 'battery', 'amount': 2}
+        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA', 'product': 'mouse', 'amount': 1}
+        {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China', 'product': 'battery', 'amount': 7}
+        {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China', 'product': 'cable', 'amount': 1}
+
+        >>> # left join, Charse has no buy item
+        >>> records = listorm.join(userTable, buyTable, on='name', how='left')
+        >>> for row in records: row
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'keyboard', 'amount': 1}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'monitor', 'amount': 1}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'mouse', 'amount': 3}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'cleaner', 'amount': 3}
+        {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China', 'product': 'cleaner', 'amount': 5}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China', 'product': 'mouse', 'amount': 1}
+        {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China', 'product': 'battery', 'amount': 7}
+        {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China', 'product': 'cable', 'amount': 1}
+        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea', 'product': 'battery', 'amount': 2}
+        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA', 'product': 'mouse', 'amount': 1}
+        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'product': 'hardcase', 'amount': 2}
+        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'product': 'keycover', 'amount': 2}
+
+        >>> # merged records has missing values so filled missing as None
+        >>> for row in listorm.fillmissed(records): row
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'keyboard', 'amount': 1}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'monitor', 'amount': 1}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'mouse', 'amount': 3}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'cleaner', 'amount': 3}
+        {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA', 'product': None, 'amount': None}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China', 'product': 'cleaner', 'amount': 5}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China', 'product': 'mouse', 'amount': 1}
+        {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China', 'product': 'battery', 'amount': 7}
+        {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China', 'product': 'cable', 'amount': 1}
+        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea', 'product': 'battery', 'amount': 2}
+        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA', 'product': 'mouse', 'amount': 1}
+        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'product': 'hardcase', 'amount': 2}
+        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'product': 'keycover', 'amount': 2}
+
+
+    '''
     if on:
         left_on = right_on = on
     elif not all([left_on, right_on]):
@@ -321,6 +715,7 @@ def join(left:list[dict], right:list[dict], on:tuple=None, left_on:tuple=None, r
             for lrow in lrows
             for rrow in rrows
         )
+        
         rows = []
         for lrow, rrow in products:
             row = {}
@@ -333,6 +728,20 @@ def join(left:list[dict], right:list[dict], on:tuple=None, left_on:tuple=None, r
 
 @reduce_args('keys')
 def values_count(records:list[dict], keys:list):
+    '''get values count by keys
+
+    :param records: a list contains dict items
+    :param keys: key for counted values
+    :return: dict has values count
+
+
+    .. doctest::
+
+        >>> listorm.values_count(buyTable, 'product')
+        {'battery': 2, 'keyboard': 2, 'cleaner': 2, 'monitor': 1, 'mouse': 3, 'hardcase': 1, 'keycover': 1, 'manual': 1, 'cable': 1, 'adopter': 1}
+
+    '''
+
     counter = {}
     for row in records:
         value = asvalues(row, keys)

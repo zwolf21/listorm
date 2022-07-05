@@ -57,7 +57,7 @@ class Listorm(ShortCutMixin, BaseList):
 
     @reduce_args('sortkeys')
     def orderby(self, sortkeys:list):
-        return Listorm(sort(self, sortkeys), **self.as_kwargs(fill_missed=False))
+        return Listorm(orderby(self, sortkeys), **self.as_kwargs(fill_missed=False))
 
     @reduce_args('columns')
     @reduce_kwargs('aggset')

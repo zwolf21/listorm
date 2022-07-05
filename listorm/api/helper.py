@@ -26,22 +26,25 @@ def reduce_where(item, where):
 
 
 
-def reduce_callback(item, key, app):
+def reduce_callback(item, key=None, app=None):
     updated = {}
     if not callable(app):
-        updated[key] = app
+        value = app
     else:
         try:
             kwargs = filer_kwargs(item, app)
         except ValueError:
-            updated[key] = app(item[key])
+            value = app(item[key])
         else:
             try:
-                updated[key] = app(**item)
+                value = app(**item)
             except TypeError:
                 if kwargs:
-                    updated[key] = app(**kwargs)
+                    value = app(**kwargs)
                 else:
-                    updated[key] = app(item[key])
-    
+                    value = app(item[key])
+    if key is None:
+        return value
+
+    updated[key] = value
     return updated
