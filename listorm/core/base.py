@@ -4,8 +4,6 @@ from ..api.forlist import *
 from ..api.extensions import *
 from ..utils import tuplize
 from ..exceptions import UniqueConstraintError
-from .row import Row
-
 
 
 
@@ -19,7 +17,7 @@ class BaseList(UserList):
             records = self.check_for_uniques(records)
         if self.fill_missed:
             records = self.normalize_records(records, fill_value)
-        super().__init__(map(Row, records))
+        super().__init__(records)
 
     def as_kwargs(self, **updates):
         default = asselect(self.__dict__, ['uniques', 'fill_value', 'fill_missed'])
