@@ -24,6 +24,8 @@ class ShortCutMixin:
         if self: return self[-1]
 
     def max(self, column:str):
+        '''get max
+        '''
         values = filter(None, self.values(column))
         return max(values)
 

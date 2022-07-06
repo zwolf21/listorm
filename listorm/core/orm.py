@@ -1,3 +1,9 @@
+'''
+Class Based API for manipulate list as records
+==============================================
+'''
+
+
 from .base import BaseList
 from .shortcuts import ShortCutMixin
 from ..exceptions import *
@@ -7,6 +13,11 @@ from ..utils import reduce_args, reduce_kwargs, pluralize_params
 
 
 class Listorm(ShortCutMixin, BaseList):
+    '''Wrapper class for list api
+
+    :param ShortCutMixin: test
+    :param BaseList: test
+    '''
 
         
     def filter(self, where:callable):

@@ -8,6 +8,7 @@ Listorm documentation
 
    module/asdict
    module/forlist
+   module/orm
    
 
 
