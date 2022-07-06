@@ -7,6 +7,7 @@ Listorm documentation
    :caption: API Index:
 
    module/asdict
+   module/forlist
    
 
 

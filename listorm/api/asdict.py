@@ -7,7 +7,7 @@ Functional API for manipulating dicts
 '''
 
 
-from .helper import reduce_callable, reduce_args_count
+from .helper import reduce_args_count, reduce_callback
 from ..utils import number_format, reduce_args, reduce_kwargs
 
 
@@ -39,8 +39,8 @@ def askeys(item:dict, excludes:list=None):
 
 
 
-@reduce_args
-def asvalues(item:dict, *keys:str, exact:bool=True, flat=True):    
+@reduce_args('keys')
+def asvalues(item:dict, keys:list, *, exact:bool=True, flat=True):    
     """extract values from item that matchs the order of keys
 
     :param item: a dict object
@@ -54,10 +54,10 @@ def asvalues(item:dict, *keys:str, exact:bool=True, flat=True):
 
         >>> item = {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 
-        >>> listorm.asvalues(item, 'name', 'gender')
+        >>> listorm.asvalues(item, ['name', 'gender']) #  listify keys
         ('Smith', 'M')
 
-        >>> listorm.asvalues(item, ['name', 'gender']) #  listify keys
+        >>> listorm.asvalues(item, 'name', 'gender') # also as unpacked args
         ('Smith', 'M')
 
         >>> listorm.asvalues(item, 'name') # unpacked when retriving single value
@@ -76,8 +76,8 @@ def asvalues(item:dict, *keys:str, exact:bool=True, flat=True):
     return result
 
 
-@reduce_args
-def asselect(item:dict, *keys:str, excludes:list=None) -> dict:
+@reduce_args('keys')
+def asselect(item:dict, keys:list, *, excludes:list=None) -> dict:
     """select key, value pair from item
 
     :param item: a dict object
@@ -113,37 +113,12 @@ def asselect(item:dict, *keys:str, excludes:list=None) -> dict:
     }
 
 
-@reduce_args
-def aslambda(callback, *keys, askwargs=False, **nonlocals):
-    """
-    * reduce for callback and values in items as parameters
-    * concise than using original lambda syntax
-    * flexible implementation according to the parameters required by callback
-    * It will be frequently used when using callback as an argument throughout this library.
-
-    :param callback: Any callable function to apply at item
-    :param keys: The key of the item value to pass as a callback args
-    :param nonlocals: Reference variable outside of item
-    :param askwargs: If True, passing not only the value of the item but also the key value as kwargs , defaults to False
-    :return: reduced as lambda function
-
-
-    .. note::
-
-        Examples of aslambda will appear in the examples of functions that take callbacks as arguments, which will be introduced belows
-
-    """
-    if askwargs:
-        return lambda item: callback(**asselect(item, keys), **nonlocals) 
-    return lambda item: callback(*asvalues(item, keys, flat=False), **nonlocals)
-
-
-@reduce_kwargs
-def addkeys(item:dict, keymapset:dict=None, **keymapset__kwargs) -> dict:
+@reduce_kwargs('keymap')
+def addkeys(item:dict, *, keymap:dict) -> dict:
     """extends item keys values via value or callback
 
     :param item: a dict object
-    :param keymapset: key: value pair dict of items to be added
+    :param keymap: key: value pair dict of items to be added
     :return: Expanded existing items
 
 
@@ -151,36 +126,45 @@ def addkeys(item:dict, keymapset:dict=None, **keymapset__kwargs) -> dict:
 
         >>> item = {'name': 'Smith', 'gender': 'M', 'age': 17}
 
-        >>> listorm.addkeys(item, {'location': 'USA'})
+        >>> listorm.addkeys(item, keymap={'location': 'USA'})
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 
-        >>> listorm.addkeys(item, location='USA') # also keymapset can converted into kwargs style
+        >>> listorm.addkeys(item, location='USA') # also keymap can converted into kwargs style
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
         
         # add key value via function
         >>> listorm.addkeys(item,
-        ...    gender_age=lambda item: "{}/{}".format(item['gender'], item['age'])
+        ...    gender_age=lambda gender, age: "{}/{}".format(gender, age)
         ... )
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'gender_age': 'M/17'}
 
-        # Tricks with aslambda
-        >>> from listorm import aslambda
-        >>> listorm.addkeys(item,
-        ...     gender_age=aslambda("{}/{}".format, 'gender', 'age')
-        ... )
-        {'name': 'Smith', 'gender': 'M', 'age': 17, 'gender_age': 'M/17'}
+
+    .. note::
+        * The lambda callback function used in this library is applied according to the number and name of the argument 
+        * Refers to the keys in the item by specifying it as the lambda arguments
+
+
+        .. code-block:: python
+
+            lambda gender, age: "{}/{}".format(gender, age) # gender and age are key name of item
+        * For refer to all items in a lambda, you can use **kwargs pattern, for example, when reffering space character exists in item
+
+        .. code-block:: python
+
+            lambda **kwargs: kwargs['age of ultron'] == 19  # (ex: when space exists in key name)
 
     """
     added = {}
-    for key, app in keymapset__kwargs.items():
-        added[key] = reduce_callable(app, item)
+    for key, app in keymap.items():
+        added.update(reduce_callback(item, key, app))
+
     item = dict(item)
     item.update(added)
     return item
 
 
-@reduce_kwargs
-def asrename(item:dict, renamemap:dict=None, **renamemap_kwargs) -> dict:
+@reduce_kwargs('renamemap')
+def asrename(item:dict, *, renamemap:dict) -> dict:
     """change key as to another name
 
     :param item: a dict object
@@ -194,25 +178,25 @@ def asrename(item:dict, renamemap:dict=None, **renamemap_kwargs) -> dict:
 
         >>> item = {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 
-        >>> listorm.asrename(item, {'name': 'first_name', 'gender': 'sex', 'location': 'country'})
+        >>> listorm.asrename(item, renamemap={'name': 'first_name', 'gender': 'sex', 'location': 'country'})
         {'first_name': 'Smith', 'sex': 'M', 'age': 17, 'country': 'USA'}
 
-        >>> listorm.asrename(item, name='first_name', gender='sex', location='country') # also as kwargs style
+        >>> listorm.asrename(item, name='first_name', gender='sex', location='country') # also as uppacked kwarg style
         {'first_name': 'Smith', 'sex': 'M', 'age': 17, 'country': 'USA'}
 
     """
     return {
-        renamemap_kwargs.get(key, key): value
+        renamemap.get(key, key): value
         for key, value in item.items()
     }
 
 
-@reduce_kwargs
-def asdefault(item:dict, defaults:dict=None, **defaults_kwargs) -> dict:
+@reduce_kwargs('defaultmap')
+def asdefault(item:dict, *, defaultmap:dict) -> dict:
     """fill values from defaults if key not in existing item
 
     :param item: a dict object
-    :param defaults: defaults key:value mapping for missing items
+    :param defaultmap: defaults key:value mapping for missing items
     :return: newly normalized dict
 
 
@@ -234,19 +218,17 @@ def asdefault(item:dict, defaults:dict=None, **defaults_kwargs) -> dict:
         >>> # fill value by function
         >>> missing_location = {'name': 'Smith', 'gender': 'M', 'age': 17}
 
-        >>> def fill_location(age):
+        >>> def fill_location(age): # argument name age matched with age as key in item
         ...     return 'Universe' if age > 100 else 'Earth'
-    
-        >>> listorm.asdefault(missing_location, location=lambda item: fill_location(item['age']))
-        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'Earth'}
 
-        >>> # or with aslambda
-        >>> listorm.asdefault(missing_location, location=aslambda(fill_location, 'age'))
+        >>> # Changing the location by referring to the neighboring key age
+        >>> listorm.asdefault(missing_location, location=fill_location)
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'Earth'}
 
     """
-    defaults = asselect(defaults_kwargs, excludes=askeys(item))
-    return addkeys(item, defaults)
+
+    defaults = asselect(defaultmap, excludes=askeys(item))
+    return addkeys(item, keymap=defaults)
 
 
 def asdiff(item1:dict, item2:dict) -> list:
@@ -280,25 +262,25 @@ def asnumformat(dict:dict, examples:dict):
     }
 
 
-@reduce_kwargs
-def asmap(item:dict, keymap:dict, **keymap_kwargs):
+@reduce_kwargs('keymap')
+def asmap(item:dict, keymap:dict):
     applied = {} 
     for key, value in item.items():
-        app = keymap_kwargs.get(key)
+        app = keymap.get(key)
         if not app:
             applied[key] = value
             continue
-        app = keymap_kwargs[key]
+        app = keymap[key]
         applied[key] = reduce_args_count(app, value, item)
     return applied
 
 
-@reduce_kwargs
-def asupdate(item:dict, updatemap:dict=None, **updatemap_kwargs):
+@reduce_kwargs('updatemap')
+def asupdate(item:dict, updatemap:dict):
     """update item values
 
     :param item: a dict object
-    :param updatemap: defaults key:value|callable mapping for update values
+    :param updatemap: key:value|callable mapping for update values
     :return: updated item
 
 
@@ -306,20 +288,23 @@ def asupdate(item:dict, updatemap:dict=None, **updatemap_kwargs):
 
         >>> item = {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'usa'}
 
-        >>> # update by assign simple value
+        >>> # update by assign simple value directly
         >>> listorm.asupdate(item, age=100) 
         {'name': 'Smith', 'gender': 'M', 'age': 100, 'location': 'usa'}
 
         >>> # update value via function
-        >>> listorm.asupdate(item, location=lambda item: str.upper(item['location']))
+
+        >>> listorm.asupdate(item, location=lambda location: str.upper(location))
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
-        
-        >>> listorm.asupdate(item, location=aslambda(str.upper, 'location'))
+
+        # as shortcut insted of using lambda
+        >>> listorm.asupdate(item, location=str.upper)
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 
     """
+            
     updated = {}
     for key, value in item.items():
-        app = updatemap_kwargs.get(key, value)
-        updated[key] = reduce_callable(app, item)
+        app = updatemap.get(key, value)
+        updated.update(reduce_callback(item, key, app))
     return updated

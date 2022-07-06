@@ -1,10 +1,5 @@
-from ..utils import get_argcounts
+from ..utils import get_argcounts, filer_kwargs
 
-
-def reduce_callable(value, *args, **kwargs):
-    if callable(value):
-        return value(*args, **kwargs)
-    return value
 
 
 def reduce_args_count(app, *args):
@@ -16,5 +11,40 @@ def reduce_args_count(app, *args):
     return app
 
 
-def reduce_where(where):
-    return where or (lambda x: True)
+def reduce_where(item, where):
+    if where is None:
+        return True
+    
+    if not callable(where):
+        raise ValueError('where must be callable')
+    
+    try:
+        return where(**item)
+    except TypeError:
+        kwargs = filer_kwargs(item, where)
+        return where(**kwargs)
+
+
+
+def reduce_callback(item, key=None, app=None):
+    updated = {}
+    if not callable(app):
+        value = app
+    else:
+        try:
+            kwargs = filer_kwargs(item, app)
+        except ValueError:
+            value = app(item[key])
+        else:
+            try:
+                value = app(**item)
+            except TypeError:
+                if kwargs:
+                    value = app(**kwargs)
+                else:
+                    value = app(item[key])
+    if key is None:
+        return value
+
+    updated[key] = value
+    return updated
