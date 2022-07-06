@@ -69,12 +69,6 @@ listorm at a glance
    ('Lee', 'F')]
 
 
-.. code-block::
-
-   # update
-
-   >> ls.update()
-
 
 '''
 

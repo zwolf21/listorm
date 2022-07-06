@@ -350,9 +350,8 @@ def fillmissed(records:list[dict], value=None):
         {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
         {'name': 'undefined', 'gender': 'undefined', 'age': 'undefined', 'location': 'Korea'}
-
-
     '''
+
     tee1, tee2 = tee(records, 2)
     fields = get_allkeys(tee1)
     defaults = dict.fromkeys(fields, value)
@@ -378,6 +377,7 @@ def orderby(records:list[dict], sortkeys:list) -> list[dict]:
 
     .. doctest::
 
+
     >>> # complex key sorting: location as ascending and by age decending
     >>> records = listorm.orderby(userTable, 'location', '-age')
     >>> for row in records: row
@@ -400,6 +400,7 @@ def orderby(records:list[dict], sortkeys:list) -> list[dict]:
     {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
     {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
     {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
+
 
     .. note::
 
