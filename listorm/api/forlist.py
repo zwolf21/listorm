@@ -515,7 +515,7 @@ def distinct(records:list[dict], keys:list, *, keep_first:bool=True, singles:boo
 
             .. doctest::
 
-                dup_numbers = [1,1,2,3,3,4,4,5,5,5,6,7,7,7,8,9]
+                >>> dup_numbers = [1,1,2,3,3,4,4,5,5,5,6,7,7,7,8,9]
                 >>> listorm.distinct(dup_numbers)
                 [1, 2, 3, 4, 5, 6, 7, 8, 9]
                 >>> listorm.distinct(dup_numbers, singles=True)
@@ -526,7 +526,7 @@ def distinct(records:list[dict], keys:list, *, keep_first:bool=True, singles:boo
                 ... ]
                 >>> listorm.distinct(fruitbasket)
                 ['apple', 'banana', 'cherry', 'mango', 'orange', 'grape', 'kiwi']
-                >>> listorm.distinct(fruitbasket)
+                >>> listorm.distinct(fruitbasket, singles=True)
                 ['banana', 'mango', 'grape']
 
 
@@ -615,7 +615,7 @@ def groupby(records:list[dict], keys:list, *, aggset:dict, renames:dict=None, gr
         >>> grouped
         [{'gender': 'M', 'age_avg': 19.6}, {'gender': 'F', 'age_avg': 20.0}]
 
-        >> simplify to values
+        >>> # simplify to values
         >>> listorm.values(grouped)
         [('M', 19.6), ('F', 20.0)]
 
@@ -665,20 +665,19 @@ def join(left:list[dict], right:list[dict], on:tuple=None, left_on:tuple=None, r
 
         >>> # inner join by name
         >>> records = listorm.join(userTable, buyTable, on='name')
-        >>> records = listorm.orderby(records, 'name', 'product') # sort join results
         >>> for row in records: row
-        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'cleaner', 'amount': 3}
         {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'keyboard', 'amount': 1}
         {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'monitor', 'amount': 1}
         {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'mouse', 'amount': 3}
-        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'product': 'hardcase', 'amount': 2}
-        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'product': 'keycover', 'amount': 2}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'product': 'cleaner', 'amount': 3}
         {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China', 'product': 'cleaner', 'amount': 5}
         {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China', 'product': 'mouse', 'amount': 1}
-        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea', 'product': 'battery', 'amount': 2}
-        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA', 'product': 'mouse', 'amount': 1}
         {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China', 'product': 'battery', 'amount': 7}
         {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China', 'product': 'cable', 'amount': 1}
+        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea', 'product': 'battery', 'amount': 2}
+        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA', 'product': 'mouse', 'amount': 1}
+        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'product': 'hardcase', 'amount': 2}
+        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'product': 'keycover', 'amount': 2}
 
         >>> # left join, Charse has no buy item
         >>> records = listorm.join(userTable, buyTable, on='name', how='left')
@@ -723,14 +722,22 @@ def join(left:list[dict], right:list[dict], on:tuple=None, left_on:tuple=None, r
     left_group = asgroup(left, left_on)
     right_group = asgroup(right, right_on)
 
+    leftset = left_group.keys()
+    rightset = right_group.keys()
+    intersection = leftset & rightset
+
+    leftkeys = [key for key in left_group if key in leftset]
+    rightkeys = [key for key in right_group if key in rightset]
+    unionkeys = distinct(leftkeys+rightkeys)
+
     if how == 'left':
-        joinkeys = left_group.keys()
+        joinkeys = leftkeys
     elif how == 'right':
-        joinkeys = right_group.keys()
+        joinkeys = rightkeys
     elif how == 'inner':
-        joinkeys = left_group.keys() & right_group.keys()
+        joinkeys = [key for key in unionkeys if key in intersection]
     elif how == 'outer':
-        joinkeys = left_group.keys() | right_group.keys()
+        joinkeys = unionkeys
     else:
         raise ValueError
 
