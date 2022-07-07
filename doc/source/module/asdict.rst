@@ -1,5 +1,5 @@
 
 
-.. automodule:: listorm.api.asdict
+.. automodule:: listorm.api.row
    :members: 
    :member-order: bysource

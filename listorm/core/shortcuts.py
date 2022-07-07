@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from ..utils import reduce_kwargs, reduce_args, number_format
+from ..utils import reduce_kwargs, reduce_args
 from ..api import values_count, write_excel, write_csv, asgroup, asdiff, set_number_format
 
 

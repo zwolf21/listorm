@@ -1,5 +1,5 @@
 import inspect, functools
-import re
+
 
 
 def get_param_type(func, param_name):
@@ -18,6 +18,7 @@ def get_param_index(func, param_name):
     except ValueError:
         raise ValueError("'{}' is not in parameters of {}".format(param_name, func))
     return index
+
 
 def get_default(func, param_name):
     sig = inspect.signature(func)
@@ -104,7 +105,6 @@ def pluralize_params(*targets):
             return func(*args, **kwargs)
         return plural
     return wrapper
-
 
 
 def filer_kwargs(item, func):

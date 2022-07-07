@@ -1,6 +1,6 @@
 import pytest
 
-from listorm.api.forlist import *
+from listorm.api.records import *
 from .samples import *
 
 

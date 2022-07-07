@@ -6,7 +6,7 @@ Functional API for list as records
 from itertools import tee
 from collections import abc
 
-from .asdict import *
+from .row import *
 from ..utils import reduce_args, reduce_kwargs, pluralize_params
 from .helper import reduce_where
 
