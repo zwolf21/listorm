@@ -1,6 +1,6 @@
 '''
-Functional API for manipulating list contains dict items
-========================================================
+Functional API for list as records
+----------------------------------
 '''
 
 from itertools import tee
@@ -16,9 +16,9 @@ from .helper import reduce_where
 def values(records:list[dict], keys:list, *, flat_one=True) -> list[tuple]:
     '''extract values list from records
 
-    :param records: list contains dicts
+    :param records: a list contains dict items
     :param keys: keys for extracting values
-    :param flat_one: When the return value is a single value, the value is returned without being included in the list, defaults to True
+    :param flat_one: If True, when the return value is a single value, the value is returned without being included in the list, defaults to True
     :return: list contains tuple values
 
 
@@ -64,10 +64,10 @@ def values(records:list[dict], keys:list, *, flat_one=True) -> list[tuple]:
 def select(records:list[dict], keys:list, *, excludes:list=None, where:callable=None) -> list[dict]:
     '''Retrieves the item of the specified item
 
-    :param records: list contains dicts
-    :param keys: keys for retrieves item
+    :param records: a list contains dict items
+    :param keys: keys for selecting item
     :param excludes: keys for excluded, defaults to None
-    :param where: record filtering callback 
+    :param where: callback for filtering records
     :return: list of selected and filtered as records
 
 
@@ -351,6 +351,7 @@ def fillmissed(records:list[dict], value=None):
         {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
         {'name': 'undefined', 'gender': 'undefined', 'age': 'undefined', 'location': 'Korea'}
+
     '''
 
     tee1, tee2 = tee(records, 2)
@@ -507,27 +508,27 @@ def distinct(records:list[dict], keys:list, *, keep_first:bool=True, singles:boo
         {'name': 'Smith', 'product': 'mouse', 'amount': 1}
 
 
-        .. note::
+    .. note::
 
-            * distinct applies not only to records but also to lists with general values
-            * Also removes duplicates while preserving order
+        * distinct applies not only to records but also to lists with general values
+        * Also removes duplicates while preserving order
 
 
-            .. doctest::
+        .. doctest::
 
-                >>> dup_numbers = [1,1,2,3,3,4,4,5,5,5,6,7,7,7,8,9]
-                >>> listorm.distinct(dup_numbers)
-                [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                >>> listorm.distinct(dup_numbers, singles=True)
-                [2, 6, 8, 9]
+            >>> dup_numbers = [1,1,2,3,3,4,4,5,5,5,6,7,7,7,8,9]
+            >>> listorm.distinct(dup_numbers)
+            [1, 2, 3, 4, 5, 6, 7, 8, 9]
+            >>> listorm.distinct(dup_numbers, singles=True)
+            [2, 6, 8, 9]
 
-                >>> fruitbasket = [
-                ...   'apple', 'apple', 'banana', 'cherry', 'cherry', 'cherry', 'mango', 'orange', 'orange', 'grape', 'kiwi', 'kiwi'
-                ... ]
-                >>> listorm.distinct(fruitbasket)
-                ['apple', 'banana', 'cherry', 'mango', 'orange', 'grape', 'kiwi']
-                >>> listorm.distinct(fruitbasket, singles=True)
-                ['banana', 'mango', 'grape']
+            >>> fruitbasket = [
+            ...   'apple', 'apple', 'banana', 'cherry', 'cherry', 'cherry', 'mango', 'orange', 'orange', 'grape', 'kiwi', 'kiwi'
+            ... ]
+            >>> listorm.distinct(fruitbasket)
+            ['apple', 'banana', 'cherry', 'mango', 'orange', 'grape', 'kiwi']
+            >>> listorm.distinct(fruitbasket, singles=True)
+            ['banana', 'mango', 'grape']
 
 
     '''

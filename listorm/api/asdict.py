@@ -1,10 +1,9 @@
-'''
-Functional API for manipulating dicts
-=========================================
+"""
+Functional API for dict as row
+------------------------------------
 
-* For apis that apply to a dict, use the prefix 'as' 
+"""
 
-'''
 
 
 from .helper import reduce_args_count, reduce_callback
@@ -20,7 +19,7 @@ def askeys(item:dict, excludes:list=None):
     :return: a list contains keys of item
 
 
-    .. doctest::
+    .. doctest::  
 
         >>> import listorm
 
@@ -31,8 +30,9 @@ def askeys(item:dict, excludes:list=None):
 
         >>> listorm.askeys(item, excludes=['gender', 'age'])
         ['name', 'location']
-        
+
     """
+
     excludes = excludes or []
     return [
         key for key in item if key not in excludes
@@ -68,6 +68,7 @@ def asvalues(item:dict, keys:list, *, exact:bool=True, flat=True):
         ('Smith',)
 
     """
+
     keys = keys or askeys(item)
     result = tuple(
         item[key] for key in keys if exact or key in item
@@ -155,6 +156,7 @@ def addkeys(item:dict, *, keymap:dict) -> dict:
             lambda **kwargs: kwargs['age of ultron'] == 19  # (ex: when space exists in key name)
 
     """
+    
     added = {}
     for key, app in keymap.items():
         added.update(reduce_callback(item, key, app))
@@ -294,11 +296,10 @@ def asupdate(item:dict, updatemap:dict):
         {'name': 'Smith', 'gender': 'M', 'age': 100, 'location': 'usa'}
 
         >>> # update value via function
-
         >>> listorm.asupdate(item, location=lambda location: str.upper(location))
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 
-        # as shortcut insted of using lambda
+        # as shortcut instead of using lambda
         >>> listorm.asupdate(item, location=str.upper)
         {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 

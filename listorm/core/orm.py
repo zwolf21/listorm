@@ -1,6 +1,6 @@
 '''
-Class Based API for manipulate list as records
-==============================================
+Class Based API as wrapper class
+--------------------------------
 '''
 
 
@@ -52,7 +52,7 @@ class Listorm(ShortCutMixin, BaseList):
         return Listorm(rename(self, renamemap=renamemap), fill_missed=False)
 
     @reduce_kwargs('updatemap')
-    def update(self, updatemap:dict, *, where:callable):
+    def update(self, updatemap:dict, *, where:callable=None):
         return Listorm(
             update(self, updatemap=updatemap, where=where),
             fill_missed=False
@@ -77,19 +77,19 @@ class Listorm(ShortCutMixin, BaseList):
             groupby(self, columns, aggset=aggset, renames=renames, groupset_name=groupset_name)
         )
 
-    @pluralize_params('on', 'right_on')
-    def join(self, other, on:None, right_on=None, how:str='inner'):
-        if not on:
-            on = self.uniques
+    @pluralize_params('left_on', 'right_on')
+    def join(self, other, left_on:None, right_on=None, how:str='inner'):
+        left_on = left_on or self.uniques        
+        
         if not right_on:
             if isinstance(other, Listorm):
-                right_on = other.uniques or on
+                right_on = other.uniques or left_on
             else:
-                right_on = on
-        if not all((on, right_on)):
-            raise JoinKeyDoesNotExists('on:{}, right_on:{} must be specified'.format(on, right_on))
+                right_on = left_on
+        if not all((left_on, right_on)):
+            raise JoinKeyDoesNotExists('on:{}, right_on:{} must be specified'.format(left_on, right_on))
         return Listorm(
-                join(self, other, None, on, right_on, how=how),
+                join(self, other, None, left_on, right_on, how=how),
                 fill_value=self.fill_value
             )
 

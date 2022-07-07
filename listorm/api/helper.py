@@ -1,3 +1,5 @@
+from collections import abc
+
 from ..utils import get_argcounts, filer_kwargs
 
 
@@ -29,7 +31,10 @@ def reduce_where(item, where):
 def reduce_callback(item, key=None, app=None):
     updated = {}
     if not callable(app):
-        value = app
+        if isinstance(app, abc.Mapping):
+            value = app.get(item[key], item[key])
+        else:
+            value = app
     else:
         try:
             kwargs = filer_kwargs(item, app)
