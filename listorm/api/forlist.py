@@ -4,6 +4,7 @@ Functional API for manipulating list contains dict items
 '''
 
 from itertools import tee
+from collections import abc
 
 from .asdict import *
 from ..utils import reduce_args, reduce_kwargs, pluralize_params
@@ -506,12 +507,38 @@ def distinct(records:list[dict], keys:list, *, keep_first:bool=True, singles:boo
         {'name': 'Smith', 'product': 'mouse', 'amount': 1}
 
 
+        .. note::
+
+            * distinct applies not only to records but also to lists with general values
+            * Also removes duplicates while preserving order
+
+
+            .. doctest::
+
+                dup_numbers = [1,1,2,3,3,4,4,5,5,5,6,7,7,7,8,9]
+                >>> listorm.distinct(dup_numbers)
+                [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                >>> listorm.distinct(dup_numbers, singles=True)
+                [2, 6, 8, 9]
+
+                >>> fruitbasket = [
+                ...   'apple', 'apple', 'banana', 'cherry', 'cherry', 'cherry', 'mango', 'orange', 'orange', 'grape', 'kiwi', 'kiwi'
+                ... ]
+                >>> listorm.distinct(fruitbasket)
+                ['apple', 'banana', 'cherry', 'mango', 'orange', 'grape', 'kiwi']
+                >>> listorm.distinct(fruitbasket)
+                ['banana', 'mango', 'grape']
+
+
     '''
     if not keep_first:
         records = list(reversed(records))
     duplicates = {}
     for row in records:
-        values = asvalues(row, keys)
+        if isinstance(row, abc.Mapping):
+            values = asvalues(row, keys)
+        else:
+            values = row
         duplicates.setdefault(values, []).append(row)
     
     distincts = []
