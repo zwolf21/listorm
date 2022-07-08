@@ -86,7 +86,8 @@ class Listorm(ShortCutMixin, BaseList):
             ...    {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'},
             ...    {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'},
             ... ]
-            
+
+            >>> ls = Listorm(userTable)
             >>> ls.drop_column('age', 'location').print()
             {'name': 'Hong', 'gender': 'M'}
             {'name': 'Charse', 'gender': 'M'}
@@ -152,10 +153,10 @@ class Listorm(ShortCutMixin, BaseList):
         :param renamemap: old:new mapping of column names
         :return: Listorm
 
-            .. doctest::
+        .. doctest::
+
 
             >>> from listorm import Listorm
-
             >>> ls = Listorm(userTable)
 
             >>> ls.rename(gender='sex', location='country').print()
@@ -330,26 +331,26 @@ class Listorm(ShortCutMixin, BaseList):
 
         .. doctest::
 
-        >>> # complex key sorting: location as ascending and by age decending
-        >>> ls.orderby(userTable, 'location', '-age').print()
-        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
-        {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'}
-        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
-        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}
-        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'}
-        {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
-        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
+            >>> # complex key sorting: location as ascending and by age decending
+            >>> ls.orderby(userTable, 'location', '-age').print()
+            {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
+            {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'}
+            {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
+            {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}
+            {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'}
+            {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
+            {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 
-        >>> # ordering by callback
-        >>> # order by first digit of age
-        >>> ls.orderby(userTable, lambda age: str(age)[-1]).print()
-        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'}
-        {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'}
-        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
-        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}
-        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
-        {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
-        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
+            >>> # ordering by callback
+            >>> # order by first digit of age
+            >>> ls.orderby(userTable, lambda age: str(age)[-1]).print()
+            {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'}
+            {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'}
+            {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
+            {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}
+            {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
+            {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
+            {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
 
         .. note::
 

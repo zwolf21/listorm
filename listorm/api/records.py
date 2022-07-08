@@ -4,12 +4,12 @@ Functional API for list as records
 '''
 
 from itertools import tee
-from collections import abc
+from collections import abc, namedtuple
 
 from .row import *
 from ..utils import reduce_args, reduce_kwargs, pluralize_params
 from .helper import reduce_where
-
+from ..exceptions import UniqueConstraintError
 
 
 @reduce_args('keys')
@@ -380,28 +380,28 @@ def orderby(records:list[dict], sortkeys:list) -> list[dict]:
     .. doctest::
 
 
-    >>> # complex key sorting: location as ascending and by age decending
-    >>> records = listorm.orderby(userTable, 'location', '-age')
-    >>> for row in records: row
-    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
-    {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'}
-    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
-    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}
-    {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'}
-    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
-    {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
+        >>> # complex key sorting: location as ascending and by age decending
+        >>> records = listorm.orderby(userTable, 'location', '-age')
+        >>> for row in records: row
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
+        {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'}
+        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}
+        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'}
+        {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
+        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
 
-    >>> # ordering by callback
-    >>> # order by first digit of age
-    >>> records = listorm.orderby(userTable, lambda age: str(age)[-1])
-    >>> for row in records: row
-    {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'}
-    {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'}
-    {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
-    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}
-    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
-    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
-    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
+        >>> # ordering by callback
+        >>> # order by first digit of age
+        >>> records = listorm.orderby(userTable, lambda age: str(age)[-1])
+        >>> for row in records: row
+        {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'}
+        {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'}
+        {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}
+        {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}
+        {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
+        {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'}
 
 
     .. note::
@@ -788,11 +788,133 @@ def values_count(records:list[dict], keys:list):
 
 @reduce_kwargs('formats')
 def set_number_format(records:list[dict], *, formats:dict=None):
+    '''change number formats as default examples
+
+    :param records: a list contains dict items
+    :param formats: number format examples, defaults to None
+    :return: number formatted records
+
+
+    .. doctest::
+
+        >>> numbers = [
+        ...     {
+        ...       'flt': 0.5, 'string': '123', 'string_float': '123.5', 'int': 412, 'string_int': '5123', 'blabla': 'what?',  
+        ...     }
+        ... ]
+
+        >>> # key name and example of types to change, if faild to change, example value will be default value
+        >>> listorm.set_number_format(numbers, flt='', string=0.0, string_float=0, int='', string_int=0, blabla=0)
+        [{'flt': '0.5', 'string': 123.0, 'string_float': 123, 'int': '412', 'string_int': 5123, 'blabla': 0}]
+
+    '''
     return [
         asnumformat(row, formats) for row in records
     ]
 
 @reduce_args('keys')
 def is_unique(records:list[dict], keys:list):
+    '''check unique for values of keys
+
+
+    '''
     counter = values_count(records, keys)
     return max(counter.values(), default=1) < 2
+
+
+@pluralize_params('pk')
+def diff(records1:list[dict], records2:list[dict], pk:tuple):    
+    '''compare two records about added, deleted and updated on common columns
+
+    :param records1: a list object as records
+    :param records2: another list objects as records
+    :param pk: unique keys for both of two records
+    :raises ValueError: when empty records passed
+    :raises UniqueConstraintError: when values for pk of reocords, is not unique
+    :return: namedtuple objects as Changes
+
+
+    .. doctest::
+
+
+        >>> before = [
+        ...    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'},
+        ...    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'},
+        ...    {'name': 'ohmyboss', 'gender': 'F', 'age': 17, 'location': 'USA'},
+        ...    {'name': 'Lyn', 'gender': 'F', 'age': 29, 'location': 'China'},
+        ... ]
+        >>> after = [
+        ...    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'},
+        ...    {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'},
+        ...    {'name': 'ohmyboss', 'gender': 'M', 'age': 17, 'location': 'Canada'},
+        ...    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'},
+        ... ]
+
+
+        >>> changes = listorm.diff(before, after, 'name')
+
+        >>> changes.added
+        [Added(pk='Xiaomi', rows={'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'}), Added(pk='Park', rows={'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'})]
+
+        >>> changes.deleted
+        [Deleted(pk='Hong', rows={'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}), Deleted(pk='Charse', rows={'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'})]
+
+        >>> changes.updated
+        [Updated(pk='ohmyboss', before={'name': 'ohmyboss', 'gender': 'F', 'age': 17, 'location': 'USA'}, after={'name': 'ohmyboss', 'gender': 'M', 'age': 17, 'location': 'Canada'}, where=['gender', 'location']), Updated(pk='Lyn', before={'name': 'Lyn', 'gender': 'F', 'age': 29, 'location': 'China'}, after={'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'}, where=['age'])]
+
+        >>> # usage of updated
+        >>> for change in changes.updated:
+        ...     print(change.pk)
+        ...     for key in change.where:
+        ...         print('where:', key)
+        ...         print('  before->after:',change.before[key], '->', change.after[key])
+        ...     print('------------------------------')
+        ohmyboss
+        where: gender
+          before->after: F -> M
+        where: location
+          before->after: USA -> Canada
+        ------------------------------
+        Lyn
+        where: age
+          before->after: 29 -> 28
+        ------------------------------
+
+    '''
+    if not records1 or not records2:
+        raise ValueError('not allowed empthy records')
+
+    if not all([is_unique(records1, pk), is_unique(records2, pk)]):
+        raise UniqueConstraintError
+    
+    beforeset = asgroup(records1, pk)
+    afterset = asgroup(records2, pk)
+
+    comparisonkeys = distinct([*beforeset, *afterset])
+
+    Added = namedtuple('Added', 'pk rows')
+    Deleted = namedtuple('Deleted', 'pk rows')
+    Updated = namedtuple('Updated', 'pk before after where')
+    Changes = namedtuple('Changes', 'added deleted updated')
+
+    added = []
+    deleted = []
+    updated = []
+    for key in comparisonkeys:
+        before = beforeset.get(key)
+        after = afterset.get(key)
+        if before and not after:
+            deleted.append(Deleted(key, before[0]))
+        elif after and not before:
+            added.append(Added(key, after[0]))
+        else:
+            before, after = before[0], after[0]
+            diff = asdiff(before, after)
+            if diff:
+                updated.append(Updated(key, before, after, diff))
+    return Changes(added, deleted, updated)
+
+
+
+
+
