@@ -6,5 +6,5 @@
     :noindex:
 
 .. autoclass:: listorm.core.orm.Listorm
-    :members: max
+    :members:
     :member-order: bysource
