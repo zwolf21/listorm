@@ -427,12 +427,12 @@ def orderby(records:list[dict], sortkeys:list) -> list[dict]:
 
 @reduce_args('keys')
 def distinct(records:list[dict], keys:list, *, keep_first:bool=True, singles:bool=False) -> list:
-    '''remove duplicate item by values for keys 
+    '''remove duplicated rows by keys
 
     :param records: a list contains dict items
     :param keys: key, check for duplicated values
-    :param keep_first: if True In case of duplicate occurrence select the first item that appears, else last
-    :param singles: if True eliminate duplicated items. That is, only items that were unique are left. defaults to False
+    :param keep_first: if True, in case of duplicate occurrence select the first item that appears, else last, defaults to True
+    :param singles: If True, eliminate rows that have been duplicated. That is, only items that were unique are left. defaults to False, defaults to False
     :return: distincted records
 
 

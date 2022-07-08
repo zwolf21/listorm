@@ -9,6 +9,7 @@ from ..exceptions import UniqueConstraintError
 
 class BaseList(UserList):
 
+
     def __init__(self, records:list, uniques:tuple=None, fill_missed=True,  fill_value=None):
         self.uniques = tuplize(uniques)
         self.fill_value = fill_value
