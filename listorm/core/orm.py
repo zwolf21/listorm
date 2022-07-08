@@ -1,5 +1,5 @@
 '''
-Class Based API as wrapper class
+Class Based API for records
 --------------------------------
 '''
 

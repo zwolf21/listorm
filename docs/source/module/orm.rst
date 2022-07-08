@@ -9,6 +9,7 @@
     :members:
     :member-order: bysource
 
+
 .. autoclass:: listorm.core.shortcuts.ShortCutMixin
     :members:
     :member-order: bysource
