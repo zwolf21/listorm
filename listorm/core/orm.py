@@ -31,6 +31,34 @@ class Listorm(ShortCutMixin, BaseList):
 
     @reduce_args('columns')
     def select(self, columns:list, *, excludes:list=None, where:callable=None):
+        '''Retrieves the item of the specified item
+
+        :param columns: keys for selecting columns
+        :param excludes: keys for excluding columns, defaults to None
+        :param where: callback for filtering records, defaults to None
+        :return: selected and filtered records as Listorm objects
+
+        
+        .. doctest::
+
+            >>> from listorm import Listorm
+            >>> userTable = [
+            ...    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'},
+            ...    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'},
+            ...    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'},
+            ...    {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'},
+            ...    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'},
+            ...    {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'},
+            ...    {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'},
+            ... ]
+
+            ls = Listorm(userTable)
+            ls.select('name', 'age', 'location', where=lambda age: age > 20).print()
+            {'name': 'Lyn', 'age': 28, 'location': 'China'}
+            {'name': 'Park', 'age': 29, 'location': 'Korea'}
+
+
+        '''
         return Listorm(
             select(self, columns, excludes=excludes, where=where), 
             fill_missed=False
@@ -38,10 +66,35 @@ class Listorm(ShortCutMixin, BaseList):
 
     @reduce_args('columns')
     def drop_column(self, columns:list):
+        '''delete columns
+
+        :param columns: column name for delete
+        :return: Listorm object
+        '''
         return self.select(excludes=columns)
     
     @reduce_kwargs('keymap')
     def add_column(self, keymap:dict):
+        '''extend row as new columns
+
+        :param keymap: new column: function mapping
+        :return: Listorm
+
+        
+        .. doctest::
+            >>> ls = Listorm(userTable)
+            >>> ls.add_column(
+            ...    summary=lambda name, gender, age: f"{name}/{gender}/{age}"
+            ... ).print()
+            {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea', 'summary': 'Hong/M/18'}
+            {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA', 'summary': 'Charse/M/19'}
+            {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China', 'summary': 'Lyn/F/28'}
+            {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China', 'summary': 'Xiaomi/M/15'}
+            {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea', 'summary': 'Park/M/29'}
+            {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA', 'summary': 'Smith/M/17'}
+            {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea', 'summary': 'Lee/F/12'}
+
+        '''
         return Listorm(
             add_column(self, keymap=keymap),
             **self.as_kwargs(fill_missed=False)
