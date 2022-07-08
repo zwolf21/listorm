@@ -10,11 +10,31 @@ About
 * Provides APIs for code patterns frequently used in dict and list processing
 * It has been implemented so that some key keywords and functions of SQL can be used similarly
 
+Installation
+============
+
+
+.. code-block:: console
+
+    >>> pip install listorm
+
+
+.. warning::
+
+    1.0.0 or later version is not compatible previous 0.x.x version
+
+    If you want to use older version as 0.x,
+
+
+    .. code-block::
+        
+        >>> pip install listorm==0.2.16
+    
+
 
 listorm at a glance
 ===================
 
-            
 
 
 select
