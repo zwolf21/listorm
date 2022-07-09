@@ -1,3 +1,6 @@
+:github_url:
+   https://github.com/zwolf21/listorm
+
 =====================
 Listorm documentation
 =====================
