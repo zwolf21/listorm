@@ -45,7 +45,7 @@ select
 
 
 .. note::
-    How to use the callback function used in listom
+    How to use the callback function used in listorm
         - Pass the keys (columns) of the values, to retrieve from the row as arguments to the callback
         - The callback function is used to change or determine values such as select, filtering, and update except **groupby** aggregate callback
 
