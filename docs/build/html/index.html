@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Listorm documentation &mdash; listorm 1.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Class Based API for records" href="module/orm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> listorm
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Listorm API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="module/orm.html">Class Based API for records</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module/asdict.html">Functional API for dict as row</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module/forlist.html">Functional API for list as records</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">listorm</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>Listorm documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="listorm-documentation">
+<h1>Listorm documentation<a class="headerlink" href="#listorm-documentation" title="Permalink to this headline"></a></h1>
+<section id="about">
+<h2>About<a class="headerlink" href="#about" title="Permalink to this headline"></a></h2>
+<ul class="simple">
+<li><p>listorm is a simple library that handles dict and list of dict data structures</p></li>
+<li><p>Provides APIs for code patterns frequently used in dict and list processing</p></li>
+<li><p>It has been implemented so that some key keywords and functions of SQL can be used similarly</p></li>
+</ul>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h2>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">&gt;&gt;&gt; pip install listorm</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>1.0.0 or later version is not compatible previous 0.x.x version</p>
+<p>If you want to use older version as 0.x,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pip</span> <span class="n">install</span> <span class="n">listorm</span><span class="o">==</span><span class="mf">0.2.16</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="listorm-at-a-glance">
+<h2>listorm at a glance<a class="headerlink" href="#listorm-at-a-glance" title="Permalink to this headline"></a></h2>
+<section id="select">
+<h3>select<a class="headerlink" href="#select" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">listorm</span> <span class="kn">import</span> <span class="n">Listorm</span>
+
+
+<span class="n">userTable</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Charse&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Park&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lee&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>  
+<span class="p">]</span>
+
+
+<span class="n">ls</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">userTable</span><span class="p">)</span>
+<span class="n">ls</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;location&#39;: &#39;Korea&#39;}</span>
+
+
+<span class="c1"># select columns with filter</span>
+<span class="n">ls</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="k">lambda</span> <span class="n">age</span><span class="p">:</span> <span class="n">age</span> <span class="o">&gt;</span> <span class="mi">20</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 29}</span>
+
+<span class="c1"># drop columns</span>
+<span class="n">ls</span><span class="o">.</span><span class="n">drop_column</span><span class="p">(</span><span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 29}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Charse&#39;, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Xiaomi&#39;, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Park&#39;, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Smith&#39;, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lee&#39;, &#39;location&#39;: &#39;Korea&#39;}</span>
+
+
+<span class="c1"># method chaining</span>
+<span class="n">values</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="k">lambda</span> <span class="n">age</span><span class="p">:</span> <span class="n">age</span> <span class="o">&gt;</span> <span class="mi">20</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+<span class="c1"># [(&#39;Lyn&#39;, &#39;China&#39;), (&#39;Park&#39;, &#39;Korea&#39;)]</span>
+
+</pre></div>
+</div>
+</div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<dl>
+<dt>How to use the callback function used in listom</dt><dd><ul class="simple">
+<li><p>Pass the keys (columns) of the values, to retrieve from the row as arguments to the callback</p></li>
+<li><p>The callback function is used to change or determine values such as select, filtering, and update except <strong>groupby</strong> aggregate callback</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">user</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;de&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">55</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">:</span> <span class="s1">&#39;br&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">},</span>
+<span class="p">]</span>
+
+<span class="c1"># Pass the keys to be referenced in the row as an argument to the callback function</span>
+
+<span class="n">callback1</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">name</span><span class="p">:</span> <span class="n">name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">callback2</span><span class="p">(</span><span class="n">country</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">country</span>
+
+<span class="k">def</span> <span class="nf">callback3</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">country</span><span class="p">):</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">country</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>In case of it need to refer to the entire row for example, a space exists in the key name</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">where</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">**</span><span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;age of ultron&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">18</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+</section>
+<section id="update">
+<h3>update<a class="headerlink" href="#update" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">listorm</span> <span class="kn">import</span> <span class="n">Listorm</span>
+
+
+<span class="n">userTable</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Charse&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Park&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lee&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>  
+<span class="p">]</span>
+
+
+<span class="n">ls</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">userTable</span><span class="p">)</span>
+
+
+<span class="c1"># update by key:value mapping</span>
+<span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;M&#39;</span><span class="p">:</span> <span class="s1">&#39;male&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="s1">&#39;female&#39;</span><span class="p">}</span>
+<span class="n">ls</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">gender</span><span class="o">=</span><span class="n">mapping</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;male&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;male&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;female&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;male&#39;, &#39;age&#39;: 15, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;male&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;male&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;female&#39;, &#39;age&#39;: 12, &#39;location&#39;: &#39;Korea&#39;}</span>
+
+
+<span class="c1"># update by callable with where clause</span>
+<span class="n">ls</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="k">lambda</span> <span class="n">gender</span><span class="p">,</span> <span class="n">age</span><span class="p">:</span> <span class="n">gender</span> <span class="o">==</span> <span class="s1">&#39;M&#39;</span> <span class="ow">and</span> <span class="n">age</span> <span class="o">&gt;</span> <span class="mi">17</span> <span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="c1"># **{&#39;name&#39;: &#39;HONG&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;}**</span>
+<span class="c1"># **{&#39;name&#39;: &#39;CHARSE&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;}**</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 15, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># **{&#39;name&#39;: &#39;PARK&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;Korea&#39;}**</span>
+<span class="c1"># {&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 12, &#39;location&#39;: &#39;Korea&#39;}</span>
+
+
+<span class="n">ls</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+    <span class="n">age</span><span class="o">=</span><span class="k">lambda</span> <span class="n">age</span><span class="p">:</span> <span class="n">age</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">where</span><span class="o">=</span><span class="k">lambda</span> <span class="n">location</span><span class="p">:</span> <span class="n">location</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;china&#39;</span><span class="p">,</span> <span class="s1">&#39;korea&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="c1"># **{&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># **{&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># **{&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 16, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># **{&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 30, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># **{&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 13, &#39;location&#39;: &#39;Korea&#39;}</span>
+
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="orderby">
+<h3>orderby<a class="headerlink" href="#orderby" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">listorm</span> <span class="kn">import</span> <span class="n">Listorm</span>
+
+
+<span class="n">userTable</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Charse&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Park&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lee&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>  
+<span class="p">]</span>
+<span class="n">ls</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">userTable</span><span class="p">)</span>
+
+
+<span class="c1"># sorting by location asc age desc</span>
+<span class="n">ls</span><span class="o">.</span><span class="n">orderby</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;-age&#39;</span><span class="p">)</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 15, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 12, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+
+
+<span class="c1"># sorting by callback; order by length of age, name, loacation as concat</span>
+<span class="n">ls</span><span class="o">.</span><span class="n">orderby</span><span class="p">(</span><span class="k">lambda</span> <span class="n">age</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">age</span><span class="si">}{</span><span class="n">name</span><span class="si">}{</span><span class="n">location</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="c1"># {&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 15, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 12, &#39;location&#39;: &#39;Korea&#39;}</span>
+
+
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="groupby">
+<h3>groupby<a class="headerlink" href="#groupby" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">listorm</span> <span class="kn">import</span> <span class="n">Listorm</span>
+
+
+<span class="n">userTable</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Charse&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Park&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lee&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="p">]</span>
+
+
+<span class="n">ls</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">userTable</span><span class="p">)</span>
+
+<span class="c1"># groupby location, gender</span>
+<span class="n">ls</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+    <span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="c1"># columns for grouping</span>
+    <span class="n">age</span><span class="o">=</span><span class="nb">sum</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span> <span class="c1"># aggregate</span>
+    <span class="n">renames</span><span class="o">=</span><span class="p">{</span>           <span class="c1"># renaming for columns to retrive aggregation</span>
+        <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="s1">&#39;age_sum&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;gender_count&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+<span class="c1"># {&#39;location&#39;: &#39;Korea&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age_sum&#39;: 47, &#39;gender_count&#39;: 2}</span>
+<span class="c1"># {&#39;location&#39;: &#39;USA&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age_sum&#39;: 36, &#39;gender_count&#39;: 2}</span>
+<span class="c1"># {&#39;location&#39;: &#39;China&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age_sum&#39;: 28, &#39;gender_count&#39;: 1}</span>
+<span class="c1"># {&#39;location&#39;: &#39;China&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age_sum&#39;: 15, &#39;gender_count&#39;: 1}</span>
+<span class="c1"># {&#39;location&#39;: &#39;Korea&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age_sum&#39;: 12, &#39;gender_count&#39;: 1}</span>
+
+<span class="c1"># retrive by with dangled groups</span>
+<span class="n">ls</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+    <span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span>
+    <span class="n">age</span><span class="o">=</span><span class="nb">sum</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span>
+    <span class="n">renames</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="s1">&#39;age_sum&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;gender_count&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">groupset_name</span><span class="o">=</span><span class="s1">&#39;grouped&#39;</span> <span class="c1"># column name for dangling group</span>
+<span class="p">)</span>
+<span class="c1"># {&#39;location&#39;: &#39;Korea&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age_sum&#39;: 47, &#39;gender_count&#39;: 2,</span>
+<span class="c1">#     &#39;grouped&#39;: [</span>
+<span class="c1">#         {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;},</span>
+<span class="c1">#         {&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1">#     ]</span>
+<span class="c1"># }</span>
+<span class="c1"># {&#39;location&#39;: &#39;USA&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age_sum&#39;: 36, &#39;gender_count&#39;: 2,</span>
+<span class="c1">#     &#39;grouped&#39;: [</span>
+<span class="c1">#         {&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;},</span>
+<span class="c1">#         {&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="c1">#     ]</span>
+<span class="c1"># }</span>
+<span class="c1"># {&#39;location&#39;: &#39;China&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age_sum&#39;: 28, &#39;gender_count&#39;: 1,</span>
+<span class="c1">#     &#39;grouped&#39;: [</span>
+<span class="c1">#         {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1">#     ]</span>
+<span class="c1"># }</span>
+<span class="c1"># {&#39;location&#39;: &#39;China&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age_sum&#39;: 15, &#39;gender_count&#39;: 1,</span>
+<span class="c1">#     &#39;grouped&#39;: [</span>
+<span class="c1">#         {&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 15, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="c1">#     ]</span>
+<span class="c1"># }</span>
+<span class="c1"># {&#39;location&#39;: &#39;Korea&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age_sum&#39;: 12, &#39;gender_count&#39;: 1,</span>
+<span class="c1">#     &#39;grouped&#39;: [</span>
+<span class="c1">#         {&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 12, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="c1">#     ]</span>
+<span class="c1"># }</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="join">
+<h3>join<a class="headerlink" href="#join" title="Permalink to this headline"></a></h3>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">listorm</span> <span class="kn">import</span> <span class="n">Listorm</span>
+
+
+<span class="n">userTable</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Charse&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="p">]</span>
+
+
+<span class="n">buyTable</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;battery&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">7</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;keyboard&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;cleaner&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;monitor&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;mouse&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span>
+    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;mouse&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+<span class="p">]</span>
+
+
+<span class="n">users</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">userTable</span><span class="p">)</span>
+<span class="n">buyings</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">buyTable</span><span class="p">)</span>
+
+<span class="c1"># inner join</span>
+<span class="n">users</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buyings</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,),</span> <span class="n">right_on</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,))</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;keyboard&#39;, &#39;amount&#39;: 1}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;monitor&#39;, &#39;amount&#39;: 1}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 3}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;, &#39;product&#39;: &#39;cleaner&#39;, &#39;amount&#39;: 5}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 1}</span>
+
+<span class="c1"># left join </span>
+<span class="c1"># If both join key names are the same, only left_on can be specified</span>
+<span class="n">users</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buyings</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;keyboard&#39;, &#39;amount&#39;: 1}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;monitor&#39;, &#39;amount&#39;: 1}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 3}</span>
+<span class="c1"># ** {&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;, &#39;product&#39;: None, &#39;amount&#39;: None}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;, &#39;product&#39;: &#39;cleaner&#39;, &#39;amount&#39;: 5}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 1}</span>
+
+<span class="c1"># right join</span>
+<span class="n">users</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buyings</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>
+<span class="c1"># ** {&#39;name&#39;: &#39;Xiaomi&#39;, &#39;product&#39;: &#39;battery&#39;, &#39;amount&#39;: 7, &#39;gender&#39;: None, &#39;age&#39;: None, &#39;location&#39;: None}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;keyboard&#39;, &#39;amount&#39;: 1}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;monitor&#39;, &#39;amount&#39;: 1}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 3}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;, &#39;product&#39;: &#39;cleaner&#39;, &#39;amount&#39;: 5}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 1}</span>
+
+<span class="c1"># fill missing </span>
+<span class="n">users</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">buyings</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;outer&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;keyboard&#39;, &#39;amount&#39;: 1}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;monitor&#39;, &#39;amount&#39;: 1}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 3}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;, &#39;product&#39;: None, &#39;amount&#39;: None}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;, &#39;product&#39;: &#39;cleaner&#39;, &#39;amount&#39;: 5}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 1}</span>
+<span class="c1"># {&#39;name&#39;: &#39;Xiaomi&#39;, &#39;product&#39;: &#39;battery&#39;, &#39;amount&#39;: 7, &#39;gender&#39;: None, &#39;age&#39;: None, &#39;location&#39;: None}</span>
+
+</pre></div>
+</div>
+</div></blockquote>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Listorm API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="module/orm.html">Class Based API for records</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module/asdict.html">Functional API for dict as row</a></li>
+<li class="toctree-l1"><a class="reference internal" href="module/forlist.html">Functional API for list as records</a></li>
+</ul>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="module/orm.html" class="btn btn-neutral float-right" title="Class Based API for records" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, HS Moon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

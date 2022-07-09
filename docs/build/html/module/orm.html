@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Class Based API for records &mdash; listorm 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Functional API for dict as row" href="asdict.html" />
+    <link rel="prev" title="Listorm documentation" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> listorm
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Listorm API:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Class Based API for records</a></li>
+<li class="toctree-l1"><a class="reference internal" href="asdict.html">Functional API for dict as row</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forlist.html">Functional API for list as records</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">listorm</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Class Based API for records</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/module/orm.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-listorm.core.orm"></span><section id="class-based-api-for-records">
+<h1>Class Based API for records<a class="headerlink" href="#class-based-api-for-records" title="Permalink to this headline"></a></h1>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="listorm.core.orm.Listorm">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Listorm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">records</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uniques</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_missed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.orm.Listorm" title="Permalink to this definition"></a></dt>
+<dd><p>wrapper class for</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>records</strong> – list as records</p></li>
+<li><p><strong>uniques</strong> – if specified, it check unique constraint, defaults to None</p></li>
+<li><p><strong>fill_missed</strong> – if True fill missing values of rows, defaults to True</p></li>
+<li><p><strong>fill_value</strong> – if specified, fill missing as specifed value, defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.orm.Listorm.select">
+<span class="sig-name descname"><span class="pre">select</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excludes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.orm.Listorm.select" title="Permalink to this definition"></a></dt>
+<dd><p>Retrieves the item of the specified item</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>columns</strong> – keys for selecting columns</p></li>
+<li><p><strong>excludes</strong> – keys for excluding columns, defaults to None</p></li>
+<li><p><strong>where</strong> – callback for filtering records, defaults to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Listorm</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">listorm</span> <span class="kn">import</span> <span class="n">Listorm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">userTable</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Charse&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Park&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lee&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+
+<span class="go">ls = Listorm(userTable)</span>
+<span class="go">ls.select(&#39;name&#39;, &#39;age&#39;, &#39;location&#39;, where=lambda age: age &gt; 20).print()</span>
+<span class="go">{&#39;name&#39;: &#39;Lyn&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Park&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;Korea&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.orm.Listorm.drop_column">
+<span class="sig-name descname"><span class="pre">drop_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.orm.Listorm.drop_column" title="Permalink to this definition"></a></dt>
+<dd><p>delete columns</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">listorm</span> <span class="kn">import</span> <span class="n">Listorm</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">userTable</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Charse&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Park&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lee&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">userTable</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">drop_column</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">{&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>columns</strong> – column name for delete</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Listorm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.orm.Listorm.add_column">
+<span class="sig-name descname"><span class="pre">add_column</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keymap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.orm.Listorm.add_column" title="Permalink to this definition"></a></dt>
+<dd><p>extend row as new columns</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>keymap</strong> – new column: function mapping</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Listorm</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">listorm</span> <span class="kn">import</span> <span class="n">Listorm</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">userTable</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Charse&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Park&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lee&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">userTable</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">summary</span><span class="o">=</span><span class="k">lambda</span> <span class="n">name</span><span class="p">,</span> <span class="n">gender</span><span class="p">,</span> <span class="n">age</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">gender</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">age</span><span class="si">}</span><span class="s2">&quot;</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">{&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;, &#39;summary&#39;: &#39;Hong/M/18&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;, &#39;summary&#39;: &#39;Charse/M/19&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;, &#39;summary&#39;: &#39;Lyn/F/28&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 15, &#39;location&#39;: &#39;China&#39;, &#39;summary&#39;: &#39;Xiaomi/M/15&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;Korea&#39;, &#39;summary&#39;: &#39;Park/M/29&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;, &#39;summary&#39;: &#39;Smith/M/17&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 12, &#39;location&#39;: &#39;Korea&#39;, &#39;summary&#39;: &#39;Lee/F/12&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.orm.Listorm.rename">
+<span class="sig-name descname"><span class="pre">rename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">renamemap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.orm.Listorm.rename" title="Permalink to this definition"></a></dt>
+<dd><p>change columns name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>renamemap</strong> – old:new mapping of column names</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Listorm</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">listorm</span> <span class="kn">import</span> <span class="n">Listorm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">userTable</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">gender</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;country&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">{&#39;name&#39;: &#39;Hong&#39;, &#39;sex&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;country&#39;: &#39;Korea&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Charse&#39;, &#39;sex&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;country&#39;: &#39;USA&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lyn&#39;, &#39;sex&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;country&#39;: &#39;China&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Xiaomi&#39;, &#39;sex&#39;: &#39;M&#39;, &#39;age&#39;: 15, &#39;country&#39;: &#39;China&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Park&#39;, &#39;sex&#39;: &#39;M&#39;, &#39;age&#39;: 29, &#39;country&#39;: &#39;Korea&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;sex&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;country&#39;: &#39;USA&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lee&#39;, &#39;sex&#39;: &#39;F&#39;, &#39;age&#39;: 12, &#39;country&#39;: &#39;Korea&#39;}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># if key name has to be containing spaces</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">renamemap</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="s1">&#39;age of ultron&#39;</span> <span class="p">})</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">{&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age of ultron&#39;: 18, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age of ultron&#39;: 19, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age of ultron&#39;: 28, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age of ultron&#39;: 15, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age of ultron&#39;: 29, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age of ultron&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age of ultron&#39;: 12, &#39;location&#39;: &#39;Korea&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.orm.Listorm.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">updatemap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">where</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.orm.Listorm.update" title="Permalink to this definition"></a></dt>
+<dd><p>update row values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>updatemap</strong> – column: value|function map for update values</p></li>
+<li><p><strong>where</strong> – specifying what to update, defaults to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Listorm</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">age</span><span class="o">=</span><span class="k">lambda</span> <span class="n">age</span><span class="p">:</span> <span class="n">age</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">where</span><span class="o">=</span><span class="k">lambda</span> <span class="n">location</span><span class="p">:</span> <span class="n">location</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;korea&#39;</span><span class="p">,</span> <span class="s1">&#39;china&#39;</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">{&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 16, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 30, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 13, &#39;location&#39;: &#39;Korea&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.orm.Listorm.values">
+<span class="sig-name descname"><span class="pre">values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat_one</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.orm.Listorm.values" title="Permalink to this definition"></a></dt>
+<dd><p>extract values from row</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>columns</strong> – column names to extract values</p></li>
+<li><p><strong>flat_one</strong> – If True, when the return value is a single value, the value is returned without being included in the list, defaults to True, defaults to True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">values</span> <span class="o">=</span> <span class="n">ls</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="go">(&#39;Hong&#39;, &#39;M&#39;, &#39;Korea&#39;)</span>
+<span class="go">(&#39;Charse&#39;, &#39;M&#39;, &#39;USA&#39;)</span>
+<span class="go">(&#39;Lyn&#39;, &#39;F&#39;, &#39;China&#39;)</span>
+<span class="go">(&#39;Xiaomi&#39;, &#39;M&#39;, &#39;China&#39;)</span>
+<span class="go">(&#39;Park&#39;, &#39;M&#39;, &#39;Korea&#39;)</span>
+<span class="go">(&#39;Smith&#39;, &#39;M&#39;, &#39;USA&#39;)</span>
+<span class="go">(&#39;Lee&#39;, &#39;F&#39;, &#39;Korea&#39;)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># When there is only one column, a flatten single list is returned</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+<span class="go">[&#39;Hong&#39;, &#39;Charse&#39;, &#39;Lyn&#39;, &#39;Xiaomi&#39;, &#39;Park&#39;, &#39;Smith&#39;, &#39;Lee&#39;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># but, flat_one = False when consistency is required</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">flat_one</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="go">[(&#39;Hong&#39;,), (&#39;Charse&#39;,), (&#39;Lyn&#39;,), (&#39;Xiaomi&#39;,), (&#39;Park&#39;,), (&#39;Smith&#39;,), (&#39;Lee&#39;,)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.orm.Listorm.distinct">
+<span class="sig-name descname"><span class="pre">distinct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_first</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">singles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.orm.Listorm.distinct" title="Permalink to this definition"></a></dt>
+<dd><p>remove duplicated rows by columns</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>columns</strong> – column names for check duplicated values</p></li>
+<li><p><strong>keep_first</strong> – If True, in case of duplicate occurrence select the first item that appears, else last, defaults to True</p></li>
+<li><p><strong>singles</strong> – If True, eliminate rows that have been duplicated. That is, only items that were unique are left. defaults to False, defaults to False</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Listorm</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">buyTable</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;battery&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">7</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;keyboard&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;cleaner&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">5</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;monitor&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;mouse&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;mouse&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;keyboard&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lee&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;hardcase&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lee&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;keycover&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Yuki&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;manual&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;cable&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;anonymous&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;adopter&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Park&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;battery&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;cleaner&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;mouse&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">buyTable</span><span class="p">)</span>
+<span class="go">15</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lsb</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">buyTable</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lsb</span><span class="o">.</span><span class="n">distinct</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span>
+<span class="go">12</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lsb</span><span class="o">.</span><span class="n">distinct</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">{&#39;name&#39;: &#39;Xiaomi&#39;, &#39;product&#39;: &#39;battery&#39;, &#39;amount&#39;: 7}</span>
+<span class="go">{&#39;name&#39;: &#39;Hong&#39;, &#39;product&#39;: &#39;keyboard&#39;, &#39;amount&#39;: 1}</span>
+<span class="go">{&#39;name&#39;: &#39;Lyn&#39;, &#39;product&#39;: &#39;cleaner&#39;, &#39;amount&#39;: 5}</span>
+<span class="go">{&#39;name&#39;: &#39;Unknown&#39;, &#39;product&#39;: &#39;keyboard&#39;, &#39;amount&#39;: 1}</span>
+<span class="go">{&#39;name&#39;: &#39;Lee&#39;, &#39;product&#39;: &#39;hardcase&#39;, &#39;amount&#39;: 2}</span>
+<span class="go">{&#39;name&#39;: &#39;Yuki&#39;, &#39;product&#39;: &#39;manual&#39;, &#39;amount&#39;: 1}</span>
+<span class="go">{&#39;name&#39;: &#39;anonymous&#39;, &#39;product&#39;: &#39;adopter&#39;, &#39;amount&#39;: 2}</span>
+<span class="go">{&#39;name&#39;: &#39;Park&#39;, &#39;product&#39;: &#39;battery&#39;, &#39;amount&#39;: 2}</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 1}</span>
+
+
+<span class="go"># distinct by unique together by name, amount</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lsb</span><span class="o">.</span><span class="n">distinct</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">{&#39;name&#39;: &#39;Xiaomi&#39;, &#39;product&#39;: &#39;battery&#39;, &#39;amount&#39;: 7}</span>
+<span class="go">{&#39;name&#39;: &#39;Hong&#39;, &#39;product&#39;: &#39;keyboard&#39;, &#39;amount&#39;: 1}</span>
+<span class="go">{&#39;name&#39;: &#39;Lyn&#39;, &#39;product&#39;: &#39;cleaner&#39;, &#39;amount&#39;: 5}</span>
+<span class="go">{&#39;name&#39;: &#39;Hong&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 3}</span>
+<span class="go">{&#39;name&#39;: &#39;Lyn&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 1}</span>
+<span class="go">{&#39;name&#39;: &#39;Unknown&#39;, &#39;product&#39;: &#39;keyboard&#39;, &#39;amount&#39;: 1}</span>
+<span class="go">{&#39;name&#39;: &#39;Lee&#39;, &#39;product&#39;: &#39;hardcase&#39;, &#39;amount&#39;: 2}</span>
+<span class="go">{&#39;name&#39;: &#39;Yuki&#39;, &#39;product&#39;: &#39;manual&#39;, &#39;amount&#39;: 1}</span>
+<span class="go">{&#39;name&#39;: &#39;Xiaomi&#39;, &#39;product&#39;: &#39;cable&#39;, &#39;amount&#39;: 1}</span>
+<span class="go">{&#39;name&#39;: &#39;anonymous&#39;, &#39;product&#39;: &#39;adopter&#39;, &#39;amount&#39;: 2}</span>
+<span class="go">{&#39;name&#39;: &#39;Park&#39;, &#39;product&#39;: &#39;battery&#39;, &#39;amount&#39;: 2}</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 1}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># if singles is True, retrive the item only the name exist once</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lsb</span><span class="o">.</span><span class="n">distinct</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">singles</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">{&#39;name&#39;: &#39;Unknown&#39;, &#39;product&#39;: &#39;keyboard&#39;, &#39;amount&#39;: 1}</span>
+<span class="go">{&#39;name&#39;: &#39;Yuki&#39;, &#39;product&#39;: &#39;manual&#39;, &#39;amount&#39;: 1}</span>
+<span class="go">{&#39;name&#39;: &#39;anonymous&#39;, &#39;product&#39;: &#39;adopter&#39;, &#39;amount&#39;: 2}</span>
+<span class="go">{&#39;name&#39;: &#39;Park&#39;, &#39;product&#39;: &#39;battery&#39;, &#39;amount&#39;: 2}</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;product&#39;: &#39;mouse&#39;, &#39;amount&#39;: 1}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.orm.Listorm.orderby">
+<span class="sig-name descname"><span class="pre">orderby</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sortkeys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.orm.Listorm.orderby" title="Permalink to this definition"></a></dt>
+<dd><p>sort rows</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sortkeys</strong> – column names or function for make sort keys</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Listorm</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># complex key sorting: location as ascending and by age decending</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">orderby</span><span class="p">(</span><span class="n">userTable</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;-age&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">{&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 15, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 12, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># ordering by callback</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># order by first digit of age</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">orderby</span><span class="p">(</span><span class="n">userTable</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">age</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">age</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">{&#39;name&#39;: &#39;Lee&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 12, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 15, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;}</span>
+<span class="go">{&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;Korea&#39;}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you are familiar with django it looks like it</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.orm.Listorm.groupby">
+<span class="sig-name descname"><span class="pre">groupby</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aggset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">groupset_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.orm.Listorm.groupby" title="Permalink to this definition"></a></dt>
+<dd><p>grouping rows and aggregate valeus</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>columns</strong> – column names for grouping</p></li>
+<li><p><strong>aggset</strong> – aggregate column: function map</p></li>
+<li><p><strong>renames</strong> – the name of aggregated columns, if None, as original column name, default None</p></li>
+<li><p><strong>groupset_name</strong> – if specified, grouped items are dangling, default None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Listorm</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># get gender numbers by location</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="c1">#1. grouping</span>
+<span class="gp">... </span>     <span class="n">gender</span><span class="o">=</span><span class="nb">len</span><span class="p">,</span>  <span class="c1">#2 caclulating</span>
+<span class="gp">... </span>     <span class="n">renames</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;gender_count&#39;</span><span class="p">}</span> <span class="c1">#3 retriving as other keyname</span>
+<span class="gp">... </span><span class="p">)</span><span class="o">.</span><span class="n">print</span><span class="p">()</span>
+<span class="go">{&#39;location&#39;: &#39;Korea&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;gender_count&#39;: 2}</span>
+<span class="go">{&#39;location&#39;: &#39;USA&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;gender_count&#39;: 2}</span>
+<span class="go">{&#39;location&#39;: &#39;China&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;gender_count&#39;: 1}</span>
+<span class="go">{&#39;location&#39;: &#39;China&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;gender_count&#39;: 1}</span>
+<span class="go">{&#39;location&#39;: &#39;Korea&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;gender_count&#39;: 1}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># get average of age by gender</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">calc_average_age</span><span class="p">(</span><span class="n">values</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+<span class="gp">... </span>  <span class="s1">&#39;gender&#39;</span><span class="p">,</span>
+<span class="gp">... </span>  <span class="n">age</span><span class="o">=</span><span class="n">calc_average_age</span><span class="p">,</span>
+<span class="gp">... </span>  <span class="n">renames</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="s1">&#39;age_avg&#39;</span><span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">[{&#39;gender&#39;: &#39;M&#39;, &#39;age_avg&#39;: 19.6}, {&#39;gender&#39;: &#39;F&#39;, &#39;age_avg&#39;: 20.0}]</span>
+
+
+<span class="go">.. note::</span>
+
+<span class="go">    Although groupby&#39;s parameterizing is rather complicated, tt is largely divided into three parts.</span>
+<span class="go">    * keys</span>
+<span class="go">    * aggregation</span>
+<span class="go">    * renaming for retrieve aggregation</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.orm.Listorm.join">
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left_on</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_on</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">how</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'inner'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.orm.Listorm.join" title="Permalink to this definition"></a></dt>
+<dd><p>merge other records</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> – another Listorm object</p></li>
+<li><p><strong>left_on</strong> – columns for join on left side records</p></li>
+<li><p><strong>right_on</strong> – columns for join on right side records</p></li>
+<li><p><strong>how</strong> – how to join ‘inner’, ‘left’, ‘right’, ‘outer’, defaults to ‘inner’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Listorm</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="listorm.core.shortcuts.ShortCutMixin">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ShortCutMixin</span></span><a class="headerlink" href="#listorm.core.shortcuts.ShortCutMixin" title="Permalink to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.shortcuts.ShortCutMixin.max">
+<span class="sig-name descname"><span class="pre">max</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.shortcuts.ShortCutMixin.max" title="Permalink to this definition"></a></dt>
+<dd><p>get maximum of column’s values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>column</strong> – column name where get max</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>max of column values</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">userTable</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Charse&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Park&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lee&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">listorm</span> <span class="kn">import</span> <span class="n">Listorm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">userTable</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">)</span>
+<span class="go">29</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.shortcuts.ShortCutMixin.min">
+<span class="sig-name descname"><span class="pre">min</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.shortcuts.ShortCutMixin.min" title="Permalink to this definition"></a></dt>
+<dd><p>get minium of column’s values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>column</strong> – column name where get min</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>min of column values</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ls</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">)</span>
+<span class="go">12</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.shortcuts.ShortCutMixin.set_number_type">
+<span class="sig-name descname"><span class="pre">set_number_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.shortcuts.ShortCutMixin.set_number_type" title="Permalink to this definition"></a></dt>
+<dd><p>change number formats as default examples</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>formats</strong> – number format examples</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number formatted records</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">numbers</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>    <span class="p">{</span>
+<span class="gp">... </span>      <span class="s1">&#39;flt&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;string&#39;</span><span class="p">:</span> <span class="s1">&#39;123&#39;</span><span class="p">,</span> <span class="s1">&#39;string_float&#39;</span><span class="p">:</span> <span class="s1">&#39;123.5&#39;</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">:</span> <span class="mi">412</span><span class="p">,</span> <span class="s1">&#39;string_int&#39;</span><span class="p">:</span> <span class="s1">&#39;5123&#39;</span><span class="p">,</span> <span class="s1">&#39;blabla&#39;</span><span class="p">:</span> <span class="s1">&#39;what?&#39;</span><span class="p">,</span>  
+<span class="gp">... </span>    <span class="p">}</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lsnumber</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># key name and example of types to change, if faild to change, example value will be default value</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lsnumber</span><span class="o">.</span><span class="n">set_number_type</span><span class="p">(</span><span class="n">flt</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">string</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">string_float</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">string_int</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">blabla</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">[{&#39;flt&#39;: &#39;0.5&#39;, &#39;string&#39;: 123.0, &#39;string_float&#39;: 123, &#39;int&#39;: &#39;412&#39;, &#39;string_int&#39;: 5123, &#39;blabla&#39;: 0}]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.shortcuts.ShortCutMixin.values_count">
+<span class="sig-name descname"><span class="pre">values_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.shortcuts.ShortCutMixin.values_count" title="Permalink to this definition"></a></dt>
+<dd><p>get values count by keys</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>columns</strong> – column name for counting values</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict that has value occurance</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lsb</span><span class="o">.</span><span class="n">values_count</span><span class="p">(</span><span class="s1">&#39;product&#39;</span><span class="p">)</span>
+<span class="go">{&#39;battery&#39;: 2, &#39;keyboard&#39;: 2, &#39;cleaner&#39;: 2, &#39;monitor&#39;: 1, &#39;mouse&#39;: 3, &#39;hardcase&#39;: 1, &#39;keycover&#39;: 1, &#39;manual&#39;: 1, &#39;cable&#39;: 1, &#39;adopter&#39;: 1}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.shortcuts.ShortCutMixin.to_excel">
+<span class="sig-name descname"><span class="pre">to_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.shortcuts.ShortCutMixin.to_excel" title="Permalink to this definition"></a></dt>
+<dd><p>write to excel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> – output excel filename,  defaults to None</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>if filename is None, return file contents</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.shortcuts.ShortCutMixin.to_csv">
+<span class="sig-name descname"><span class="pre">to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">csv_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.shortcuts.ShortCutMixin.to_csv" title="Permalink to this definition"></a></dt>
+<dd><p>write to csv</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> – output csv filename, defaults to None</p></li>
+<li><p><strong>fields</strong> – fields for retrieve, defaults to None</p></li>
+<li><p><strong>encoding</strong> – encoding , defaults to ‘utf-8’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>if filename is None, return file contents</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="listorm.core.shortcuts.ShortCutMixin.get_changes">
+<span class="sig-name descname"><span class="pre">get_changes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.core.shortcuts.ShortCutMixin.get_changes" title="Permalink to this definition"></a></dt>
+<dd><p>compare two records about added, deleted and updated on common columns</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> – another Listorm objects as records</p></li>
+<li><p><strong>pk</strong> – unique keys for both of two records, defaults to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>namedtuple objects as Changes</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">before</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hong&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Charse&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;ohmyboss&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">after</span> <span class="o">=</span> <span class="p">[</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Lyn&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">28</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;China&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;ohmyboss&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Canada&#39;</span><span class="p">},</span>
+<span class="gp">... </span>   <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Park&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">29</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;Korea&#39;</span><span class="p">},</span>
+<span class="gp">... </span><span class="p">]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls_before</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">before</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ls_after</span> <span class="o">=</span> <span class="n">Listorm</span><span class="p">(</span><span class="n">after</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">changes</span> <span class="o">=</span> <span class="n">ls_before</span><span class="o">.</span><span class="n">get_changes</span><span class="p">(</span><span class="n">ls_after</span><span class="p">,</span> <span class="n">pk</span><span class="o">=</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">changes</span><span class="o">.</span><span class="n">added</span>
+<span class="go">[Added(pk=&#39;Xiaomi&#39;, rows={&#39;name&#39;: &#39;Xiaomi&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 15, &#39;location&#39;: &#39;China&#39;}), Added(pk=&#39;Park&#39;, rows={&#39;name&#39;: &#39;Park&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;Korea&#39;})]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">changes</span><span class="o">.</span><span class="n">deleted</span>
+<span class="go">[Deleted(pk=&#39;Hong&#39;, rows={&#39;name&#39;: &#39;Hong&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 18, &#39;location&#39;: &#39;Korea&#39;}), Deleted(pk=&#39;Charse&#39;, rows={&#39;name&#39;: &#39;Charse&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 19, &#39;location&#39;: &#39;USA&#39;})]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">changes</span><span class="o">.</span><span class="n">updated</span>
+<span class="go">[Updated(pk=&#39;ohmyboss&#39;, before={&#39;name&#39;: &#39;ohmyboss&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}, after={&#39;name&#39;: &#39;ohmyboss&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;Canada&#39;}, where=[&#39;gender&#39;, &#39;location&#39;]), Updated(pk=&#39;Lyn&#39;, before={&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 29, &#39;location&#39;: &#39;China&#39;}, after={&#39;name&#39;: &#39;Lyn&#39;, &#39;gender&#39;: &#39;F&#39;, &#39;age&#39;: 28, &#39;location&#39;: &#39;China&#39;}, where=[&#39;age&#39;])]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># usage of updated</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">change</span> <span class="ow">in</span> <span class="n">changes</span><span class="o">.</span><span class="n">updated</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">change</span><span class="o">.</span><span class="n">pk</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">change</span><span class="o">.</span><span class="n">where</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;where:&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;  before-&gt;after:&#39;</span><span class="p">,</span><span class="n">change</span><span class="o">.</span><span class="n">before</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="s1">&#39;-&gt;&#39;</span><span class="p">,</span> <span class="n">change</span><span class="o">.</span><span class="n">after</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;------------------------------&#39;</span><span class="p">)</span>
+<span class="go">ohmyboss</span>
+<span class="go">where: gender</span>
+<span class="go">  before-&gt;after: F -&gt; M</span>
+<span class="go">where: location</span>
+<span class="go">  before-&gt;after: USA -&gt; Canada</span>
+<span class="go">------------------------------</span>
+<span class="go">Lyn</span>
+<span class="go">where: age</span>
+<span class="go">  before-&gt;after: 29 -&gt; 28</span>
+<span class="go">------------------------------</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Listorm documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="asdict.html" class="btn btn-neutral float-right" title="Functional API for dict as row" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, HS Moon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

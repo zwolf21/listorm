@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Functional API for dict as row &mdash; listorm 1.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Functional API for list as records" href="forlist.html" />
+    <link rel="prev" title="Class Based API for records" href="orm.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../index.html" class="icon icon-home"> listorm
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Listorm API:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="orm.html">Class Based API for records</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Functional API for dict as row</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forlist.html">Functional API for list as records</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">listorm</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Functional API for dict as row</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/module/asdict.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <span class="target" id="module-listorm.api.row"></span><section id="functional-api-for-dict-as-row">
+<h1>Functional API for dict as row<a class="headerlink" href="#functional-api-for-dict-as-row" title="Permalink to this headline"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="listorm.api.row.askeys">
+<span class="sig-name descname"><span class="pre">askeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excludes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.api.row.askeys" title="Permalink to this definition"></a></dt>
+<dd><p>extract keys from item</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> – a dict object</p></li>
+<li><p><strong>excludes</strong> – keys for excluded, defaults to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a list contains keys of item</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">listorm</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">item</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">askeys</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+<span class="go">[&#39;name&#39;, &#39;gender&#39;, &#39;age&#39;, &#39;location&#39;]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">askeys</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">excludes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">])</span>
+<span class="go">[&#39;name&#39;, &#39;location&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="listorm.api.row.asvalues">
+<span class="sig-name descname"><span class="pre">asvalues</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.api.row.asvalues" title="Permalink to this definition"></a></dt>
+<dd><p>extract values from item that matchs the order of keys</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> – a dict object</p></li>
+<li><p><strong>keys</strong> – keys for retrive values</p></li>
+<li><p><strong>exact</strong> – if True, raise KeyError when key is not in item, defaults to True</p></li>
+<li><p><strong>flat</strong> – When the return value is a single value, the value is returned without being included in the tuple, defaults to True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a tuple of contains values or a value</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">item</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asvalues</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">])</span> <span class="c1">#  listify keys</span>
+<span class="go">(&#39;Smith&#39;, &#39;M&#39;)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asvalues</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">)</span> <span class="c1"># also as unpacked args</span>
+<span class="go">(&#39;Smith&#39;, &#39;M&#39;)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asvalues</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">)</span> <span class="c1"># unpacked when retriving single value</span>
+<span class="go">&#39;Smith&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asvalues</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="c1"># if flat=False, the sigle value is also packed as a tuple.</span>
+<span class="go">(&#39;Smith&#39;,)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="listorm.api.row.asselect">
+<span class="sig-name descname"><span class="pre">asselect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excludes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#listorm.api.row.asselect" title="Permalink to this definition"></a></dt>
+<dd><p>select key, value pair from item</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> – a dict object</p></li>
+<li><p><strong>keys</strong> – the arguments for keys or a list containing keys, if nothing, returns a new dict with the same key and value as the original item.</p></li>
+<li><p><strong>excludes</strong> – keys for excluded, defaults to None</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>new dict item as selected</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">item</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asselect</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">])</span> <span class="c1"># keys arg as list</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asselect</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">)</span> <span class="c1"># equal from above that keys as unpacked args</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asselect</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="c1"># pass a nothing of keys arg</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asselect</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">excludes</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">])</span> <span class="c1"># useful when need to drop item</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="listorm.api.row.addkeys">
+<span class="sig-name descname"><span class="pre">addkeys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keymap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#listorm.api.row.addkeys" title="Permalink to this definition"></a></dt>
+<dd><p>extends item keys values via value or callback</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> – a dict object</p></li>
+<li><p><strong>keymap</strong> – key: value pair dict of items to be added</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Expanded existing items</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">item</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">addkeys</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">keymap</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">})</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">addkeys</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;USA&#39;</span><span class="p">)</span> <span class="c1"># also keymap can converted into kwargs style</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+
+<span class="go"># add key value via function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">addkeys</span><span class="p">(</span><span class="n">item</span><span class="p">,</span>
+<span class="gp">... </span>   <span class="n">gender_age</span><span class="o">=</span><span class="k">lambda</span> <span class="n">gender</span><span class="p">,</span> <span class="n">age</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gender</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;gender_age&#39;: &#39;M/17&#39;}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The lambda callback function used in this library is applied according to the number and name of the argument</p></li>
+<li><p>Refers to the keys in the item by specifying it as the lambda arguments</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">lambda</span> <span class="n">gender</span><span class="p">,</span> <span class="n">age</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">/</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gender</span><span class="p">,</span> <span class="n">age</span><span class="p">)</span> <span class="c1"># gender and age are key name of item</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>For refer to all items in a lambda, you can use <a href="#id1"><span class="problematic" id="id2">**</span></a>kwargs pattern, for example, when reffering space character exists in item</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">lambda</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;age of ultron&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">19</span>  <span class="c1"># (ex: when space exists in key name)</span>
+</pre></div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="listorm.api.row.asrename">
+<span class="sig-name descname"><span class="pre">asrename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">renamemap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#listorm.api.row.asrename" title="Permalink to this definition"></a></dt>
+<dd><p>change key as to another name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> – a dict object</p></li>
+<li><p><strong>renamemap</strong> – old: new name pair of dict</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>newly renamed dict</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">listorm</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">item</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asrename</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">renamemap</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;first_name&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;country&#39;</span><span class="p">})</span>
+<span class="go">{&#39;first_name&#39;: &#39;Smith&#39;, &#39;sex&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;country&#39;: &#39;USA&#39;}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asrename</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;first_name&#39;</span><span class="p">,</span> <span class="n">gender</span><span class="o">=</span><span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;country&#39;</span><span class="p">)</span> <span class="c1"># also as uppacked kwarg style</span>
+<span class="go">{&#39;first_name&#39;: &#39;Smith&#39;, &#39;sex&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;country&#39;: &#39;USA&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="listorm.api.row.asdefault">
+<span class="sig-name descname"><span class="pre">asdefault</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultmap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="headerlink" href="#listorm.api.row.asdefault" title="Permalink to this definition"></a></dt>
+<dd><p>fill values from defaults if key not in existing item</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> – a dict object</p></li>
+<li><p><strong>defaultmap</strong> – defaults key:value mapping for missing items</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>newly normalized dict</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">normal_item</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;USA&#39;</span><span class="p">}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># nothing is happend when applied at normal_item which has not missing values at location</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asdefault</span><span class="p">(</span><span class="n">normal_item</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;Unknown&#39;</span><span class="p">)</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># item that has missing keys for location and age</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">missing_location_and_age</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># filled with defaults values at missing keys</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asdefault</span><span class="p">(</span><span class="n">missing_location_and_age</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="s1">&#39;Earth&#39;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;location&#39;: &#39;Earth&#39;, &#39;age&#39;: 10}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># fill value by function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">missing_location</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">fill_location</span><span class="p">(</span><span class="n">age</span><span class="p">):</span> <span class="c1"># argument name age matched with age as key in item</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="s1">&#39;Universe&#39;</span> <span class="k">if</span> <span class="n">age</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="k">else</span> <span class="s1">&#39;Earth&#39;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Changing the location by referring to the neighboring key age</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asdefault</span><span class="p">(</span><span class="n">missing_location</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">fill_location</span><span class="p">)</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;Earth&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="listorm.api.row.asdiff">
+<span class="sig-name descname"><span class="pre">asdiff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">item2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="headerlink" href="#listorm.api.row.asdiff" title="Permalink to this definition"></a></dt>
+<dd><p>Finds keys with different value from common keys of two items</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item1</strong> – a dict object</p></li>
+<li><p><strong>item2</strong> – anothor dict object</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of keys</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">item1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Xiaomi&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;battery&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">7</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">item2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Park&#39;</span><span class="p">,</span> <span class="s1">&#39;product&#39;</span><span class="p">:</span> <span class="s1">&#39;battery&#39;</span><span class="p">,</span> <span class="s1">&#39;amount&#39;</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asdiff</span><span class="p">(</span><span class="n">item1</span><span class="p">,</span> <span class="n">item2</span><span class="p">)</span>
+<span class="go">[&#39;name&#39;, &#39;amount&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="listorm.api.row.asupdate">
+<span class="sig-name descname"><span class="pre">asupdate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updatemap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#listorm.api.row.asupdate" title="Permalink to this definition"></a></dt>
+<dd><p>update item values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> – a dict object</p></li>
+<li><p><strong>updatemap</strong> – key:value|callable mapping for update values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>updated item</p>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">item</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Smith&#39;</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s1">&#39;location&#39;</span><span class="p">:</span> <span class="s1">&#39;usa&#39;</span><span class="p">}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># update by assign simple value directly</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asupdate</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> 
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 100, &#39;location&#39;: &#39;usa&#39;}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># update value via function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asupdate</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="k">lambda</span> <span class="n">location</span><span class="p">:</span> <span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">(</span><span class="n">location</span><span class="p">))</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+
+<span class="go"># as shortcut instead of using lambda</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">listorm</span><span class="o">.</span><span class="n">asupdate</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="nb">str</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span>
+<span class="go">{&#39;name&#39;: &#39;Smith&#39;, &#39;gender&#39;: &#39;M&#39;, &#39;age&#39;: 17, &#39;location&#39;: &#39;USA&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="orm.html" class="btn btn-neutral float-left" title="Class Based API for records" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="forlist.html" class="btn btn-neutral float-right" title="Functional API for list as records" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, HS Moon.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
