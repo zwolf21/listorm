@@ -110,7 +110,7 @@ join
 
 .. toctree::
    :maxdepth: 2
-   :caption: Listorm API:
+   :caption: Listorm API
 
 
    module/orm
