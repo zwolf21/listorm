@@ -1,13 +1,13 @@
-### Note: *This documentation is for older version of listorm as 0.x.x*
+## Note: This documentation is for older version of listorm as 0.x.x
+
+## [View documentation of listorm after version 1.0](https://zwolf21.github.io/listorm/)
 
 ----
 
-### Installation
+### Installation of order version
 `pip install listorm==0.2.16`
 
 ----
-
-
 
 ```python
 import listorm as ls
