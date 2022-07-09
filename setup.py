@@ -15,7 +15,6 @@ setup(
 	author = 'HS Moon',
 	author_email = 'pbr112@naver.com',
 	py_modules = ['listorm'],
-	install_requires=[],
 	keywords=['listorm', 'list of dict', 'dict list', 'records', 'sql', 'orm'],
 	url='https://github.com/zwolf21/listorm',
 	packages=find_packages(exclude=['contrib', 'docs', 'tests']),
