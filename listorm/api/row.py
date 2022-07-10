@@ -307,6 +307,9 @@ def asupdate(item:dict, updatemap:dict):
             
     updated = {}
     for key, value in item.items():
-        app = updatemap.get(key, value)
-        updated.update(reduce_callback(item, key, app))
+        app = updatemap.get(key)
+        if not app:
+            updated[key] = value
+        else:
+            updated.update(reduce_callback(item, key, app))        
     return updated

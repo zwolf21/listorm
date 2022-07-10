@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
 	name='listorm',
-	version='1.0.0',
+	version='1.0.1',
 	license='MIT',
 	description='list orm methods and shortcuts for table type of dict-list',
 	long_description=long_description,

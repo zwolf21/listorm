@@ -35,7 +35,7 @@ def number_format(value, formats:object):
     formatter = type(formats)
     try:
         formatted = formatter(value)
-    except:
+    except Exception as e:
         asfloat = str2float(value)
         try:
             formatted = formatter(asfloat)
