@@ -4,7 +4,7 @@
 
 ----
 
-### Installation of order version
+### Installation of older version
 `pip install listorm==0.2.16`
 
 ----
