@@ -17,9 +17,10 @@ setup(
 	py_modules = ['listorm'],
 	keywords=['listorm', 'list of dict', 'dict list', 'records', 'sql', 'orm'],
 	url='https://github.com/zwolf21/listorm',
-	packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+	packages=find_packages(exclude=['docs', 'test', 'test.*']),
 	install_requires=['openpyxl'],
 	classifiers=[
+		'Operating System :: OS Independent',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
     ],
