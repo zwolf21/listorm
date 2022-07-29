@@ -1,10 +1,13 @@
 import csv
+from typing import List, Dict
+
+
 from ..records import get_allkeys
 from .io import get_stringio, reduce_csv_input
 
 
 
-def read_csv(file, encoding='utf-8', fields=None, **csv_kwargs):
+def read_csv(file, encoding='utf-8', fields:List=None, **csv_kwargs):
     fp = reduce_csv_input(file, encoding=encoding)
     csv_reader = csv.reader(fp, **csv_kwargs)
     fields = fields or next(csv_reader)
@@ -13,7 +16,7 @@ def read_csv(file, encoding='utf-8', fields=None, **csv_kwargs):
 
 
 
-def write_csv(records:list[dict], filename=None, fields=None, encoding='utf-8', **csv_kwargs):
+def write_csv(records:List[Dict], filename=None, fields=None, encoding='utf-8', **csv_kwargs):
     csv_kwargs.update({'lineterminator':'\n'})
     output = get_stringio()
     fields = fields or get_allkeys(records)

@@ -2,7 +2,7 @@
 Functional API for list as records
 ----------------------------------
 '''
-
+from typing import List, Dict, Tuple, Callable, Text, Any
 from itertools import tee
 from collections import abc, namedtuple
 
@@ -13,7 +13,7 @@ from ..exceptions import UniqueConstraintError
 
 
 @reduce_args('keys')
-def values(records:list[dict], keys:list, *, flat_one=True) -> list[tuple]:
+def values(records:List[Dict], keys:List, *, flat_one=True) -> List[Tuple]:
     '''extract values list from records
 
     :param records: a list contains dict items
@@ -61,7 +61,7 @@ def values(records:list[dict], keys:list, *, flat_one=True) -> list[tuple]:
 
 
 @reduce_args('keys')
-def select(records:list[dict], keys:list, *, excludes:list=None, where:callable=None) -> list[dict]:
+def select(records:List[Dict], keys:List, *, excludes:List=None, where:Callable=None) -> List[Dict]:
     '''Retrieves the item of the specified item
 
     :param records: a list contains dict items
@@ -87,7 +87,7 @@ def select(records:list[dict], keys:list, *, excludes:list=None, where:callable=
 
 
 @reduce_kwargs('updatemap')
-def update(records:list[dict], updatemap:dict=None, where:callable=None):
+def update(records:List[Dict], updatemap:Dict=None, where:Callable=None):
     '''update item values
 
     :param records: a list contains dict items
@@ -157,7 +157,7 @@ def update(records:list[dict], updatemap:dict=None, where:callable=None):
 
 
 @reduce_kwargs('keymap')
-def add_column(records:list[dict], *, keymap:dict) -> list[dict]:
+def add_column(records:List[Dict], *, keymap:Dict) -> List[Dict]:
     '''add keys to item in records
 
     :param records: a list contains dict items
@@ -197,7 +197,7 @@ def add_column(records:list[dict], *, keymap:dict) -> list[dict]:
 
 
 @reduce_args('keys')
-def drop(records:list[dict], keys:list) -> list:
+def drop(records:List[Dict], keys:List) -> List:
     '''delete key from the items in records
 
     :param records: a list contains dict items
@@ -231,7 +231,7 @@ def drop(records:list[dict], keys:list) -> list:
 
 
 @reduce_kwargs('renamemap')
-def rename(records:list[dict], renamemap:dict) -> dict:
+def rename(records:List[Dict], renamemap:Dict) -> Dict:
     '''change key of items in records as to another name
 
     :param records: a list contains dict items
@@ -272,7 +272,7 @@ def rename(records:list[dict], renamemap:dict) -> dict:
         for row in records   
     ]
 
-def get_allkeys(records:list[dict]) -> list:
+def get_allkeys(records:List[Dict]) -> List:
     '''extract the occurance keys
 
     :param records: a list contains dict items
@@ -299,7 +299,7 @@ def get_allkeys(records:list[dict]) -> list:
     return list(keyset)
 
 
-def fillmissed(records:list[dict], value=None):
+def fillmissed(records:List[Dict], value:Any=None):
     '''fill missing key as default value for normalizing records
 
     :param records: a list contains dict items
@@ -362,14 +362,14 @@ def fillmissed(records:list[dict], value=None):
     ]
 
 
-def guess_type(records:list[dict], key:str):
+def guess_type(records:List[Dict], key:Text):
     values = values(records, key)
     head, *_ = filter(None, values)
     return type(head)
 
 
 @reduce_args('sortkeys')
-def orderby(records:list[dict], sortkeys:list) -> list[dict]:
+def orderby(records:List[Dict], sortkeys:List) -> List[Dict]:
     '''sort items in records
 
     :param records: a list of dict items
@@ -426,7 +426,7 @@ def orderby(records:list[dict], sortkeys:list) -> list[dict]:
 
 
 @reduce_args('keys')
-def distinct(records:list[dict], keys:list, *, keep_first:bool=True, singles:bool=False) -> list:
+def distinct(records:List[Dict], keys:List, *, keep_first:bool=True, singles:bool=False) -> List:
     '''remove duplicated rows by keys
 
     :param records: a list contains dict items
@@ -553,7 +553,7 @@ def distinct(records:list[dict], keys:list, *, keep_first:bool=True, singles:boo
     return distincts
 
 
-def asgroup(records:list[dict], keys:list, with_pos:bool=False) -> tuple[list, dict[str, list]]:
+def asgroup(records:List[Dict], keys:List, with_pos:bool=False) -> Tuple[List, Dict[Text, List]]:
     grouped = {}
     for p, row in enumerate(records):
         values = asvalues(row, keys)    
@@ -561,7 +561,8 @@ def asgroup(records:list[dict], keys:list, with_pos:bool=False) -> tuple[list, d
     return grouped
 
 
-def aggregate(grouped:dict[str, list[dict]], keys:list, aggset:dict, aliases:dict=None, groupset_name:str=None) -> list[dict]:
+
+def aggregate(grouped:Dict[Text, List[Dict]], keys:List, aggset:Dict, aliases:Dict=None, groupset_name:Text=None) -> List[Dict]:
     aliases = aliases or {}
     aggregated = []
     for _, rows in grouped.items():
@@ -579,7 +580,7 @@ def aggregate(grouped:dict[str, list[dict]], keys:list, aggset:dict, aliases:dic
 
 @reduce_args('keys')
 @reduce_kwargs('aggset')
-def groupby(records:list[dict], keys:list, *, aggset:dict, renames:dict=None, groupset_name:str=None) -> list[dict]:
+def groupby(records:List[Dict], keys:List, *, aggset:Dict, renames:Dict=None, groupset_name:Text=None) -> List[Dict]:
     '''grouping by keys and aggregate values
 
     :param records: a list of dict items
@@ -634,7 +635,7 @@ def groupby(records:list[dict], keys:list, *, aggset:dict, renames:dict=None, gr
     return agged
 
 
-def product(records1:list[dict], records2:list[dict]):
+def product(records1:List[Dict], records2:List[Dict]):
     for row1 in records1:
         for row2 in records2:
             row = {}
@@ -644,13 +645,13 @@ def product(records1:list[dict], records2:list[dict]):
 
 
 @reduce_args('keys')
-def set_index(records:list[dict], keys:list) -> list[tuple[tuple, dict]]:
+def set_index(records:List[Dict], keys:List) -> List[Tuple[Tuple, Dict]]:
     return [
         (asvalues(row, keys), row) for row in records
     ]
 
 @pluralize_params('on', 'left_on', 'right_on')
-def join(left:list[dict], right:list[dict], on:tuple=None, left_on:tuple=None, right_on:tuple=None, how:str='inner') -> list[dict]:
+def join(left:List[Dict], right:List[Dict], on:Tuple=None, left_on:Tuple=None, right_on:Tuple=None, how:Text='inner') -> List[Dict]:
     '''merge two records
 
     :param left: a records
@@ -763,7 +764,7 @@ def join(left:list[dict], right:list[dict], on:tuple=None, left_on:tuple=None, r
 
 
 @reduce_args('keys')
-def values_count(records:list[dict], keys:list):
+def values_count(records:List[Dict], keys:List):
     '''get values count by keys
 
     :param records: a list contains dict items
@@ -787,7 +788,7 @@ def values_count(records:list[dict], keys:list):
 
 
 @reduce_kwargs('formats')
-def set_number_format(records:list[dict], *, formats:dict=None):
+def set_number_format(records:List[Dict], *, formats:Dict=None):
     '''change number formats as default examples
 
     :param records: a list contains dict items
@@ -813,7 +814,7 @@ def set_number_format(records:list[dict], *, formats:dict=None):
     ]
 
 @reduce_args('keys')
-def is_unique(records:list[dict], keys:list):
+def is_unique(records:List[Dict], keys:List):
     '''check unique for values of keys
 
 
@@ -823,7 +824,7 @@ def is_unique(records:list[dict], keys:list):
 
 
 @pluralize_params('pk')
-def diff(records1:list[dict], records2:list[dict], pk:tuple):    
+def diff(records1:List[Dict], records2:List[Dict], pk:Tuple):    
     '''compare two records about added, deleted and updated on common columns
 
     :param records1: a list object as records

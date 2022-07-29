@@ -3,6 +3,7 @@ Class Based API for records
 --------------------------------
 '''
 
+from typing import List, Dict, Tuple, Callable, Text, Any, Union
 
 from .base import BaseList
 from .shortcuts import ShortCutMixin
@@ -33,7 +34,7 @@ class Listorm(ShortCutMixin, BaseList):
 
 
     @reduce_args('columns')
-    def select(self, columns:list, *, excludes:list=None, where:callable=None):
+    def select(self, columns:List, *, excludes:List=None, where:Callable=None):
         '''Retrieves the item of the specified item
 
         :param columns: keys for selecting columns
@@ -69,7 +70,7 @@ class Listorm(ShortCutMixin, BaseList):
 
 
     @reduce_args('columns')
-    def drop_column(self, columns:list):
+    def drop_column(self, columns:List):
         '''delete columns
 
 
@@ -105,7 +106,7 @@ class Listorm(ShortCutMixin, BaseList):
     
 
     @reduce_kwargs('keymap')
-    def add_column(self, keymap:dict):
+    def add_column(self, keymap:Dict):
         '''extend row as new columns
 
         :param keymap: new column: function mapping
@@ -147,7 +148,7 @@ class Listorm(ShortCutMixin, BaseList):
 
 
     @reduce_kwargs('renamemap')
-    def rename(self, renamemap:dict):
+    def rename(self, renamemap:Dict):
         '''change columns name
 
         :param renamemap: old:new mapping of column names
@@ -183,7 +184,7 @@ class Listorm(ShortCutMixin, BaseList):
 
 
     @reduce_kwargs('updatemap')
-    def update(self, updatemap:dict, *, where:callable=None):
+    def update(self, updatemap:Dict, *, where:callable=None):
         '''update row values
 
         :param updatemap: column: value|function map for update values
@@ -213,7 +214,7 @@ class Listorm(ShortCutMixin, BaseList):
     
 
     @reduce_args('columns')
-    def values(self, columns:list, *, flat_one=True):
+    def values(self, columns:List, *, flat_one=True):
         '''extract values from row
 
         :param columns: column names to extract values
@@ -246,7 +247,7 @@ class Listorm(ShortCutMixin, BaseList):
 
 
     @reduce_args('columns')
-    def distinct(self, columns:list, *, keep_first:bool=True, singles:bool=False):
+    def distinct(self, columns:List, *, keep_first:bool=True, singles:bool=False):
         '''remove duplicated rows by columns
 
         :param columns: column names for check duplicated values
@@ -323,7 +324,7 @@ class Listorm(ShortCutMixin, BaseList):
 
 
     @reduce_args('sortkeys')
-    def orderby(self, sortkeys:list):
+    def orderby(self, sortkeys:List):
         '''sort rows 
 
         :param sortkeys: column names or function for make sort keys
@@ -362,7 +363,7 @@ class Listorm(ShortCutMixin, BaseList):
 
     @reduce_args('columns')
     @reduce_kwargs('aggset')
-    def groupby(self, columns:list, *, aggset:dict, renames:dict=None, groupset_name:str=None):
+    def groupby(self, columns:List, *, aggset:Dict, renames:Dict=None, groupset_name:Text=None):
         '''grouping rows and aggregate valeus
 
         :param columns: column names for grouping
@@ -413,7 +414,7 @@ class Listorm(ShortCutMixin, BaseList):
 
 
     @pluralize_params('left_on', 'right_on')
-    def join(self, other, left_on:None, right_on=None, how:str='inner'):
+    def join(self, other, left_on:Union[Text, Tuple]=None, right_on:Union[Text, Tuple]=None, how:Text='inner'):
         '''merge other records
 
         :param other: another Listorm object

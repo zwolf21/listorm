@@ -1,11 +1,14 @@
+from typing import List, Dict, Text
+
 import openpyxl
+
 
 from .io import get_bytesio, reduce_excel_input
 from ..records import fillmissed, values, askeys, select
 
 
 
-def _find_table(values, fields_contains=None, start_rows=None, start_cols=None):
+def _find_table(values, fields_contains:List=None, start_rows:int=None, start_cols:int=None):
     def _find_start_row_by_fields(values, fields):
         fieldset = set(fields)
         for i, row in enumerate(values):
@@ -49,7 +52,7 @@ def _normalize_columns(fields):
     return results
 
 
-def read_excel(file=None, search_fields:list=None, sheet_name=None, start_rows=0, start_cols=0, prettify_column_names=True):
+def read_excel(file=None, search_fields:List=None, sheet_name:Text=None, start_rows:int=0, start_cols:int=0, prettify_column_names:bool=True):
     '''Excel File or byte Content of Excel to Listorm object
     '''
     file = reduce_excel_input(file)
@@ -68,7 +71,7 @@ def read_excel(file=None, search_fields:list=None, sheet_name=None, start_rows=0
     ]
 
 
-def write_excel(records:list[dict], filename=None, fill_miss=True):
+def write_excel(records:List[Dict], filename=None, fill_miss=True):
     if not records:
         raise ValueError('Cannot write excel from Empty list')
     if fill_miss:

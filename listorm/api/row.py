@@ -4,14 +4,14 @@ Functional API for dict as row
 
 """
 
-
+from typing import List, Dict, Tuple, Callable, Text, Any
 
 from .helper import reduce_args_count, reduce_callback
 from ..utils import number_format, reduce_args, reduce_kwargs
 
 
 
-def askeys(item:dict, excludes:list=None):
+def askeys(item:Dict, excludes:List=None):
     """extract keys from item
 
     :param item: a dict object
@@ -41,7 +41,7 @@ def askeys(item:dict, excludes:list=None):
 
 
 @reduce_args('keys')
-def asvalues(item:dict, keys:list, *, exact:bool=True, flat=True):    
+def asvalues(item:Dict, keys:List, *, exact:bool=True, flat:bool=True):    
     """extract values from item that matchs the order of keys
 
     :param item: a dict object
@@ -79,7 +79,7 @@ def asvalues(item:dict, keys:list, *, exact:bool=True, flat=True):
 
 
 @reduce_args('keys')
-def asselect(item:dict, keys:list, *, excludes:list=None) -> dict:
+def asselect(item:Dict, keys:List, *, excludes:List=None) -> Dict:
     """select key, value pair from item
 
     :param item: a dict object
@@ -116,7 +116,7 @@ def asselect(item:dict, keys:list, *, excludes:list=None) -> dict:
 
 
 @reduce_kwargs('keymap')
-def addkeys(item:dict, *, keymap:dict) -> dict:
+def addkeys(item:Dict, *, keymap:Dict) -> Dict:
     """extends item keys values via value or callback
 
     :param item: a dict object
@@ -167,7 +167,7 @@ def addkeys(item:dict, *, keymap:dict) -> dict:
 
 
 @reduce_kwargs('renamemap')
-def asrename(item:dict, *, renamemap:dict) -> dict:
+def asrename(item:Dict, *, renamemap:Dict) -> Dict:
     """change key as to another name
 
     :param item: a dict object
@@ -195,7 +195,7 @@ def asrename(item:dict, *, renamemap:dict) -> dict:
 
 
 @reduce_kwargs('defaultmap')
-def asdefault(item:dict, *, defaultmap:dict) -> dict:
+def asdefault(item:Dict, *, defaultmap:Dict) -> Dict:
     """fill values from defaults if key not in existing item
 
     :param item: a dict object
@@ -234,7 +234,7 @@ def asdefault(item:dict, *, defaultmap:dict) -> dict:
     return addkeys(item, keymap=defaults)
 
 
-def asdiff(item1:dict, item2:dict) -> list:
+def asdiff(item1:Dict, item2:Dict) -> List:
     """Finds keys with different value from common keys of two items
 
     :param item1: a dict object
@@ -258,7 +258,7 @@ def asdiff(item1:dict, item2:dict) -> list:
     ]
 
 
-def asnumformat(dict:dict, examples:dict):
+def asnumformat(dict:Dict, examples:Dict):
     return {
         key: number_format(value, examples.get(key))
         for key, value in dict.items()
@@ -266,7 +266,7 @@ def asnumformat(dict:dict, examples:dict):
 
 
 @reduce_kwargs('keymap')
-def asmap(item:dict, keymap:dict):
+def asmap(item:Dict, keymap:Dict):
     applied = {} 
     for key, value in item.items():
         app = keymap.get(key)
@@ -279,7 +279,7 @@ def asmap(item:dict, keymap:dict):
 
 
 @reduce_kwargs('updatemap')
-def asupdate(item:dict, updatemap:dict):
+def asupdate(item:Dict, updatemap:Dict):
     """update item values
 
     :param item: a dict object

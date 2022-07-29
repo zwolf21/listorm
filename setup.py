@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
 	name='listorm',
-	version='1.0.2',
+	version='1.0.3',
 	license='MIT',
 	description='list orm methods and shortcuts for table type of dict-list',
 	long_description=long_description,
@@ -21,8 +21,9 @@ setup(
 	install_requires=['openpyxl'],
 	classifiers=[
 		'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
     ],
-	python_requires=">=3.9"
+	python_requires=">=3.8"
 )

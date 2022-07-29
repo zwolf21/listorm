@@ -1,3 +1,5 @@
+from typing import List, Dict, Tuple, Callable, Text, Any
+
 from collections import UserList
 
 from ..api.records import *
@@ -10,7 +12,7 @@ from ..exceptions import UniqueConstraintError
 class BaseList(UserList):
 
 
-    def __init__(self, records:list, uniques:tuple=None, fill_missed=True,  fill_value=None):
+    def __init__(self, records:List, uniques:Tuple=None, fill_missed:bool=True,  fill_value:Any=None):
         self.uniques = tuplize(uniques)
         self.fill_value = fill_value
         self.fill_missed = fill_missed
