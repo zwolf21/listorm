@@ -561,6 +561,59 @@ def asgroup(records:List[Dict], keys:List, with_pos:bool=False) -> Tuple[List, D
     return grouped
 
 
+@reduce_args('keys')
+def asdict(records:List[Dict], keys:List, select:List=None, type='values') -> Dict:
+    '''Change records to a dict form based on a specific key
+
+    :param records: a list contains dict items
+    :param keys: keys as unique values for records
+    :param select: keys to retrives as results, if None retrieves all columns
+    :param type: retrive type, values|records  defaults to 'values'
+    :return: a dict as records
+
+
+    .. doctest::
+    
+    >>> listorm.asdict(userTable, 'name', select=['location'])
+    {'Hong': 'Korea',
+    'Charse': 'USA',
+    'Lyn': 'China',
+    'Xiaomi': 'China',
+    'Park': 'Korea',
+    'Smith': 'USA',
+    'Lee': 'Korea'}
+
+    >>> listorm.asdict(userTable, 'name', select=['location', 'gender'])
+    {'Hong': ('Korea', 'M'),
+    'Charse': ('USA', 'M'),
+    'Lyn': ('China', 'F'),
+    'Xiaomi': ('China', 'M'),
+    'Park': ('Korea', 'M'),
+    'Smith': ('USA', 'M'),
+    'Lee': ('Korea', 'F')}
+    
+    >>> listorm.asdict(userTable, 'name', select=['location', 'gender'], type='records')
+    {'Hong': {'location': 'Korea', 'gender': 'M'},
+    'Charse': {'location': 'USA', 'gender': 'M'},
+    'Lyn': {'location': 'China', 'gender': 'F'},
+    'Xiaomi': {'location': 'China', 'gender': 'M'},
+    'Park': {'location': 'Korea', 'gender': 'M'},
+    'Smith': {'location': 'USA', 'gender': 'M'},
+    'Lee': {'location': 'Korea', 'gender': 'F'}}
+
+
+    '''
+
+    grouped = {}
+    for row in records:
+        key = asvalues(row, keys)
+        if select:
+            row = asselect(row, select)
+        if type == 'values':
+            row = asvalues(row)
+        grouped[key] = row
+    return grouped
+
 
 def aggregate(grouped:Dict[Text, List[Dict]], keys:List, aggset:Dict, aliases:Dict=None, groupset_name:Text=None) -> List[Dict]:
     aliases = aliases or {}
@@ -816,8 +869,6 @@ def set_number_format(records:List[Dict], *, formats:Dict=None):
 @reduce_args('keys')
 def is_unique(records:List[Dict], keys:List):
     '''check unique for values of keys
-
-
     '''
     counter = values_count(records, keys)
     return max(counter.values(), default=1) < 2

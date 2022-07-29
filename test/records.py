@@ -102,3 +102,4 @@ def test_join(records, other, on, right_on, how, results):
     lst = set_number_format(lst, amount=0)
     for rec, l in zip(results, lst):
         assert rec == l
+
