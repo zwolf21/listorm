@@ -1,3 +1,4 @@
+import os
 from typing import List, Dict, Text, Tuple
 
 import openpyxl
@@ -95,7 +96,12 @@ def write_excel(records:List[Dict], filename=None, fill_miss=True, **kwargs):
 
 
 @pluralize_params('uniques')
-def insert_excel(excel, records:List[Dict], uniques:Tuple[Text], mode=('create', 'update',), append=False, **kwargs):
+def insert_excel(records:List[Dict], excel, uniques:Tuple[Text], mode=('create', 'update',), append=False, **kwargs):
+    if isinstance(excel, str):
+        if not os.path.exists(excel):
+            if 'create' in mode:
+                return write_excel(records, excel, **kwargs)
+
     rows = read_excel(excel, **kwargs)
     merged = merge(rows, records, uniques, mode=mode, append=append)
     return write_excel(merged, excel, **kwargs)
