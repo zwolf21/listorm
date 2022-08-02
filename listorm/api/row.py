@@ -142,6 +142,7 @@ def addkeys(item:Dict, *, keymap:Dict) -> Dict:
 
 
     .. note::
+    
         * The lambda callback function used in this library is applied according to the number and name of the argument 
         * Refers to the keys in the item by specifying it as the lambda arguments
 

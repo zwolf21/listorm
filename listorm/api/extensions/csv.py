@@ -30,7 +30,7 @@ def write_csv(records:List[Dict], filename=None, fields=None, encoding='utf-8', 
 
 
 @pluralize_params('uniques')
-def merge2csv(csv, records:List[Dict], uniques:Tuple[Text], mode='create', append=False, **kwargs):
+def insert_csv(csv, records:List[Dict], uniques:Tuple[Text], mode='create', append=False, **kwargs):
     rows = read_csv(csv, **kwargs)
     merged = merge(rows, records, uniques, mode=mode, append=append)
     return write_csv(merged, csv)

@@ -13,4 +13,4 @@ Basic Concepts
 
 '''
 from .records import *
-from .extensions import read_excel, read_csv, write_csv, write_excel, merge2csv, merge2excel
+from .extensions import read_excel, read_csv, write_csv, write_excel, insert_csv, insert_excel

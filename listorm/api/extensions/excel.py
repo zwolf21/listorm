@@ -95,7 +95,7 @@ def write_excel(records:List[Dict], filename=None, fill_miss=True, **kwargs):
 
 
 @pluralize_params('uniques')
-def merge2excel(excel, records:List[Dict], uniques:Tuple[Text], mode=('create', 'update',), append=False, **kwargs):
+def insert_excel(excel, records:List[Dict], uniques:Tuple[Text], mode=('create', 'update',), append=False, **kwargs):
     rows = read_excel(excel, **kwargs)
     merged = merge(rows, records, uniques, mode=mode, append=append)
     return write_excel(merged, excel, **kwargs)

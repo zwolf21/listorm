@@ -575,31 +575,13 @@ def asdict(records:List[Dict], keys:List, select:List=None, type='values') -> Di
     .. doctest::
     
     >>> listorm.asdict(userTable, 'name', select=['location'])
-    {'Hong': 'Korea',
-    'Charse': 'USA',
-    'Lyn': 'China',
-    'Xiaomi': 'China',
-    'Park': 'Korea',
-    'Smith': 'USA',
-    'Lee': 'Korea'}
+    {'Hong': 'Korea', 'Charse': 'USA', 'Lyn': 'China', 'Xiaomi': 'China', 'Park': 'Korea', 'Smith': 'USA', 'Lee': 'Korea'}
 
     >>> listorm.asdict(userTable, 'name', select=['location', 'gender'])
-    {'Hong': ('Korea', 'M'),
-    'Charse': ('USA', 'M'),
-    'Lyn': ('China', 'F'),
-    'Xiaomi': ('China', 'M'),
-    'Park': ('Korea', 'M'),
-    'Smith': ('USA', 'M'),
-    'Lee': ('Korea', 'F')}
+    {'Hong': ('Korea', 'M'), 'Charse': ('USA', 'M'), 'Lyn': ('China', 'F'), 'Xiaomi': ('China', 'M'), 'Park': ('Korea', 'M'), 'Smith': ('USA', 'M'), 'Lee': ('Korea', 'F')}
     
     >>> listorm.asdict(userTable, 'name', select=['location', 'gender'], type='records')
-    {'Hong': {'location': 'Korea', 'gender': 'M'},
-    'Charse': {'location': 'USA', 'gender': 'M'},
-    'Lyn': {'location': 'China', 'gender': 'F'},
-    'Xiaomi': {'location': 'China', 'gender': 'M'},
-    'Park': {'location': 'Korea', 'gender': 'M'},
-    'Smith': {'location': 'USA', 'gender': 'M'},
-    'Lee': {'location': 'Korea', 'gender': 'F'}}
+    {'Hong': {'location': 'Korea', 'gender': 'M'}, 'Charse': {'location': 'USA', 'gender': 'M'}, 'Lyn': {'location': 'China', 'gender': 'F'}, 'Xiaomi': {'location': 'China', 'gender': 'M'}, 'Park': {'location': 'Korea', 'gender': 'M'}, 'Smith': {'location': 'USA', 'gender': 'M'}, 'Lee': {'location': 'Korea', 'gender': 'F'}}
 
 
     '''
@@ -978,7 +960,62 @@ def merge(records1, records2, uniques:Tuple, mode:Tuple=('create', 'update'), ap
     :param records2: records to update
     :param uniques: common unique keys
     :param mode: the set of methods- create, update, delete defaults to ('create', 'update')
-    :param append: Determind insert a new row at the beginning or at the end , defaults to False
+    :param append: Determind insert a new row at the head or at the tail of records, defaults to False
+    :return: merged records
+
+
+    .. doctest::
+
+
+        >>> users = [
+        ...    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'},
+        ...    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'},
+        ...    {'name': 'ohmyboss', 'gender': 'F', 'age': 17, 'location': 'USA'},
+        ...    {'name': 'Lyn', 'gender': 'F', 'age': 29, 'location': 'China'},
+        ... ]
+        >>> new_users = [
+        ...    {'name': 'moon', 'gender': 'M', 'age': 38, 'location': 'Korea'},
+        ...    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}, # duplicated!
+        ...    {'name': 'vice', 'gender': 'M', 'age': 21, 'location': 'Mexico'},
+        ...    {'name': 'Lyn', 'gender': 'F', 'age': 29, 'location': 'China'}, # duplicated
+        ... ]
+
+        >>> # the new guys 'moon' and 'vice' are appended who not exists in users
+        >>> merged_by_create_mode = listorm.merge(users, new_users, uniques='name', mode='create', append=True)
+        >>> for row in merged_by_create_mode: row
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'}
+        {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
+        {'name': 'ohmyboss', 'gender': 'F', 'age': 17, 'location': 'USA'}
+        {'name': 'Lyn', 'gender': 'F', 'age': 29, 'location': 'China'}
+        {'name': 'moon', 'gender': 'M', 'age': 38, 'location': 'Korea'}
+        {'name': 'vice', 'gender': 'M', 'age': 21, 'location': 'Mexico'}
+
+
+        >>> updated_users = [
+        ...    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'China'}, # location: Korea -> China
+        ...    {'name': 'ohmyboss', 'gender': 'M', 'age': 27, 'location': 'USA'}, # gender: F -> M, age: 17 -> 27
+        ... ]
+
+        >>> # appliying changed information from updated
+        >>> merged_by_updated_mode = listorm.merge(users, updated_users, uniques='name', mode='update', append=True)
+        >>> for row in merged_by_updated_mode: row
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'China'}
+        {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
+        {'name': 'ohmyboss', 'gender': 'M', 'age': 27, 'location': 'USA'}
+        {'name': 'Lyn', 'gender': 'F', 'age': 29, 'location': 'China'}
+
+
+        >>> # create and merge as default and pushs new rows at head of records
+        >>> merged_by_create_update_mode = listorm.merge(users, new_users+updated_users, uniques='name')
+        >>> for row in merged_by_create_update_mode: row
+        {'name': 'moon', 'gender': 'M', 'age': 38, 'location': 'Korea'}
+        {'name': 'vice', 'gender': 'M', 'age': 21, 'location': 'Mexico'}
+        {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'China'}
+        {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'}
+        {'name': 'ohmyboss', 'gender': 'M', 'age': 27, 'location': 'USA'}
+        {'name': 'Lyn', 'gender': 'F', 'age': 29, 'location': 'China'}
+
+
     '''
     
     def get_adds(changes):
