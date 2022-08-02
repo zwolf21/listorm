@@ -440,7 +440,23 @@ class Listorm(ShortCutMixin, BaseList):
             )
 
     
+    @pluralize_params('pk', 'mode')
+    def merge(self, other, pk=None, mode=('create', 'update'), append=False, **kwargs):
+        '''Update information of self to other based on pk
+           If mode is create, it merges other that do not have duplicate pk
+           If mode is update, then other is overwritten with self
 
+        :param other: records to update
+        :param pk: common unique keys
+        :param mode: the set of methods- create, update, delete defaults to ('create', 'update')
+        :param append: Determind insert a new row at the beginning or at the end , defaults to False
+        :return: Listorm
+        '''
 
+        pk = pk or self.uniques or other.uniques
 
-    
+        if not pk:
+            raise ValueError('pk must be specified or pre setted as uniques of Listorm')
+
+        merged = merge(self, other, pk, mode=mode, append=append)
+        return Listorm(merged, **self.as_kwargs(fill_missed=False))

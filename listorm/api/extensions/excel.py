@@ -1,10 +1,10 @@
-from typing import List, Dict, Text
+from typing import List, Dict, Text, Tuple
 
 import openpyxl
 
-
 from .io import get_bytesio, reduce_excel_input
-from ..records import fillmissed, values, askeys, select
+from ..records import fillmissed, values, askeys, select, merge
+from ...utils import pluralize_params
 
 
 
@@ -52,7 +52,7 @@ def _normalize_columns(fields):
     return results
 
 
-def read_excel(file=None, search_fields:List=None, sheet_name:Text=None, start_rows:int=0, start_cols:int=0, prettify_column_names:bool=True):
+def read_excel(file=None, search_fields:List=None, sheet_name:Text=None, start_rows:int=0, start_cols:int=0, prettify_column_names:bool=True, **kwargs):
     '''Excel File or byte Content of Excel to Listorm object
     '''
     file = reduce_excel_input(file)
@@ -71,7 +71,7 @@ def read_excel(file=None, search_fields:List=None, sheet_name:Text=None, start_r
     ]
 
 
-def write_excel(records:List[Dict], filename=None, fill_miss=True):
+def write_excel(records:List[Dict], filename=None, fill_miss=True, **kwargs):
     if not records:
         raise ValueError('Cannot write excel from Empty list')
     if fill_miss:
@@ -92,3 +92,10 @@ def write_excel(records:List[Dict], filename=None, fill_miss=True):
         content = output.getvalue()
         return content
     workbook.save(filename)
+
+
+@pluralize_params('uniques')
+def merge2excel(excel, records:List[Dict], uniques:Tuple[Text], mode=('create', 'update',), append=False, **kwargs):
+    rows = read_excel(excel, **kwargs)
+    merged = merge(rows, records, uniques, mode=mode, append=append)
+    return write_excel(merged, excel, **kwargs)

@@ -103,3 +103,14 @@ def test_join(records, other, on, right_on, how, results):
     for rec, l in zip(results, lst):
         assert rec == l
 
+test_merge_cases = [
+    (userTable, userTable_for_create, 'name', 'create', True, userTable_created),
+    (userTable, userTable_for_create_and_update, 'name', ('create' ,'update'), True, userTable_created_and_updated),
+    (userTable, userTable_for_create_and_delete, 'name', ('create' ,'delete'), False, userTable_created_and_deleted),
+]
+@pytest.mark.parametrize('records1, records2, uniques, mode, append, results', test_merge_cases)
+def test_merge(records1, records2, uniques, mode, append, results):
+    merged = merge(records1, records2, uniques, mode=mode, append=append)
+    for rec, l in zip(results, merged):
+        assert rec == l
+    

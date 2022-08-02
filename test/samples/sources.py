@@ -8,6 +8,34 @@ userTable = [
     {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'},
 ]
 
+userTable_for_create = [
+    {'name': 'moon', 'gender': 'M', 'age': 38, 'location': 'Korea'},
+    {'name': 'choi', 'gender': 'F', 'age': 28, 'location': 'Korea'},
+    {'name': 'vice', 'gender': 'M', 'age': 41, 'location': 'Mexico'},
+]
+
+userTable_for_create_and_update = [
+    {'name': 'moon', 'gender': 'M', 'age': 38, 'location': 'Korea'},
+    {'name': 'choi', 'gender': 'F', 'age': 28, 'location': 'Korea'},
+    {'name': 'vice', 'gender': 'M', 'age': 41, 'location': 'Mexico'},
+    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'},
+    {'name': 'Xiaomi', 'gender': 'F', 'age': 21, 'location': 'China'},
+    {'name': 'Smith', 'gender': 'F', 'age': 27, 'location': 'USA'},
+]
+
+userTable_for_create_and_delete = [
+    {'name': 'moon', 'gender': 'M', 'age': 38, 'location': 'Korea'},
+    {'name': 'choi', 'gender': 'F', 'age': 28, 'location': 'Korea'},
+    {'name': 'vice', 'gender': 'M', 'age': 41, 'location': 'Mexico'},
+    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'},
+    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'},
+    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'},
+    {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'},
+]
+
+
+
+
 userTable_missing_values = [
     {'age': 18, 'location': 'Korea'},
     {'name': 'Charse', 'gender': 'M', 'location': 'USA'},

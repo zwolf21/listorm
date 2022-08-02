@@ -1,5 +1,5 @@
-from ..utils import reduce_kwargs, reduce_args
-from ..api import values_count, write_excel, write_csv, diff, set_number_format
+from ..utils import reduce_kwargs, reduce_args, pluralize_params
+from ..api import values_count, write_excel, write_csv, diff, set_number_format, merge
 
 
 
@@ -194,3 +194,5 @@ class ShortCutMixin:
         
         diff_keys = pk or self.uniques or other.uniques
         return diff(self, other, diff_keys)
+
+

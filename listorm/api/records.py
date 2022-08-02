@@ -874,8 +874,8 @@ def is_unique(records:List[Dict], keys:List):
     return max(counter.values(), default=1) < 2
 
 
-@pluralize_params('pk')
-def diff(records1:List[Dict], records2:List[Dict], pk:Tuple):    
+@pluralize_params('pk', 'targets')
+def diff(records1:List[Dict], records2:List[Dict], pk:Tuple, targets=('create', 'delete', 'update')):    
     '''compare two records about added, deleted and updated on common columns
 
     :param records1: a list object as records
@@ -933,6 +933,7 @@ def diff(records1:List[Dict], records2:List[Dict], pk:Tuple):
         ------------------------------
 
     '''
+
     if not records1 or not records2:
         raise ValueError('not allowed empthy records')
 
@@ -955,18 +956,49 @@ def diff(records1:List[Dict], records2:List[Dict], pk:Tuple):
     for key in comparisonkeys:
         before = beforeset.get(key)
         after = afterset.get(key)
-        if before and not after:
+        if ('delete' in targets) and (before and not after):
             deleted.append(Deleted(key, before[0]))
-        elif after and not before:
+        elif ('create' in targets) and (after and not before):
             added.append(Added(key, after[0]))
-        else:
-            before, after = before[0], after[0]
-            diff = asdiff(before, after)
-            if diff:
-                updated.append(Updated(key, before, after, diff))
+        elif ('update' in targets) and (after and before):
+                before, after = before[0], after[0]
+                diff = asdiff(before, after)
+                if diff:
+                    updated.append(Updated(key, before, after, diff))
     return Changes(added, deleted, updated)
 
 
+@pluralize_params('uniques', 'mode')
+def merge(records1, records2, uniques:Tuple, mode:Tuple=('create', 'update'), append=False):
+    '''Update information of records1 to records2 based on unique
+        If mode is create, it merges records that do not have duplicate unique keys
+        If mode is update, then record2 is overwritten with records1.
 
+    :param records1: records for updated
+    :param records2: records to update
+    :param uniques: common unique keys
+    :param mode: the set of methods- create, update, delete defaults to ('create', 'update')
+    :param append: Determind insert a new row at the beginning or at the end , defaults to False
+    '''
+    
+    def get_adds(changes):
+        return [ad.rows for ad in changes.added]
+    
+    def get_updates(changes):
+        return [up.after for up in changes.updated]
 
+    def get_deleted_uniques(changes):
+        return set(de.pk for de in changes.deleted)
 
+    changes = diff(records1, records2, uniques, targets=mode)
+
+    if updates := get_updates(changes):
+        records1 = join(records1, updates, on=uniques, how='left')
+    
+    if delete_keys := get_deleted_uniques(changes):
+        records1 = select(records1, where=lambda **row: asvalues(row, uniques) not in delete_keys)
+
+    if adds := get_adds(changes):
+        records1 = records1 + adds if append else adds + records1
+
+    return records1

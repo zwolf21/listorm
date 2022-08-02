@@ -260,6 +260,39 @@ buyTable_values_count_by_product = {
     'mouse': 3
 }
 
+userTable_created = [
+    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'},
+    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'},
+    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'},
+    {'name': 'Xiaomi', 'gender': 'M', 'age': 15, 'location': 'China'},
+    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'},
+    {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'},
+    {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'},
+    {'name': 'moon', 'gender': 'M', 'age': 38, 'location': 'Korea'},
+    {'name': 'choi', 'gender': 'F', 'age': 28, 'location': 'Korea'},
+    {'name': 'vice', 'gender': 'M', 'age': 41, 'location': 'Mexico'},
+]
+
+userTable_created_and_updated = [
+    {'name': 'Hong', 'gender': 'M', 'age': 18, 'location': 'Korea'},
+    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'},
+    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'},
+    {'name': 'Xiaomi', 'gender': 'F', 'age': 21, 'location': 'China'},
+    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'},
+    {'name': 'Smith', 'gender': 'F', 'age': 27, 'location': 'USA'},
+    {'name': 'Lee', 'gender': 'F', 'age': 12, 'location': 'Korea'},
+    {'name': 'moon', 'gender': 'M', 'age': 38, 'location': 'Korea'},
+    {'name': 'choi', 'gender': 'F', 'age': 28, 'location': 'Korea'},
+    {'name': 'vice', 'gender': 'M', 'age': 41, 'location': 'Mexico'},
+]
 
 
-
+userTable_created_and_deleted = [
+    {'name': 'moon', 'gender': 'M', 'age': 38, 'location': 'Korea'},
+    {'name': 'choi', 'gender': 'F', 'age': 28, 'location': 'Korea'},
+    {'name': 'vice', 'gender': 'M', 'age': 41, 'location': 'Mexico'},
+    {'name': 'Charse', 'gender': 'M', 'age': 19, 'location': 'USA'},
+    {'name': 'Lyn', 'gender': 'F', 'age': 28, 'location': 'China'},
+    {'name': 'Park', 'gender': 'M', 'age': 29, 'location': 'Korea'},
+    {'name': 'Smith', 'gender': 'M', 'age': 17, 'location': 'USA'},
+]

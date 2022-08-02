@@ -176,3 +176,17 @@ test_values_count_cases = [
 def test_values_count(records, products, results):
     lst = Listorm(records).values_count(products)
     assert results == lst
+
+
+test_merge_cases = [
+    (userTable, userTable_for_create, 'create', True, userTable_created),
+    (userTable, userTable_for_create_and_update, ('create' ,'update'), True, userTable_created_and_updated),
+    (userTable, userTable_for_create_and_delete, ('create' ,'delete'), False, userTable_created_and_deleted),
+]
+@pytest.mark.parametrize('records1, records2, mode, append, results', test_merge_cases)
+def test_merge(records1, records2, mode, append, results):
+    lst1 = Listorm(records1, uniques='name')
+    lst2 = Listorm(records2, uniques='name')
+    merged = lst1.merge(lst2, mode=mode, append=append)
+    for rec, l in zip(results, merged):
+        assert rec == l
