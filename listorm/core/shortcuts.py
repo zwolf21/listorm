@@ -106,13 +106,13 @@ class ShortCutMixin:
         '''
         return values_count(self, columns)
         
-    def to_excel(self, filename=None):
+    def to_excel(self, filename=None, **kwargs):
         '''write to excel
 
         :param filename: output excel filename,  defaults to None
         :return: if filename is None, return file contents
         '''
-        return write_excel(self, filename, fill_miss=False)
+        return write_excel(self, filename, fill_miss=False, **kwargs)
 
 
     def to_csv(self, filename=None, fields=None, encoding='utf-8', **csv_kwargs):

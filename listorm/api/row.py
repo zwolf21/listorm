@@ -41,12 +41,12 @@ def askeys(item:Dict, excludes:List=None):
 
 
 @reduce_args('keys')
-def asvalues(item:Dict, keys:List, *, exact:bool=True, flat:bool=True):    
+def asvalues(item:Dict, keys:List, *, exact:bool=False, flat:bool=True):    
     """extract values from item that matchs the order of keys
 
     :param item: a dict object
     :param keys: keys for retrive values
-    :param exact: if True, raise KeyError when key is not in item, defaults to True
+    :param exact: if True, raise KeyError when key is not in item, defaults to False
     :param flat: When the return value is a single value, the value is returned without being included in the tuple, defaults to True
     :return: a tuple of contains values or a value
 

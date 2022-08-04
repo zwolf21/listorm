@@ -916,21 +916,29 @@ def diff(records1:List[Dict], records2:List[Dict], pk:Tuple, targets=('create', 
 
     '''
 
-    if not records1 or not records2:
-        raise ValueError('not allowed empthy records')
-
-    if not all([is_unique(records1, pk), is_unique(records2, pk)]):
-        raise UniqueConstraintError
-    
-    beforeset = asgroup(records1, pk)
-    afterset = asgroup(records2, pk)
-
-    comparisonkeys = distinct([*beforeset, *afterset])
-
     Added = namedtuple('Added', 'pk rows')
     Deleted = namedtuple('Deleted', 'pk rows')
     Updated = namedtuple('Updated', 'pk before after where')
     Changes = namedtuple('Changes', 'added deleted updated')
+
+    if pk is None:
+        sample = {}
+        if records1:
+            sample.update(records1[0])
+        if records2:
+            sample.update(records2[0])
+        pk = tuple(sample.keys())
+
+    if records1 and not is_unique(records1, pk):
+        raise UniqueConstraintError(f'the pk values of records1 is not uniques {pk}')
+
+    if records2 and not is_unique(records2, pk):
+        raise UniqueConstraintError(f'the pk values of records2 is not uniques {pk}')
+        
+    beforeset = asgroup(records1, pk)
+    afterset = asgroup(records2, pk)
+
+    comparisonkeys = distinct([*beforeset, *afterset])
 
     added = []
     deleted = []
@@ -951,7 +959,7 @@ def diff(records1:List[Dict], records2:List[Dict], pk:Tuple, targets=('create', 
 
 
 @pluralize_params('uniques', 'mode')
-def merge(records1, records2, uniques:Tuple, mode:Tuple=('create', 'update'), append=False):
+def merge(records1, records2, uniques:Tuple=None, mode:Tuple=('create', 'update'), append=True, with_count=False):
     '''Update information of records1 to records2 based on unique
         If mode is create, it merges records that do not have duplicate unique keys
         If mode is update, then record2 is overwritten with records1.
@@ -1029,13 +1037,19 @@ def merge(records1, records2, uniques:Tuple, mode:Tuple=('create', 'update'), ap
 
     changes = diff(records1, records2, uniques, targets=mode)
 
+    count = 0
     if updates := get_updates(changes):
+        count += len(updates)
         records1 = join(records1, updates, on=uniques, how='left')
     
     if delete_keys := get_deleted_uniques(changes):
+        count += len(delete_keys)
         records1 = select(records1, where=lambda **row: asvalues(row, uniques) not in delete_keys)
 
     if adds := get_adds(changes):
+        count += len(adds)
         records1 = records1 + adds if append else adds + records1
 
+    if with_count:
+        return records1, count
     return records1

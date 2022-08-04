@@ -152,7 +152,7 @@ test_write_and_read_excel_cases = [
 @pytest.mark.parametrize('records, file, results', test_write_and_read_excel_cases)
 def test_write_and_read_excel(records, file, results):
     lst = Listorm(records, fill_value='undefined')
-    lst.to_excel(file)
+    lst.to_excel(file, sheet_name='test_excel')
     lstdest = read_excel(file)
     assert results == lstdest
 
