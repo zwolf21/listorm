@@ -4,7 +4,7 @@ from collections import abc
 
 
 from .io import get_bytesio, reduce_excel_input
-from ..records import fillmissed, values, askeys, select, merge
+from ..records import fillmissed, values, askeys, select, merge, orderby
 from ..row import asvalues
 from ...utils import pluralize_params
 from ...utils.excel import load_workbook, load_worksheet, open_workbook, save_workbook
@@ -99,30 +99,17 @@ def write_excel(records:List[Dict], file=None, sheet_name:Text=None, fill_miss=T
         return save_workbook(workbook, file, close=close, **kwargs)
     return b''
 
-# @pluralize_params('uniques')
-# def insert_excel(records:List[Dict], excel, uniques:Tuple[Text], mode=('create', 'update',), append=False, **kwargs):
-#     if isinstance(excel, str):
-#         if not os.path.exists(excel):
-#             if 'create' in mode:
-#                 return write_excel(records, excel, **kwargs)
 
-#     rows = read_excel(excel, **kwargs)
-#     merged = merge(rows, records, uniques, mode=mode, append=append)
-#     return write_excel(merged, excel, **kwargs)
-
-
-
-@pluralize_params('uniques')
-def insert_excel(records:List[Dict], file=None, sheet_name:Text=None, uniques:Tuple=None, mode='create', append=True, **kwargs):
+@pluralize_params('uniques', 'ordering', 'selecting')
+def insert_excel(records:List[Dict], file=None, sheet_name:Text=None, uniques:Tuple=None, mode='create', append=True, ordering=None, selecting=None, **kwargs):
     if records:=pluralize(records):
         workbook = load_workbook(file, **kwargs)
         rows = read_excel(workbook, sheet_name=sheet_name, **kwargs)
         merged, count = merge(rows, records, uniques=uniques, mode=mode, append=append, with_count=True)
+        if ordering:
+            merged = orderby(merged, ordering)
+        if selecting:
+            merged = select(merged, selecting)
         write_excel(merged, file, sheet_name=sheet_name, **kwargs)
         return count
     return 0
-
-
-
-
-    
