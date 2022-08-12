@@ -561,6 +561,26 @@ def asgroup(records:List[Dict], keys:List, with_pos:bool=False) -> Tuple[List, D
     return grouped
 
 
+@reduce_args('groups')
+def set_enumerate(records:List[Dict], groups=None, enum_column_name='_idx'):
+    results = []
+    if not groups:
+        for i, row in enumerate(records):
+            r = addkeys(row, keymap={enum_column_name: i})
+            results.append(r)
+    else:
+        counter = {}
+        for row in records:
+            vals = asvalues(row, groups)
+            counter.setdefault(vals, 0)
+            r = addkeys(row, keymap={enum_column_name: counter[vals]})
+            counter[vals] += 1
+            results.append(r)
+
+    return results
+
+
+
 @reduce_args('keys')
 def asdict(records:List[Dict], keys:List, select:List=None, type='values') -> Dict:
     '''Change records to a dict form based on a specific key
