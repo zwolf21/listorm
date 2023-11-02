@@ -27,7 +27,7 @@ test.py
 dist/
 __pycache__/
 .pytest_cache/
-
+play.py
 
 .DS_Store
 pyvenv.cfg
