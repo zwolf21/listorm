@@ -20,6 +20,7 @@ MANIFEST
 *.ipynb
 *.json
 *.txt
+play.py
 test.py
 
 *.ipynb
