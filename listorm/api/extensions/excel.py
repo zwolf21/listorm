@@ -1,13 +1,9 @@
-import os
 from typing import List, Dict, Text, Tuple
-from collections import abc
 
 
-from .io import get_bytesio, reduce_excel_input
 from ..records import fillmissed, values, askeys, select, merge, orderby
-from ..row import asvalues
 from ...utils import pluralize_params
-from ...utils.excel import load_workbook, load_worksheet, open_workbook, save_workbook
+from ...utils.excel import load_workbook, load_worksheet, open_workbook, save_workbook, add_image, set_cell_height, set_cell_width
 from ...utils.plural import pluralize
 
 
@@ -81,7 +77,7 @@ def read_excel(file=None, search_fields:List=None, sheet_name:Text=None, start_r
     ]
 
 
-def write_excel(records:List[Dict], file=None, sheet_name:Text=None, fill_miss=True, write_only=True, close=True, **kwargs):
+def write_excel(records:List[Dict], file=None, sheet_name:Text=None, fill_miss=True, write_only=True, close=True, image_fields:list=None, **kwargs):
     if records := pluralize(records):
         if fill_miss:
             records = fillmissed(records)
@@ -92,9 +88,28 @@ def write_excel(records:List[Dict], file=None, sheet_name:Text=None, fill_miss=T
         fields = askeys(records[0])
         selected = select(records, fields)
         rows = values(selected, flat_one=False)
+
+        width_list = []
+        if image_fields:
+            max_height = 17
+            for field_name, height, width in image_fields:
+                max_height = max(height, max_height)
+                cols = fields.index(field_name)
+                width_list.append((cols, width))
+                set_cell_width(worksheet, cols + 1, width/8)
+
+            for r, row in enumerate(rows):
+                set_cell_height(worksheet, r + 2, max_height/1.3)
         
-        worksheet.append(fields)
-        for row in rows:
+        worksheet.append(fields)        
+        for r, row in enumerate(rows):
+            for c, data in enumerate(row):
+                if image_fields:
+                    row = list(row)
+                    for cols, width in width_list:
+                        if cols == c:
+                            row[c] = None
+                            add_image(worksheet, data, r+2, cols+1, (max_height, width))
             worksheet.append(row)
         return save_workbook(workbook, file, close=close, **kwargs)
     return b''
