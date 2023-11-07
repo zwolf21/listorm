@@ -80,7 +80,6 @@ def read_excel(file=None, search_fields:List=None, sheet_name:Text=None, start_r
 
 def write_excel(records:List[Dict], file=None, sheet_name:Text=None, mode='overwrite', image_fields:list=None, **kwargs):
     if records := pluralize(records):
-
         records = fillmissed(records)
         fields = askeys(records[0])
         exists_rows_count = 0
@@ -91,31 +90,18 @@ def write_excel(records:List[Dict], file=None, sheet_name:Text=None, mode='overw
             worksheet = load_worksheet(workbook, sheet_name, **kwargs)
         elif mode == 'append':
             workbook = load_workbook(file, read_only=False, **kwargs)
-            if sheet_name:
-                try:
-                    worksheet = workbook[sheet_name]
-                except KeyError:
-                    worksheet = load_worksheet(workbook, sheet_name=sheet_name)
-
-            else:
-                if len(workbook.sheetnames) > 1:
-                    raise ValueError(f'Which sheet would you like to add data to? {workbook.sheetnames}')
-                else:
-                    worksheet = load_worksheet(workbook, workbook.sheetnames[0])
+            worksheet = load_worksheet(workbook, sheet_name=sheet_name)
 
             if exists_records := read_excel(file, sheet_name=sheet_name, read_only=False):
                 exists_rows_count = len(exists_records)
                 records = fillmissed([exists_records[0]]+records)[1:]
                 fields = askeys(exists_records[0])
                 records = select(records, fields)
-
         else:
             raise ValueError('mode must be append or overwrite')
 
-
         selected = select(records, fields)
         rows = values(selected, flat_one=False)
-
         width_list = []
         if image_fields:
             max_height = 17
@@ -126,7 +112,7 @@ def write_excel(records:List[Dict], file=None, sheet_name:Text=None, mode='overw
                 set_cell_width(worksheet, cols + 1, width/8)
 
             for r, row in enumerate(rows):
-                set_cell_height(worksheet, r + 2 + exists_rows_count, max_height/1.3)
+                set_cell_height(worksheet, r+2+exists_rows_count, max_height/1.3)
 
         if exists_rows_count == 0:
             worksheet.append(fields)        
@@ -137,9 +123,8 @@ def write_excel(records:List[Dict], file=None, sheet_name:Text=None, mode='overw
                     for cols, width in width_list:
                         if cols == c:
                             row[c] = None
-                            add_image(worksheet, data, r+2, cols+1, (max_height, width))
+                            add_image(worksheet, data, r+2+exists_rows_count, cols+1, (max_height, width))
             worksheet.append(row)
-        # return select_kwargs(save_workbook, file, **kwargs)
         return save_workbook(workbook, file, **kwargs)
     return b''
 

@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
 	name='listorm',
-	version='1.3.0',
+	version='1.3.1',
 	license='MIT',
 	description='list orm methods and shortcuts for table type of dict-list',
 	long_description=long_description,
@@ -18,12 +18,13 @@ setup(
 	keywords=['listorm', 'list of dict', 'dict list', 'records', 'sql', 'orm'],
 	url='https://github.com/zwolf21/listorm',
 	packages=find_packages(exclude=['docs', 'test', 'test.*']),
-	install_requires=['openpyxl'],
+	install_requires=['openpyxl', 'Pillow'],
 	classifiers=[
 		'Operating System :: OS Independent',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
     ],
 	python_requires=">=3.8"
 )
