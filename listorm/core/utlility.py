@@ -46,3 +46,7 @@ def read_csv(file, encoding='utf-8', uniques=None, **csv_reader_kwargs):
         records, fill_missed=False,
         uniques=uniques
     )
+
+
+def read_jsonline(file, mode='r', loads=None):
+    return extensions.read_jsonline(file, mode=mode, loads=loads)

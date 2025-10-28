@@ -19,6 +19,7 @@ MANIFEST
 *.cfg
 *.ipynb
 *.json
+*.jsonl
 *.txt
 play.py
 test.py
