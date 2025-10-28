@@ -112,7 +112,7 @@ class ShortCutMixin:
         :param filename: output excel filename,  defaults to None
         :return: if filename is None, return file contents
         '''
-        return write_excel(self, filename, fill_miss=False, **kwargs)
+        return write_excel(self, filename, **kwargs)
 
 
     def to_csv(self, filename=None, fields=None, encoding='utf-8', **csv_kwargs):

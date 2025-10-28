@@ -705,7 +705,7 @@ def set_index(records:List[Dict], keys:List) -> List[Tuple[Tuple, Dict]]:
         (asvalues(row, keys), row) for row in records
     ]
 
-@pluralize_params('on', 'left_on', 'right_on')
+@pluralize_params('left', 'right', 'on', 'left_on', 'right_on')
 def join(left:List[Dict], right:List[Dict], on:Tuple=None, left_on:Tuple=None, right_on:Tuple=None, how:Text='inner') -> List[Dict]:
     '''merge two records
 
@@ -978,7 +978,7 @@ def diff(records1:List[Dict], records2:List[Dict], pk:Tuple, targets=('create', 
     return Changes(added, deleted, updated)
 
 
-@pluralize_params('uniques', 'mode')
+@pluralize_params('records1', 'records2', 'uniques', 'mode')
 def merge(records1, records2, uniques:Tuple=None, mode:Tuple=('create', 'update'), append=True, with_count=False):
     '''Update information of records1 to records2 based on unique
         If mode is create, it merges records that do not have duplicate unique keys
